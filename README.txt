@@ -10,14 +10,12 @@ Improve wordpress search performance and accuracy by leveraging an ElasticSearch
 
 == Description ==
 
-NOTE: This plugin is still in progress. Currently, the index has to be manually updated in the admin.
+This plugin is NOT a simple drop-in, it is expected you have some understanding of what an ElasticSearch server is and how it works. The goals/features of this plugin are:
 
-This plugin is NOT a simple drop-in and go module to improve performance. It is expected you will have some understanding of what an ElasticSearch server is and how it works. The goals/features of this plugin are:
-
-* Replace default wordpress search functionality with that of an ElasticSearch server
+* Replace default wordpress search functionality with that of an ElasticSearch server.
 * Ability to specify what data points should be indexed and what the relevancy of those points are.
-* Fall back to default wordpress search if ElasticSearch server is not responsive
-* Update ElasticSearch server when content is removed/added/unpublished
+* Fall back to default wordpress search if ElasticSearch server is not responsive.
+* Update ElasticSearch server when posts are removed/added/unpublished.
 
 Future Features
 
@@ -34,6 +32,12 @@ https://github.com/parisholley/wordpress-fantastic-elasticsearch/
 2. Activate the plugin through the 'Plugins' menu in WordPress
 3. Click the 'ElasticSearch' menu item and follow the instructions on each section to configure the plugin.
 4. Select "Enable" on "Server Settings" when you are ready for it to go live. 
+
+== Frequently Asked Questions ==
+
+= What happens if I change a taxonomy associate with a post? =
+
+Rather than re-index every time taxonomies change, we expect that will be a manual effort on your part. This may be a configurable option in the future.
 
 == Changelog ==
 
