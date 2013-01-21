@@ -19,7 +19,7 @@ This plugin is NOT a simple drop-in, it is expected you have some understanding 
 
 Future Features
 
-* Facet API for building your own faceted search (javascript components too)
+* Facet utilities for building your own faceted search (javascript components, etc)
 
 Please submit bugs or contributions to the github location and not here on wordpress' system:
 
@@ -38,6 +38,10 @@ https://github.com/parisholley/wordpress-fantastic-elasticsearch/
 = What happens if I change a taxonomy associate with a post? =
 
 Rather than re-index every time taxonomies change, we expect that will be a manual effort on your part. This may be a configurable option in the future.
+
+= How do I filter my search results using facets? =
+
+By default, the plugin will look for those facet names (taxonomies) in the query string along with the search (ie: ?s=test&category[]=1). The more facets you add to the URL, the more it will filter. Facets values and counts are available at $WP_Query->facets.
 
 == Changelog ==
 
