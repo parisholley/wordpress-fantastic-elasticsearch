@@ -15,9 +15,9 @@ class Indexer{
 			$document[$field] = $post->$field;
 		}
 
-		$taxes = get_object_taxonomies($post->post_type);
+		$taxes = array_intersect(Api::taxonomies(), get_object_taxonomies($post->post_type));
 
-		foreach(get_object_taxonomies($post->post_type) as $tax){
+		foreach($taxes as $tax){
 			$document[$tax] = array();
 
 			foreach(wp_get_object_terms($post->ID, $tax) as $term){
