@@ -17,6 +17,7 @@ This plugin is NOT a simple drop-in and go module to improve performance. It is 
 * Replace default wordpress search functionality with that of an ElasticSearch server
 * Ability to specify what data points should be indexed and what the relevancy of those points are.
 * Fall back to default wordpress search if ElasticSearch server is not responsive
+* Update ElasticSearch server when content is removed/added/unpublished
 
 Future Features
 
@@ -29,13 +30,13 @@ https://github.com/parisholley/wordpress-fantastic-elasticsearch/
 
 == Installation ==
 
-1. Upload `afantastic-elasticsearch` folder to the `/wp-content/plugins/` directory
+1. Upload `fantastic-elasticsearch` folder to the `/wp-content/plugins/` directory
 2. Activate the plugin through the 'Plugins' menu in WordPress
 3. Click the 'ElasticSearch' menu item and follow the instructions on each section to configure the plugin.
 4. Select "Enable" on "Server Settings" when you are ready for it to go live. 
 
 == Changelog ==
 
-= 0.1.0 =
+= 1.0.0 =
 
 * Initial release

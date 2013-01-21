@@ -2,6 +2,8 @@
 namespace elasticsearch;
 
 class Indexer{
+	static $types = array();
+
 	static function get_posts(){
 		return get_posts(Defaults::get_posts_args());
 	}
@@ -30,28 +32,41 @@ class Indexer{
 		foreach(Api::types() as $type){
 			$type = Api::index(true)->getType($type);
 
-			//try{
+			try{
 				$type->delete();
-			//}catch(\Exception $ex){
+			}catch(\Exception $ex){
 				// no way to detect if type exists
-			//}
+				if(strpos($ex->getMessage(), 'TypeMissingException') === false){
+					throw $ex;
+				}
+			}
 		}
 	}
 
 	static function reindex(){
 		$index = Api::index(true);
 
-		$types = array();
-
 		foreach(self::get_posts() as $post){
-			if(!($type = $types[$post->post_type])){
-				$type = $types[$post->post_type] = $index->getType($post->post_type);
-			}
-
-			$data = self::build_document($post);
-
-			$type->addDocument(new \Elastica_Document($post->ID, $data));
+			self::addOrUpdate($index, $post);
 		}
+	}
+
+	static function delete($index, $post){
+		if(!($type = self::$types[$post->post_type])){
+			$type = self::$types[$post->post_type] = $index->getType($post->post_type);
+		}
+
+		$type->deleteById($post->ID);
+	}
+
+	static function addOrUpdate($index, $post){
+		if(!($type = self::$types[$post->post_type])){
+			$type = self::$types[$post->post_type] = $index->getType($post->post_type);
+		}
+
+		$data = self::build_document($post);
+
+		$type->addDocument(new \Elastica_Document($post->ID, $data));		
 	}
 }
 ?>
