@@ -43,6 +43,13 @@ Rather than re-index every time taxonomies change, we expect that will be a manu
 
 By default, the plugin will look for those facet names (taxonomies) in the query string along with the search (ie: ?s=test&category[]=1). The more facets you add to the URL, the more it will filter. Facets values and counts are available at $WP_Query->facets.
 
+== Screenshots ==
+
+1. Configure your ElasticServer settings
+2. Determine what data you want to index
+3. Alter the result scoring behavior
+4. Wipe and re-index data is available if needed
+
 == Changelog ==
 
 = 1.0.0 =
