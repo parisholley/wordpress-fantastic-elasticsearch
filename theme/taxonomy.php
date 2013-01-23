@@ -1,7 +1,7 @@
 <?php
 namespace elasticsearch;
 
-class Search{
+class Taxonomy{
 	var $searched = false;
 	var $total = 0;
 	var $scores = array();
@@ -15,19 +15,21 @@ class Search{
 	function do_search($wp_query){
 		$this->searched = false;
 
-		if(!$wp_query->is_main_query() || !is_search() || is_admin() || !Api::option('enable')){
+die('uasusd');
+		if(!$wp_query->is_main_query() || !is_tax() || is_admin() || !Api::option('enable')){
 			return;
 		}
 
-		$search = $wp_query->query_vars['s'];
+		die('wee');
 
+		$search = $wp_query->query_vars['s'];
 		$this->page = $wp_query->query_vars['paged'] > 0 ? $wp_query->query_vars['paged'] - 1 : 0;
 
 		if(!$wp_query->query_vars['posts_per_page']){
 			$wp_query->query_vars['posts_per_page'] = get_option('posts_per_page');
 		}
 
-		$results = Searcher::query($search, $this->page, $wp_query->query_vars['posts_per_page'], $wp_query->query_vars);
+		$results = Searcher::query($search, $this->page, $wp_query->query_vars['posts_per_page'], $wp_query->query_vars)
 
 		if($results == null){
 			return null;
@@ -64,5 +66,5 @@ class Search{
 	}
 }
 
-new Search();
+new Taxonomy();
 ?>
