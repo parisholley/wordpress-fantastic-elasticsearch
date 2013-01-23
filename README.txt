@@ -52,6 +52,10 @@ By default, the plugin will look for those facet names (taxonomies) in the query
 
 == Changelog ==
 
+= 1.0.1 =
+
+* Fixed bug, forgot to convert Api to use defaults
+
 = 1.0.0 =
 
 * Initial release

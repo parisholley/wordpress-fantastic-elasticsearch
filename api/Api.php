@@ -51,7 +51,7 @@ class Api{
 			return array_keys($fields);
 		}
 
-		return es_fields();
+		return Defaults::fields();
 	}
 
 	static function facets(){
@@ -65,7 +65,7 @@ class Api{
 			return array_keys($types);
 		}
 
-		return es_types();
+		return Defaults::types();
 	}
 
 	static function taxonomies(){
@@ -75,7 +75,7 @@ class Api{
 			return array_keys($taxes);
 		}
 
-		return es_get_taxonomies(self::types());
+		return Defaults::taxonomies(self::types());
 	}
 }
 ?>
