@@ -1,0 +1,71 @@
+<?php
+add_action('nhp-opts-options-validate-elasticsearch', function($new, $current){
+	global $NHP_Options;
+
+	if($new['server_url'] == $current['server_url'] && $new['server_index'] == $current['server_index']){
+		return;
+	}
+
+	$client = new \Elastica_Client(array(
+		'url' => $new['server_url']
+	));
+
+	$index = $client->getIndex($new['server_index']);
+
+	$status = $index->getStatus()->getResponse()->getData();
+
+	if(!$status['ok']){
+		$field = $NHP_Options->sections['server']['fields']['server_url'];
+		$field['msg'] = 'Unable to connect to the ElasticSearch server.';
+
+		$NHP_Options->errors[] = $field;
+
+		set_transient('nhp-opts-errors-elasticsearch', $NHP_Options->errors, 1000 );
+	}
+}, 10, 2);
+
+$sections['server'] = array(
+	'icon' => NHP_OPTIONS_URL.'img/glyphicons/glyphicons_280_settings.png',
+	'title' => 'Server Settings',
+	'fields' => array(
+		'enable' => array(
+			'id' => 'enable',
+			'type' => 'checkbox',
+			'title' => 'Enable Search',
+			'sub_desc' => 'If enabled, the default wordpress search will use ElasticSearch.'
+		),
+		'server_url' => array(
+			'id' => 'server_url',
+			'type' => 'text',
+			'title' => 'Server URL',
+			'sub_desc' => 'If your search provider has given you a connection URL, use that instead of filling out server information.',
+			'desc' => 'It must include the trailing slash "/"',
+			'validate' => 'url',
+		),
+		'server_index' => array(
+			'id' => 'server_index',
+			'type' => 'text',
+			'title' => 'Index Name'
+		),
+		'server_timeout_read' => array(
+			'id' => 'server_timeout_read',
+			'type' => 'text',
+			'title' => 'Read Timemout',
+			'validate' => 'numeric',
+			'std' => 1,
+			'desc' => 'Number of seconds (minimum of 1)',
+			'sub_desc' => 'The maximum time (in seconds) that <strong>read</strong> requests should wait for server response. If the call times out, wordpress will fallback to standard search.'
+		),
+		'server_timeout_write' => array(
+			'id' => 'server_timeout_write',
+			'type' => 'text',
+			'title' => 'Write Timemout',
+			'validate' => 'numeric',
+			'std' => 300,
+			'desc' => 'Number of seconds (minimum of 1)',
+			'sub_desc' => 'The maximum time (in seconds) that <strong>write</strong> requests should wait for server response. This should be set long enough to index your entire site.'
+		)
+	)
+);
+
+?>
