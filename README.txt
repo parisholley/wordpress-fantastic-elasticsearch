@@ -52,6 +52,11 @@ By default, the plugin will look for those facet names (taxonomies) in the query
 
 == Changelog ==
 
+= 1.0.2 =
+
+* Possible fix for reported class not found problem
+* Ignore connection failure during validation
+
 = 1.0.1 =
 
 * Fixed bug, forgot to convert Api to use defaults
