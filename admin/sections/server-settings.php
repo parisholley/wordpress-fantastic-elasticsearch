@@ -1,4 +1,6 @@
 <?php
+namespace elasticsearch;
+
 add_action('nhp-opts-options-validate-elasticsearch', function($new, $current){
 	global $NHP_Options;
 
@@ -6,21 +8,27 @@ add_action('nhp-opts-options-validate-elasticsearch', function($new, $current){
 		return;
 	}
 
-	$client = new \Elastica_Client(array(
-		'url' => $new['server_url']
-	));
+	if($new['server_url']){
+		$client = new \Elastica_Client(array(
+			'url' => $new['server_url']
+		));
 
-	$index = $client->getIndex($new['server_index']);
+		try{
+			$index = $client->getIndex($new['server_index']);
 
-	$status = $index->getStatus()->getResponse()->getData();
+			$status = $index->getStatus()->getResponse()->getData();
+		}catch(\Exception $ex){
 
-	if(!$status['ok']){
-		$field = $NHP_Options->sections['server']['fields']['server_url'];
-		$field['msg'] = 'Unable to connect to the ElasticSearch server.';
+		}
 
-		$NHP_Options->errors[] = $field;
+		if(!$status['ok']){
+			$field = $NHP_Options->sections['server']['fields']['server_url'];
+			$field['msg'] = 'Unable to connect to the ElasticSearch server.';
 
-		set_transient('nhp-opts-errors-elasticsearch', $NHP_Options->errors, 1000 );
+			$NHP_Options->errors[] = $field;
+
+			set_transient('nhp-opts-errors-elasticsearch', $NHP_Options->errors, 1000 );
+		}
 	}
 }, 10, 2);
 
