@@ -5,6 +5,7 @@ class Searcher{
 	public function query($search, $pageIndex, $size, $facets = array()){
 		$shoulds = array();
 		$musts = array();
+		$filters = array();
 		$type = null;
 
 		foreach(Api::types() as $type){
@@ -26,9 +27,34 @@ class Searcher{
 				}
 			}
 
-			// faceting
-			foreach($facets[$tax] as $facet){
-				$musts[] = array( 'term' => array( $tax => $facet ));
+			if(is_array($facets[$tax])){
+				foreach($facets[$tax] as $operation => $facet){
+					if(is_string($operation)){
+						if($operation == 'and'){
+							if(is_array($facet)){
+								foreach($facet as $value){
+									$musts[] = array( 'term' => array( $tax => $value ));
+								}
+							}else{
+								$musts[] = array( 'term' => array( $tax => $facet ));
+							}
+						}
+
+						if($operation == 'or'){
+							if(is_array($facet)){
+								foreach($facet as $value){
+									$filters[] = array( 'term' => array( $tax => $value ));
+								}
+							}else{
+								$filters[] = array( 'term' => array( $tax => $facet ));
+							}
+						}
+					}else{
+						$musts[] = array( 'term' => array( $tax => $facet ));
+					}
+				}
+			}elseif($facets[$tax]){
+				$musts[] = array( 'term' => array( $tax => $facets[$tax] ));
 			}
 		}
 
@@ -51,12 +77,24 @@ class Searcher{
 			$args['query']['bool']['should'] = $shoulds;
 		}
 
+		if(count($filters) > 0){
+			$args['filter']['bool']['should'] = $filters;
+		}
+
 		if(count($musts) > 0){
 			$args['query']['bool']['must'] = $musts;
 		}
 
 		foreach(Api::facets() as $facet){
 			$args['facets'][$facet]['terms']['field'] = $facet;
+
+			if(count($filters) > 0){
+				foreach($filters as $filter){
+					if(!$filter['term'][$facet]){
+						$args['facets'][$facet]['facet_filter']['bool']['should'][] = $filter;
+					}
+				}
+			}
 		}
 
 		$query =new \Elastica_Query($args);
