@@ -36,12 +36,6 @@ $sections['server'] = array(
 	'icon' => NHP_OPTIONS_URL.'img/glyphicons/glyphicons_280_settings.png',
 	'title' => 'Server Settings',
 	'fields' => array(
-		'enable' => array(
-			'id' => 'enable',
-			'type' => 'checkbox',
-			'title' => 'Enable Search',
-			'sub_desc' => 'If enabled, the default wordpress search will use ElasticSearch.'
-		),
 		'server_url' => array(
 			'id' => 'server_url',
 			'type' => 'text',

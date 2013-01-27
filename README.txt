@@ -52,6 +52,10 @@ By default, the plugin will look for those facet names (taxonomies) in the query
 
 == Changelog ==
 
+= 1.1.1 =
+* Fixed class load problem due to case sensitivity
+* Removed duplicate enable setting 
+
 = 1.1.0 =
 * Uses AJAX calls to index all documents to get around server execution timeout
 * Support for using ElasticSearch on category page
