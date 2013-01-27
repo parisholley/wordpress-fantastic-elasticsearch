@@ -4,8 +4,28 @@ namespace elasticsearch;
 class Indexer{
 	static $types = array();
 
-	static function get_posts(){
-		return get_posts(Defaults::get_posts_args());
+	static function per_page(){
+		return apply_filters('es_indexer_per_page', 10);
+	}
+
+	static function get_posts($page = 1){
+		$args = apply_filters('ex_indexer_get_posts', array(
+			'posts_per_page' => self::per_page(),
+			'post_type' => Api::types(),
+			'paged' => $page,
+			'post_status' => 'publish'
+		));
+
+		return get_posts($args);
+	}
+
+	static function get_count(){
+		$query = new \WP_Query(array(
+			'post_type' => Api::types(),
+			'post_status' => 'publish'
+		));
+
+		return $query->found_posts; //performance risk?
 	}
 
 	static function build_document($post){
@@ -21,10 +41,28 @@ class Indexer{
 			$document[$tax] = array();
 
 			foreach(wp_get_object_terms($post->ID, $tax) as $term){
-				$document[$tax][] = $term->slug;
+				if(!in_array($term->slug, $document[$tax])){
+					$document[$tax][] = $term->slug;
+				}
+
+				if($term->parent){
+					$term = get_term($term->parent, $tax);
+					
+					while($term != null){
+						if(!in_array($term->slug, $document[$tax])){
+							$document[$tax][] = $term->slug;
+						}
+
+						if($term->parent){
+							$term = get_term($term->parent, $tax);
+						}else{
+							$term = null;
+						}
+					}
+				}
 			}
 		}
-
+		
 		return apply_filters('es_build_document', $document, $post);
 	}
 
@@ -43,12 +81,16 @@ class Indexer{
 		}
 	}
 
-	static function reindex(){
+	static function reindex($page = 1){
 		$index = Api::index(true);
 
-		foreach(self::get_posts() as $post){
+		$posts = self::get_posts($page);
+
+		foreach($posts as $post){
 			self::addOrUpdate($index, $post);
 		}
+
+		return count($posts);
 	}
 
 	static function delete($index, $post){

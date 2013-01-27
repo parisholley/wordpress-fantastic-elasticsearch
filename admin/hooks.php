@@ -17,9 +17,11 @@ class Hooks{
 
 		$index = Api::index(true);
 
-		if ($post->post_status != 'publish'){
+		if ($post->post_status == 'trash'){
 			Indexer::delete($index, $post);
-		} else {
+		}
+
+		if ($post->post_status == 'publish'){
 			Indexer::addOrUpdate($index, $post);
 		}
 	}

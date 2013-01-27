@@ -52,6 +52,15 @@ By default, the plugin will look for those facet names (taxonomies) in the query
 
 == Changelog ==
 
+= 1.1.0 =
+* Uses AJAX calls to index all documents to get around server execution timeout
+* Support for using ElasticSearch on category page
+* Faceting documentation
+* Show more post types in admin
+* Only index published posts, need to test other status behavior (like future)
+* Support for boolean faceting (and/or)
+
+
 = 1.0.2 =
 
 * Possible fix for reported class not found problem

@@ -1,6 +1,28 @@
 <?php
 namespace elasticsearch;
 
+add_action('wp_ajax_esreindex', function(){
+	try{
+		echo Indexer::reindex($_POST['page']);
+	}catch(\Exception $ex){
+		header("HTTP/1.0 500 Internal Server Error");
+
+		echo $ex->getMessage();
+	}
+
+	die();
+});
+
+add_action('admin_head-toplevel_page_elastic_search', function(){
+	wp_enqueue_script('es-indexing', plugins_url( '/manage-index.js', __FILE__ ), array('jquery'));
+
+	wp_localize_script( 'es-indexing', 'indexing', array(
+		'ajaxurl' => admin_url( 'admin-ajax.php' ),
+		'total'	=> Indexer::get_count(),
+		'perpage' => Indexer::per_page()
+	));
+});
+
 add_filter('nhp-opts-saved-text-elasticsearch', function($default){
 	if(get_transient('es-wiped') == 1){
 		return '<strong>The index has been wiped.</strong>';
@@ -33,22 +55,6 @@ add_action('nhp-opts-options-validate-elasticsearch', function(){
 			set_transient('es-wiped-error', $ex->getMessage(), 30);
 		}
 	}
-
-	if($_POST['reindex']){
-		try{
-			Indexer::reindex();
-			set_transient('es-indexed', 1, 30);
-		}catch(\Exception $ex){
-			$errors = get_transient('nhp-opts-errors-elasticsearch');
-			$errors[] = array(
-				'section_id' => 'index'
-			);
-
-			set_transient('nhp-opts-errors-elasticsearch', $errors, 1000 );
-
-			set_transient('es-indexed-error', $ex->getMessage(), 30);
-		}
-	}
 });
 
 ob_start();
@@ -75,10 +81,10 @@ ob_start();
 					<span class="description">Re-populate index</span>
 				</th>
 				<td>
-					<input type="submit" name="reindex" class="button button-primary" value="Re-index Data" />
-					<?php if($error = get_transient('es-indexed-error')): delete_transient('es-indexed-error'); ?>
-						<span class="nhp-opts-th-error">There was a problem indexing the data. (<strong><?php echo $error; ?></strong>)</span>
-					<?php endif; ?>
+					<input id="reindex" type="submit" name="reindex" class="button button-primary" value="Re-index Data" />
+					<span id="progress" style="display:none">Indexed <span class="finished">0</span> of <span class="total">0</span> so far.</span>
+					<span id="complete" style="display:none">Indexing Complete</span>
+					<span id="error" class="nhp-opts-th-error" style="display:none">There was a problem indexing the data. (<strong class="msg"></strong>)</span>
 				</td>
 			</tr>
 		</tbody>
