@@ -52,6 +52,9 @@ By default, the plugin will look for those facet names (taxonomies) in the query
 
 == Changelog ==
 
+= 1.1.2 =
+* Ability to specify which categories should be enabled
+
 = 1.1.1 =
 * Fixed class load problem due to case sensitivity
 * Removed duplicate enable setting 

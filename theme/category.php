@@ -17,7 +17,11 @@ class Category{
 
 		$slug = $wp_query->query_vars['category_name'];
 
-		if(!$wp_query->is_main_query() || !(is_tax() || $slug) || is_admin() || !Api::option('enable_category')){
+		$cat = get_category_by_slug($slug);
+
+		$enabled = Api::option('enable_categories');
+
+		if(!$wp_query->is_main_query() || !(is_tax() || $slug) || is_admin() || !in_array($cat->term_id, $enabled)){
 			return;
 		}
 
