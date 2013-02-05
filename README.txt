@@ -52,6 +52,9 @@ By default, the plugin will look for those facet names (taxonomies) in the query
 
 == Changelog ==
 
+= 1.1.3 =
+* Fixed bug that would only search content with a specific type (php scope creep).
+
 = 1.1.2 =
 * Ability to specify which categories should be enabled
 

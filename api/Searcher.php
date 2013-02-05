@@ -6,11 +6,11 @@ class Searcher{
 		$shoulds = array();
 		$musts = array();
 		$filters = array();
-		$type = null;
+		$bytype = null;
 
 		foreach(Api::types() as $type){
 			if($type == $search){
-				$type = $search;
+				$bytype = $search;
 				$search = null;
 			}
 		}
@@ -105,8 +105,8 @@ class Searcher{
 		try{
 			$index = Api::index(false);
 
-			if($type){
-				$response = $index->getType($type)->search($query);
+			if($bytype){
+				$response = $index->getType($bytype)->search($query);
 			}else{
 				$response = $index->search($query);
 			}
