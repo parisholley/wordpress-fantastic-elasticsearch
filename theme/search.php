@@ -36,6 +36,7 @@ class Search{
 		$this->total = $results['total'];
 		$this->scores = $results['scores'];
 		
+		$wp_query->query_vars['s'] = '';	
 		$wp_query->query_vars['post__in'] = $results['ids'];
 		$wp_query->query_vars['paged'] = 1;
 		$wp_query->facets = $results['facets'];
