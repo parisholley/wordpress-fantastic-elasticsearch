@@ -52,6 +52,9 @@ By default, the plugin will look for those facet names (taxonomies) in the query
 
 == Changelog ==
 
+= 1.1.4 =
+* Fixed bug that caused search to show invalid results due to wordpress filtering on top of elastic search resutls.
+
 = 1.1.3 =
 * Fixed bug that would only search content with a specific type (php scope creep).
 
