@@ -253,18 +253,21 @@ class NHP_Options{
 					
 			}//if
 						
+			if(is_array($this->extra_tabs)){
 
-			foreach($this->extra_tabs as $k => $tab){
-				
-				add_submenu_page(
-						$this->args['page_slug'],
-						$tab['title'], 
-						$tab['title'], 
-						$this->args['page_cap'], 
-						$this->args['page_slug'].'&tab='.$k, 
-						create_function( '$a', "return null;" )
-				);
-				
+				foreach($this->extra_tabs as $k => $tab){
+
+					add_submenu_page(
+							$this->args['page_slug'],
+							$tab['title'],
+							$tab['title'],
+							$this->args['page_cap'],
+							$this->args['page_slug'].'&tab='.$k,
+							create_function( '$a', "return null;" )
+					);
+
+				}
+
 			}
 
 			if(true === $this->args['dev_mode']){
@@ -686,12 +689,13 @@ class NHP_Options{
 						
 						
 						
-						
-						foreach($this->extra_tabs as $k => $tab){
-							$icon = (!isset($tab['icon']))?'<img src="'.$this->url.'img/glyphicons/glyphicons_019_cogwheel.png" /> ':'<img src="'.$tab['icon'].'" /> ';
-							echo '<li id="'.$k.'_section_group_li" class="nhp-opts-group-tab-link-li">';
-								echo '<a href="javascript:void(0);" id="'.$k.'_section_group_li_a" class="nhp-opts-group-tab-link-a custom-tab" data-rel="'.$k.'">'.$icon.'<span>'.$tab['title'].'</span></a>';
-							echo '</li>';
+						if (is_array($this->extra_tabs)){
+							foreach($this->extra_tabs as $k => $tab){
+								$icon = (!isset($tab['icon']))?'<img src="'.$this->url.'img/glyphicons/glyphicons_019_cogwheel.png" /> ':'<img src="'.$tab['icon'].'" /> ';
+								echo '<li id="'.$k.'_section_group_li" class="nhp-opts-group-tab-link-li">';
+									echo '<a href="javascript:void(0);" id="'.$k.'_section_group_li_a" class="nhp-opts-group-tab-link-a custom-tab" data-rel="'.$k.'">'.$icon.'<span>'.$tab['title'].'</span></a>';
+								echo '</li>';
+							}
 						}
 
 						
@@ -767,12 +771,13 @@ class NHP_Options{
 					}
 					
 					
-					
-					foreach($this->extra_tabs as $k => $tab){
-						echo '<div id="'.$k.'_section_group'.'" class="nhp-opts-group-tab">';
-						echo '<h3>'.$tab['title'].'</h3>';
-						echo $tab['content'];
-						echo '</div>';
+					if(is_array($this->extra_tabs)){
+						foreach($this->extra_tabs as $k => $tab){
+							echo '<div id="'.$k.'_section_group'.'" class="nhp-opts-group-tab">';
+							echo '<h3>'.$tab['title'].'</h3>';
+							echo $tab['content'];
+							echo '</div>';
+						}
 					}
 
 					
