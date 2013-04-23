@@ -52,6 +52,10 @@ By default, the plugin will look for those facet names (taxonomies) in the query
 
 == Changelog ==
 
+= 1.1.5 =
+* Removed NHP warning (thanks to EkAndreas)
+* Fixed issue with plugin indexing post types that weren't selected
+
 = 1.1.4 =
 * Fixed bug that caused search to show invalid results due to wordpress filtering on top of elastic search resutls.
 
