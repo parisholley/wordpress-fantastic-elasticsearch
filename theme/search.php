@@ -53,6 +53,7 @@ class Search{
 			$wp_query->max_num_pages = ceil( $this->total / $wp_query->query_vars['posts_per_page'] );
 			$wp_query->found_posts = $this->total;
 			$wp_query->query_vars['paged'] = $this->page + 1;
+			$wp_query->query_vars['s'] = $_GET['s'];
 
 			usort($posts, array(&$this, 'sort_posts'));
 		}
