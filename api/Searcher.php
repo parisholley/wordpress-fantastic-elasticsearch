@@ -105,11 +105,15 @@ class Searcher{
 		try{
 			$index = Api::index(false);
 
+			$search = new Elastica_Search($index->getClient());
+			$search->addIndex($index);
+
 			if($bytype){
-				$response = $index->getType($bytype)->search($query);
-			}else{
-				$response = $index->search($query);
+				$search->addType($index->getType($bytype));
 			}
+
+			$response = $search->search($query);
+
 		}catch(\Exception $ex){
 			return null;
 		}
