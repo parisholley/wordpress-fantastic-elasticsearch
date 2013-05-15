@@ -102,6 +102,9 @@ class Searcher{
 		$query->setSize($size);
 		$query->setFields(array('id'));
 
+		//Possibility to modify the query after it was built
+		\apply_filters('elastica_query', $query);
+
 		try{
 			$index = Api::index(false);
 
@@ -138,7 +141,8 @@ class Searcher{
 
 		$val['ids'] = array_keys($val['scores']);
 
-		return $val;
+		//Possibility to alter the results
+		return \apply_filters('elastica_results', $val, $response);
 	}
 }
 ?>
