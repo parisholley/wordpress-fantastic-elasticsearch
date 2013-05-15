@@ -51,6 +51,10 @@ By default, the plugin will look for those facet names (taxonomies) in the query
 4. Wipe and re-index data is available if needed
 
 == Changelog ==
+
+= 1.1.7 =
+* Merged pull requests that added more hooks/filters (thanks to turcottedanny)
+
 = 1.1.6 =
 * Fixed search query not showing in title (thanks to eleshar for finding)
 
