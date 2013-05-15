@@ -112,6 +112,8 @@ class Searcher{
 				$search->addType($index->getType($bytype));
 			}
 
+			\apply_filters( 'elastica_pre_search', $search );
+
 			$response = $search->search($query);
 
 		}catch(\Exception $ex){
