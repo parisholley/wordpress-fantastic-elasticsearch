@@ -105,7 +105,7 @@ class Searcher{
 		try{
 			$index = Api::index(false);
 
-			$search = new Elastica_Search($index->getClient());
+			$search = new \Elastica_Search($index->getClient());
 			$search->addIndex($index);
 
 			if($bytype){
