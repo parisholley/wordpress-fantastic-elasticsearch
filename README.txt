@@ -52,7 +52,7 @@ By default, the plugin will look for those facet names (taxonomies) in the query
 
 == Changelog ==
 
-= 1.1.7 =
+= 1.1.8 =
 * Merged pull requests that added more hooks/filters (thanks to turcottedanny)
 
 = 1.1.6 =
