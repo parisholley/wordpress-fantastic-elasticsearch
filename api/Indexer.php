@@ -28,11 +28,18 @@ class Indexer{
 		return $query->found_posts; //performance risk?
 	}
 
-	static function build_document($post){
+	static function build_document($post, $display_name = null){
 		$document = array();
 
 		foreach(Api::fields() as $field){
-			$document[$field] = $post->$field;
+			if($field == 'post_author' && $display_name){
+				$document[$field] = $display_name;
+			} else if($field == 'post_author'){
+				$document[$field] = get_the_author_meta('display_name', $post->$field);	
+			} else {
+				$document[$field] = $post->$field;	
+			}
+			
 		}
 
 		$taxes = array_intersect(Api::taxonomies(), get_object_taxonomies($post->post_type));
@@ -101,12 +108,12 @@ class Indexer{
 		$type->deleteById($post->ID);
 	}
 
-	static function addOrUpdate($index, $post){
+	static function addOrUpdate($index, $post, $display_name = null){
 		if(!($type = self::$types[$post->post_type])){
 			$type = self::$types[$post->post_type] = $index->getType($post->post_type);
 		}
 
-		$data = self::build_document($post);
+		$data = self::build_document($post, $display_name);
 
 		$type->addDocument(new \Elastica_Document($post->ID, $data));		
 	}
