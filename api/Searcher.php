@@ -96,6 +96,8 @@ class Searcher{
 				}
 			}
 		}
+		
+		$args = \apply_filters('es_query_args', $args);
 
 		$query =new \Elastica_Query($args);
 		$query->setFrom($pageIndex * $size);
