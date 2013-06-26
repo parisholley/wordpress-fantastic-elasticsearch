@@ -41,8 +41,7 @@ $sections['server'] = array(
 			'type' => 'text',
 			'title' => 'Server URL',
 			'sub_desc' => 'If your search provider has given you a connection URL, use that instead of filling out server information.',
-			'desc' => 'It must include the trailing slash "/"',
-			'validate' => 'url',
+			'desc' => 'It must include the trailing slash "/"'
 		),
 		'server_index' => array(
 			'id' => 'server_index',
