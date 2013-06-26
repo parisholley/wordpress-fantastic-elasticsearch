@@ -32,7 +32,11 @@ class Indexer{
 		$document = array();
 
 		foreach(Api::fields() as $field){
-			$document[$field] = $post->$field;
+			if($field == 'post_date'){
+				$document[$field] = date('c',strtotime($post->$field));
+			}else{
+				$document[$field] = $post->$field;
+			}
 		}
 
 		$taxes = array_intersect(Api::taxonomies(), get_object_taxonomies($post->post_type));
@@ -66,6 +70,39 @@ class Indexer{
 		return apply_filters('es_build_document', $document, $post);
 	}
 
+	static function map(){
+		$numeric = Api::option('numeric');
+		$index = Api::index(false);
+
+		foreach(Api::fields() as $field){
+			if($numeric[$field]){
+				foreach(Api::types() as $type){
+					$type = $index->getType($type);
+
+					$mapping = new \Elastica_Type_Mapping($type);
+					$mapping->setProperties(array($field => array(
+						'type' => 'float'
+					)));
+
+					$mapping->send();
+				}
+			}
+
+			if($field == 'post_date'){
+				foreach(Api::types() as $type){
+					$type = $index->getType($type);
+
+					$mapping = new \Elastica_Type_Mapping($type);
+					$mapping->setProperties(array($field => array(
+						'type' => 'date'
+					)));
+
+					$mapping->send();
+				}			
+			}
+		}
+	}
+
 	static function clear(){
 		foreach(Api::types() as $type){
 			$type = Api::index(true)->getType($type);
@@ -79,6 +116,8 @@ class Indexer{
 				}
 			}
 		}
+
+		self::map();
 	}
 
 	static function reindex($page = 1){

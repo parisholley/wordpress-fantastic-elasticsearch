@@ -18,6 +18,34 @@ class Api{
 		return self::option("score_{$type}_{$name}");
 	}
 
+	static function ranges($field){
+		$config = Api::option($field . '_range');
+
+		if($config){
+			$ranges = array();
+
+			foreach(split(',', $config) as $range){
+				$ends = split('-', $range);
+
+				$tmp = array();
+
+				if($ends[0]){
+					$tmp['from'] = $ends[0];
+				}
+
+				if($ends[1]){
+					$tmp['to'] = $ends[1];
+				}
+
+				$ranges[$ends[0] . '-' . $ends[1]] = $tmp;
+			}
+
+			return $ranges;
+		}
+
+		return null;
+	}
+
 	static function client($write = false){
 		if(self::$client == null){
 			$settings = array(
@@ -45,13 +73,13 @@ class Api{
 	}
 
 	static function fields(){
-		$fields = self::option('fields');
+		$fieldnames = Defaults::fields();
 
-		if($fields){
-			return array_keys($fields);
+		if($fields = self::option('fields')){
+			$fieldnames = array_keys($fields);
 		}
 
-		return Defaults::fields();
+		return apply_filters('es_api_fields', $fieldnames);
 	}
 
 	static function facets(){

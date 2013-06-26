@@ -84,6 +84,7 @@ add_action('init', function(){
 	require('admin/sections/wordpress-integration.php');
 	require('admin/sections/server-settings.php');
 	require('admin/sections/content-indexing.php');
+	require('admin/sections/field-mapping.php');
 	require('admin/sections/results-scoring.php');
 	require('admin/sections/manage-index.php');
 

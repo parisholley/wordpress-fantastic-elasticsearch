@@ -27,39 +27,15 @@ class Searcher{
 				}
 			}
 
-			if(is_array($facets[$tax])){
-				foreach($facets[$tax] as $operation => $facet){
-					if(is_string($operation)){
-						if($operation == 'and'){
-							if(is_array($facet)){
-								foreach($facet as $value){
-									$musts[] = array( 'term' => array( $tax => $value ));
-								}
-							}else{
-								$musts[] = array( 'term' => array( $tax => $facet ));
-							}
-						}
-
-						if($operation == 'or'){
-							if(is_array($facet)){
-								foreach($facet as $value){
-									$filters[] = array( 'term' => array( $tax => $value ));
-								}
-							}else{
-								$filters[] = array( 'term' => array( $tax => $facet ));
-							}
-						}
-					}else{
-						$musts[] = array( 'term' => array( $tax => $facet ));
-					}
-				}
-			}elseif($facets[$tax]){
-				$musts[] = array( 'term' => array( $tax => $facets[$tax] ));
-			}
+			self::facet($tax, $facets, 'term', $musts, $filters);
 		}
 
-		if($search){
-			foreach(Api::fields() as $field){
+		$args = array();
+
+		$numeric = Api::option('numeric');
+
+		foreach(Api::fields() as $field){
+			if($search){
 				$score = Api::score('field', $field);
 
 				if($score > 0){
@@ -69,9 +45,11 @@ class Searcher{
 					)));
 				}
 			}
-		}
 
-		$args = array();
+			if($numeric[$field]){
+				self::facet($field, $facets, 'range', $musts, $filters, Api::ranges($field));
+			}
+		}
 
 		if(count($shoulds) > 0){
 			$args['query']['bool']['should'] = $shoulds;
@@ -97,6 +75,18 @@ class Searcher{
 			}
 		}
 
+		foreach(array_keys($numeric) as $facet){
+			$args['facets'][$facet]['range'][$field][] = array_values(Api::ranges($field));
+			
+			if(count($filters) > 0){
+				foreach($filters as $filter){
+					$args['facets'][$facet]['facet_filter']['bool']['should'][] = $filter;
+				}
+			}
+		}
+
+		$args = \apply_filters('es_query_args', $args);
+
 		$query =new \Elastica_Query($args);
 		$query->setFrom($pageIndex * $size);
 		$query->setSize($size);
@@ -118,10 +108,10 @@ class Searcher{
 			\apply_filters( 'elastica_pre_search', $search );
 
 			$response = $search->search($query);
-
 		}catch(\Exception $ex){
 			return null;
 		}
+
 
 		$val = array(
 			'total' => $response->getTotalHits(),
@@ -133,6 +123,9 @@ class Searcher{
 			foreach($facet['terms'] as $term){
 				$val['facets'][$name][$term['term']] = $term['count'];
 			}
+			foreach($facet['ranges'] as $range){
+				$val['facets'][$name][$range['from'] . '-' . $range['to']] = $range['count'];
+			}
 		}
 
 		foreach($response->getResults() as $result){
@@ -143,6 +136,38 @@ class Searcher{
 
 		//Possibility to alter the results
 		return \apply_filters('elastica_results', $val, $response);
+	}
+
+	protected function facet($name, $facets, $type, &$musts, &$filters, $translate = array()){
+		if(is_array($facets[$name])){
+			foreach($facets[$name] as $operation => $facet){
+				if(is_string($operation)){
+					if($operation == 'and'){
+						if(is_array($facet)){
+							foreach($facet as $value){
+								$musts[] = array( $type => array( $name => $translate[$value] ?: $value ));
+							}
+						}else{
+							$musts[] = array( $type => array( $name => $translate[$facet] ?: $facet ));
+						}
+					}
+
+					if($operation == 'or'){
+						if(is_array($facet)){
+							foreach($facet as $value){
+								$filters[] = array( $type => array( $name => $translate[$value] ?: $value ));
+							}
+						}else{
+							$filters[] = array( $type => array( $name => $translate[$facet] ?: $facet ));
+						}
+					}
+				}else{
+					$musts[] = array( $type => array( $name => $translate[$facet] ?: $facet ));
+				}
+			}
+		}elseif($facets[$name]){
+			$musts[] = array( $type => array( $name => $translate[$facets[$name]] ?: $facets[$name] ));
+		}
 	}
 }
 ?>
