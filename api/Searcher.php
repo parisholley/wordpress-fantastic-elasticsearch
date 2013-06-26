@@ -47,7 +47,11 @@ class Searcher{
 			}
 
 			if($numeric[$field]){
-				self::facet($field, $facets, 'range', $musts, $filters, Api::ranges($field));
+				$ranges = Api::ranges($field);
+
+				if(count($ranges) > 0 ){
+					self::facet($field, $facets, 'range', $musts, $filters, $ranges);
+				}
 			}
 		}
 
@@ -78,11 +82,15 @@ class Searcher{
 		$args = \apply_filters('es_query_args', $args);
 
 		foreach(array_keys($numeric) as $facet){
-			$args['facets'][$facet]['range'][$field][] = array_values(Api::ranges($field));
-			
-			if(count($filters) > 0){
-				foreach($filters as $filter){
-					$args['facets'][$facet]['facet_filter']['bool']['should'][] = $filter;
+			$ranges = Api::ranges($facet);
+
+			if(count($ranges) > 0 ){
+				$args['facets'][$facet]['range'][$facet] = array_values($ranges);
+				
+				if(count($filters) > 0){
+					foreach($filters as $filter){
+						$args['facets'][$facet]['facet_filter']['bool']['should'][] = $filter;
+					}
 				}
 			}
 		}
