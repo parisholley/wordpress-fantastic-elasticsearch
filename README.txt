@@ -52,6 +52,9 @@ By default, the plugin will look for those facet names (taxonomies) in the query
 
 == Changelog ==
 
+= 1.2.1 =
+* Fix if ranges aren't defined but marked as numeric
+
 = 1.2.0 =
 * Faceting API to make URL management and customer interfaces easier
 * New field mapping page to allow for custom field settings (currently only for setting up ranges)
