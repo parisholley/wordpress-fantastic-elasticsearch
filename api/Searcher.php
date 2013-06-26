@@ -74,6 +74,8 @@ class Searcher{
 				}
 			}
 		}
+		
+		$args = \apply_filters('es_query_args', $args);
 
 		foreach(array_keys($numeric) as $facet){
 			$args['facets'][$facet]['range'][$field][] = array_values(Api::ranges($field));
