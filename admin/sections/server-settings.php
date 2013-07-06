@@ -21,7 +21,7 @@ add_action('nhp-opts-options-validate-elasticsearch', function($new, $current){
 
 		}
 
-		if(!$status['ok']){
+		if(!(isset($status['ok']) && $status['ok'])){
 			$field = $NHP_Options->sections['server']['fields']['server_url'];
 			$field['msg'] = 'Unable to connect to the ElasticSearch server.';
 
