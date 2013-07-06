@@ -11,7 +11,7 @@ class Api{
 			self::$options = get_option('elasticsearch');
 		}
 
-		isset(self::$options[$name]) ? self::$options[$name] : array();
+		return isset(self::$options[$name]) ? self::$options[$name] : null;
 	}
 
 	static function score($type, $name){
