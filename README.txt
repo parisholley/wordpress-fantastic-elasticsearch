@@ -52,6 +52,10 @@ By default, the plugin will look for those facet names (taxonomies) in the query
 
 == Changelog ==
 
+= 1.2.2 =
+* Better coding practices (PHP strict support, etc) by both eedeebee and deltamualpha
+* Fixes for certain types of wordpress/server configurations
+
 = 1.2.1 =
 * Fix if ranges aren't defined but marked as numeric
 
