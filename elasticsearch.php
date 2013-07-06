@@ -90,6 +90,8 @@ add_action('init', function(){
 
 	global $NHP_Options;
 
+    $tabs = array();
+
 	$NHP_Options = new \NHP_Options($sections, $args, $tabs);
 }, 10241988);
 ?>
