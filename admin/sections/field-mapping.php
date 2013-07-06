@@ -14,15 +14,17 @@ foreach(Api::fields() as $field){
 	$fields['numeric']['options'][$field] = $field;
 }
 
-if (is_array(Api::option('numeric'))) {
-    foreach(array_keys(Api::option('numeric')) as $numeric){
-	    $fields[$numeric . '_range'] = array(
-		    'id' => $numeric . '_range',
-		    'type' => 'text',
-		    'title' => $numeric . ' Range',
-		    'desc' => 'Comma delimited list of ranges for this field using the format of FROM-TO. Currently ranges are always inclusive., ie: "-10,10-50,50-" or "-5,6-,7-,8-,9-"'
-	    );
-    }
+$numeric_option = Api::option('numeric');
+
+if ($numeric_option) {
+	foreach(array_keys($numeric_option) as $numeric){
+		$fields[$numeric . '_range'] = array(
+			'id' => $numeric . '_range',
+			'type' => 'text',
+			'title' => $numeric . ' Range',
+			'desc' => 'Comma delimited list of ranges for this field using the format of FROM-TO. Currently ranges are always inclusive., ie: "-10,10-50,50-" or "-5,6-,7-,8-,9-"'
+		);
+	}
 }
 
 $sections['field'] = array(
