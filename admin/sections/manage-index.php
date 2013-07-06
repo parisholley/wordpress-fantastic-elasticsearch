@@ -40,7 +40,7 @@ add_filter('nhp-opts-saved-text-elasticsearch', function($default){
 });
 
 add_action('nhp-opts-options-validate-elasticsearch', function(){
-	if($_POST['wipe']){
+	if(isset($_POST['wipe']) && $_POST['wipe']){
 		try{
 			Indexer::clear();
 			set_transient('es-wiped', 1, 30);
