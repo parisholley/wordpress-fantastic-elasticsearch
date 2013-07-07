@@ -47,6 +47,9 @@ spl_autoload_register(function($class){
 
 require 'theme/search.php';
 require 'theme/category.php';
+require 'theme/taxonomy.php';
+require 'theme/page.php';
+require 'theme/post_type.php';
 require 'admin/hooks.php';
 
 add_action( 'admin_enqueue_scripts', function() {
@@ -90,7 +93,7 @@ add_action('init', function(){
 
 	global $NHP_Options;
 
-    $tabs = array();
+	$tabs = array();
 
 	$NHP_Options = new \NHP_Options($sections, $args, $tabs);
 }, 10241988);

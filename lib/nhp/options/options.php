@@ -10,7 +10,7 @@ if ( ! class_exists('NHP_Options') ){
 	}
 	
 	if(!defined('NHP_OPTIONS_URL')){
-		define('NHP_OPTIONS_URL', plugins_url('wordpress-fantastic-elasticsearch/lib/nhp/options') . '/');
+		define('NHP_OPTIONS_URL', plugins_url('fantastic-elasticsearch/lib/nhp/options') . '/');
 	}
 	
 class NHP_Options{
