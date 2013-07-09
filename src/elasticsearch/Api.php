@@ -8,7 +8,7 @@ class Api{
 
 	static function option($name){
 		if(self::$options == null){
-			self::$options = get_option('elasticsearch');
+			self::$options = &get_option('elasticsearch');
 		}
 
 		return isset(self::$options[$name]) ? self::$options[$name] : null;
@@ -24,8 +24,8 @@ class Api{
 		if($config){
 			$ranges = array();
 
-			foreach(split(',', $config) as $range){
-				$ends = split('-', $range);
+			foreach(explode(',', $config) as $range){
+				$ends = explode('-', $range);
 
 				$tmp = array();
 
@@ -47,21 +47,17 @@ class Api{
 	}
 
 	static function client($write = false){
-		if(self::$client == null){
-			$settings = array(
-				'url' => self::option('server_url')
-			);
-			
-			if($write){
-				$settings['timeout'] = self::option('server_timeout_write') ?: 300;
-			}else{
-				$settings['timeout'] = self::option('server_timeout_read') ?: 1;
-			}
-
-			self::$client = new \Elastica_Client($settings);
+		$settings = array(
+			'url' => self::option('server_url')
+		);
+		
+		if($write){
+			$settings['timeout'] = self::option('server_timeout_write') ?: 300;
+		}else{
+			$settings['timeout'] = self::option('server_timeout_read') ?: 1;
 		}
 
-		return self::$client;
+		return new \Elastica_Client($settings);
 	}
 
 	static function index($write = false){
