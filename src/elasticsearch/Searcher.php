@@ -27,7 +27,7 @@ class Searcher{
 				}
 			}
 
-			self::facet($tax, $facets, 'term', $musts, $filters);
+			self::_facet($tax, $facets, 'term', $musts, $filters);
 		}
 
 		$args = array();
@@ -50,7 +50,7 @@ class Searcher{
 				$ranges = Api::ranges($field);
 
 				if(count($ranges) > 0 ){
-					self::facet($field, $facets, 'range', $musts, $filters, $ranges);
+					self::_facet($field, $facets, 'range', $musts, $filters, $ranges);
 				}
 			}
 		}
@@ -152,35 +152,33 @@ class Searcher{
 		return \apply_filters('elastica_results', $val, $response);
 	}
 
-	protected function facet($name, $facets, $type, &$musts, &$filters, $translate = array()){
-		if(is_array($facets[$name])){
-			foreach($facets[$name] as $operation => $facet){
+	public function _facet($name, $facets, $type, &$musts, &$filters, $translate = array()){
+		if(isset($facets[$name])){
+			$output = &$musts;
+
+			$facets = $facets[$name];
+
+			if(!is_array($facets)){
+				$facets = array($facets);
+			}
+
+			foreach($facets as $operation => $facet){
 				if(is_string($operation)){
-					if($operation == 'and'){
-						if(is_array($facet)){
-							foreach($facet as $value){
-								$musts[] = array( $type => array( $name => $translate[$value] ?: $value ));
-							}
-						}else{
-							$musts[] = array( $type => array( $name => $translate[$facet] ?: $facet ));
-						}
+					if($operation == 'or'){
+						$output = &$filters;
 					}
 
-					if($operation == 'or'){
-						if(is_array($facet)){
-							foreach($facet as $value){
-								$filters[] = array( $type => array( $name => $translate[$value] ?: $value ));
-							}
-						}else{
-							$filters[] = array( $type => array( $name => $translate[$facet] ?: $facet ));
+					if(is_array($facet)){
+						foreach($facet as $value){
+							$output[] = array( $type => array( $name => isset($translate[$value]) ? $translate[$value] : $value ));
 						}
+
+						continue;
 					}
-				}else{
-					$musts[] = array( $type => array( $name => $translate[$facet] ?: $facet ));
 				}
+				
+				$output[] = array( $type => array( $name => isset($translate[$facet]) ? $translate[$facet] : $facet ));
 			}
-		}elseif($facets[$name]){
-			$musts[] = array( $type => array( $name => $translate[$facets[$name]] ?: $facets[$name] ));
 		}
 	}
 }
