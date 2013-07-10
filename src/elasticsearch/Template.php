@@ -2,7 +2,7 @@
 namespace elasticsearch;
 
 class Template{
-	public function facets(){
+	public static function facets(){
 		global $wp_query;
 
 		return $wp_query->facets;
