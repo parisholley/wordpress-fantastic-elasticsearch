@@ -2,14 +2,12 @@
 namespace elasticsearch;
 
 class Indexer{
-	static $types = array();
-
 	static function per_page(){
-		return apply_filters('es_indexer_per_page', 10);
+		return Api::apply_filters('indexer_per_page', 10);
 	}
 
 	static function get_posts($page = 1){
-		$args = apply_filters('ex_indexer_get_posts', array(
+		$args = Api::apply_filters('indexer_get_posts', array(
 			'posts_per_page' => self::per_page(),
 			'post_type' => Api::types(),
 			'paged' => $page,
@@ -32,42 +30,46 @@ class Indexer{
 		$document = array();
 
 		foreach(Api::fields() as $field){
-			if($field == 'post_date'){
-				$document[$field] = date('c',strtotime($post->$field));
-			}else{
-				$document[$field] = $post->$field;
+			if(isset($post->$field)){
+				if($field == 'post_date'){
+					$document[$field] = date('c',strtotime($post->$field));
+				}else{
+					$document[$field] = $post->$field;
+				}
 			}
 		}
 
-		$taxes = array_intersect(Api::taxonomies(), get_object_taxonomies($post->post_type));
+		if(isset($post->post_type)){
+			$taxes = array_intersect(Api::taxonomies(), get_object_taxonomies($post->post_type));
 
-		foreach($taxes as $tax){
-			$document[$tax] = array();
+			foreach($taxes as $tax){
+				$document[$tax] = array();
 
-			foreach(wp_get_object_terms($post->ID, $tax) as $term){
-				if(!in_array($term->slug, $document[$tax])){
-					$document[$tax][] = $term->slug;
-				}
+				foreach(wp_get_object_terms($post->ID, $tax) as $term){
+					if(!in_array($term->slug, $document[$tax])){
+						$document[$tax][] = $term->slug;
+					}
 
-				if($term->parent){
-					$term = get_term($term->parent, $tax);
-					
-					while($term != null){
-						if(!in_array($term->slug, $document[$tax])){
-							$document[$tax][] = $term->slug;
-						}
+					if(isset($term->parent) && $term->parent){
+						$parent = get_term($term->parent, $tax);
+						
+						while($parent != null){
+							if(!in_array($parent->slug, $document[$tax])){
+								$document[$tax][] = $parent->slug;
+							}
 
-						if($term->parent){
-							$term = get_term($term->parent, $tax);
-						}else{
-							$term = null;
+							if(isset($parent->parent) && $parent->parent){
+								$parent = get_term($parent->parent, $tax);
+							}else{
+								$parent = null;
+							}
 						}
 					}
 				}
 			}
 		}
 		
-		return apply_filters('es_build_document', $document, $post);
+		return Api::apply_filters('indexer_build_document', $document, $post);
 	}
 
 	static function map(){
@@ -75,30 +77,23 @@ class Indexer{
 		$index = Api::index(false);
 
 		foreach(Api::fields() as $field){
-			if($numeric[$field]){
-				foreach(Api::types() as $type){
-					$type = $index->getType($type);
+			$estype = 'string';
 
-					$mapping = new \Elastica_Type_Mapping($type);
-					$mapping->setProperties(array($field => array(
-						'type' => 'float'
-					)));
-
-					$mapping->send();
-				}
+			if(isset($numeric[$field])){
+				$estype = 'float';
+			}elseif($field == 'post_date'){
+				$estype = 'date';
 			}
 
-			if($field == 'post_date'){
-				foreach(Api::types() as $type){
-					$type = $index->getType($type);
+			foreach(Api::types() as $type){
+				$type = $index->getType($type);
 
-					$mapping = new \Elastica_Type_Mapping($type);
-					$mapping->setProperties(array($field => array(
-						'type' => 'date'
-					)));
+				$mapping = new \Elastica_Type_Mapping($type);
+				$mapping->setProperties(array($field => array(
+					'type' => $estype
+				)));
 
-					$mapping->send();
-				}			
+				$mapping->send();
 			}
 		}
 	}
@@ -133,17 +128,13 @@ class Indexer{
 	}
 
 	static function delete($index, $post){
-		if(!($type = self::$types[$post->post_type])){
-			$type = self::$types[$post->post_type] = $index->getType($post->post_type);
-		}
+		$type = $index->getType($post->post_type);
 
 		$type->deleteById($post->ID);
 	}
 
 	static function addOrUpdate($index, $post){
-		if(!($type = self::$types[$post->post_type])){
-			$type = self::$types[$post->post_type] = $index->getType($post->post_type);
-		}
+		$type = $index->getType($post->post_type);
 
 		$data = self::build_document($post);
 

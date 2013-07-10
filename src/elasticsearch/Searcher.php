@@ -3,9 +3,6 @@ namespace elasticsearch;
 
 class Searcher{
 	public function query($search, $pageIndex, $size, $facets = array()){
-		$shoulds = array();
-		$musts = array();
-		$filters = array();
 		$bytype = null;
 
 		foreach(Api::types() as $type){
@@ -14,6 +11,72 @@ class Searcher{
 				$search = null;
 			}
 		}
+
+		$args = self::_buildQuery($search, $facets);
+
+		$query =new \Elastica_Query($args);
+		$query->setFrom($pageIndex * $size);
+		$query->setSize($size);
+		$query->setFields(array('id'));
+
+		Api::apply_filters('elastica_query', $query);
+
+		try{
+			$index = Api::index(false);
+
+			$search = new \Elastica_Search($index->getClient());
+			$search->addIndex($index);
+
+			if($bytype){
+				$search->addType($index->getType($bytype));
+			}
+
+			Api::apply_filters('elastica_search', $search);
+
+			$results = $search->search($query);
+
+			$val = self::_parseResults($results);
+
+			return Api::apply_filters('query_response', $val, $results);
+		}catch(\Exception $ex){
+			return null;
+		}
+	}
+
+	public function _parseResults($response){
+		$val = array(
+			'total' => $response->getTotalHits(),
+			'scores' => array(),
+			'facets' => array()
+		);
+
+		foreach($response->getFacets() as $name => $facet){
+			if(isset($facet['terms'])){
+				foreach($facet['terms'] as $term){
+					$val['facets'][$name][$term['term']] = $term['count'];
+				}
+			}
+
+			if(isset($facet['ranges'])){
+				foreach($facet['ranges'] as $range){
+					$val['facets'][$name][$range['from'] . '-' . $range['to']] = $range['count'];
+				}
+			}
+		}
+
+		foreach($response->getResults() as $result){
+			$val['scores'][$result->getId()] = $result->getScore();
+		}
+
+		$val['ids'] = array_keys($val['scores']);
+
+		return Api::apply_filters('elastica_results', $val, $response);		
+	}
+
+	public function _buildQuery($search, $facets = array()){
+		$shoulds = array();
+		$musts = array();
+		$filters = array();
 
 		foreach(Api::taxonomies() as $tax){
 			if($search){
@@ -46,7 +109,7 @@ class Searcher{
 				}
 			}
 
-			if($numeric[$field]){
+			if(isset($numeric[$field]) && $numeric[$field]){
 				$ranges = Api::ranges($field);
 
 				if(count($ranges) > 0 ){
@@ -67,19 +130,19 @@ class Searcher{
 			$args['query']['bool']['must'] = $musts;
 		}
 
+		$args = Api::apply_filters('query_pre_facet_filter', $args);
+
 		foreach(Api::facets() as $facet){
 			$args['facets'][$facet]['terms']['field'] = $facet;
 
 			if(count($filters) > 0){
 				foreach($filters as $filter){
-					if(!$filter['term'][$facet]){
+					if(!isset($filter['term'][$facet])){
 						$args['facets'][$facet]['facet_filter']['bool']['should'][] = $filter;
 					}
 				}
 			}
 		}
-		
-		$args = \apply_filters('es_query_args', $args);
 
 		if($numeric) {
 			foreach(array_keys($numeric) as $facet){
@@ -97,59 +160,7 @@ class Searcher{
 			}
 		}
 
-		$args = \apply_filters('es_query_args', $args);
-
-		$query =new \Elastica_Query($args);
-		$query->setFrom($pageIndex * $size);
-		$query->setSize($size);
-		$query->setFields(array('id'));
-
-		//Possibility to modify the query after it was built
-		\apply_filters('elastica_query', $query);
-
-		try{
-			$index = Api::index(false);
-
-			$search = new \Elastica_Search($index->getClient());
-			$search->addIndex($index);
-
-			if($bytype){
-				$search->addType($index->getType($bytype));
-			}
-
-			\apply_filters( 'elastica_pre_search', $search );
-
-			$response = $search->search($query);
-		}catch(\Exception $ex){
-			return null;
-		}
-
-
-		$val = array(
-			'total' => $response->getTotalHits(),
-			'scores' => array(),
-			'facets' => array()
-		);
-
-		foreach($response->getFacets() as $name => $facet){
-			foreach($facet['terms'] as $term){
-				$val['facets'][$name][$term['term']] = $term['count'];
-			}
-			if($facet['ranges']){
-				foreach($facet['ranges'] as $range){
-					$val['facets'][$name][$range['from'] . '-' . $range['to']] = $range['count'];
-				}
-			}
-		}
-
-		foreach($response->getResults() as $result){
-			$val['scores'][$result->getId()] = $result->getScore();
-		}
-
-		$val['ids'] = array_keys($val['scores']);
-
-		//Possibility to alter the results
-		return \apply_filters('elastica_results', $val, $response);
+		return Api::apply_filters('query_post_facet_filter', $args);
 	}
 
 	public function _facet($name, $facets, $type, &$musts, &$filters, $translate = array()){

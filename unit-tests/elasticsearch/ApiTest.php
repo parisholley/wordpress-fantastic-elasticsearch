@@ -134,10 +134,17 @@ class ApiTest extends BaseTestCase
 		$this->assertEquals(array('tax1', 'tax2'), Api::taxonomies());
 	}
 
-	public function testTypes()
+	public function testTypesDefined()
 	{
 		register_post_type('post');
 		register_post_type('review');
+
+		$this->assertEquals(array('post', 'review'), Api::types());
+	}
+
+	public function testTypesDefault()
+	{
+		update_option('types', array('post' => 1, 'review' => 1));
 
 		$this->assertEquals(array('post', 'review'), Api::types());
 	}

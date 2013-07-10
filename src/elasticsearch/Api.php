@@ -2,8 +2,6 @@
 namespace elasticsearch;
 
 class Api{
-	static $client = null;
-	static $index = null;
 	static $options = null;
 
 	static function option($name){
@@ -61,11 +59,14 @@ class Api{
 	}
 
 	static function index($write = false){
-		if(self::$index == null){
-			self::$index = self::client($write)->getIndex(self::option('server_index'));
-		}
+		return self::client($write)->getIndex(self::option('server_index'));
+	}
 
-		return self::$index;
+	static function apply_filters(){
+		$args = func_get_args();
+		$args[0] = 'elasticsearch_' . $args[0];
+
+		return call_user_func_array('apply_filters', $args);
 	}
 
 	static function fields(){

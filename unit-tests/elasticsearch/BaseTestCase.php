@@ -10,8 +10,11 @@ class BaseTestCase extends \PHPUnit_Framework_TestCase{
 		$this->reset(TestContext::$filters);
 		$this->reset(TestContext::$taxes);
 		$this->reset(TestContext::$types);
+		$this->reset(TestContext::$posts);
+		$this->reset(TestContext::$terms);
+		$this->reset(TestContext::$termrel);
 
-		$wp_query = (object) array();
+		$wp_query = new \stdClass();
 	}
 
 	private function reset(&$array){
