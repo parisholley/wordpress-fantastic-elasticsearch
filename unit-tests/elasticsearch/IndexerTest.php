@@ -105,7 +105,13 @@ class IndexerTest extends BaseTestCase
 			'post_type' => 'post'
 		);
 
+		$tz = date_default_timezone_get();
+		
+		date_default_timezone_set('America/Chicago');
+		
 		$document = Indexer::build_document($post);
+		
+		date_default_timezone_set($tz);
 
 		$this->assertEquals(array(
 			'field1' => 'value1',
