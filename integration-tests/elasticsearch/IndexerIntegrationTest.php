@@ -5,7 +5,7 @@ class IndexerIntegrationTest extends BaseTestCase
 {
 	public function testAddOrUpdate()
 	{
-		update_option('server_url', 'http://site:74f7074c9bed64b4b367664f282e7d21@api.searchbox.io/');
+		update_option('server_url', 'http://127.0.0.1:9200/');
 		update_option('server_index', 'travisci');
 		update_option('fields', array('field1' => 1, 'field2' => 1));
 
@@ -19,6 +19,7 @@ class IndexerIntegrationTest extends BaseTestCase
 		);
 
 		$index = Api::index(true);
+		$index->create(array(), true);
 
 		Indexer::clear();
 
@@ -43,7 +44,7 @@ class IndexerIntegrationTest extends BaseTestCase
 
 	public function testDelete()
 	{
-		update_option('server_url', 'http://site:74f7074c9bed64b4b367664f282e7d21@api.searchbox.io/');
+		update_option('server_url', 'http://127.0.0.1:9200/');
 		update_option('server_index', 'travisci');
 		update_option('fields', array('field1' => 1, 'field2' => 1));
 
@@ -57,6 +58,7 @@ class IndexerIntegrationTest extends BaseTestCase
 		);
 
 		$index = Api::index(true);
+		$index->create(array(), true);
 
 		Indexer::clear();
 
@@ -87,7 +89,7 @@ class IndexerIntegrationTest extends BaseTestCase
 
 	public function testReindex()
 	{
-		update_option('server_url', 'http://site:74f7074c9bed64b4b367664f282e7d21@api.searchbox.io/');
+		update_option('server_url', 'http://127.0.0.1:9200/');
 		update_option('server_index', 'travisci');
 		update_option('fields', array('field1' => 1, 'field2' => 1));
 
@@ -100,6 +102,7 @@ class IndexerIntegrationTest extends BaseTestCase
 		));
 
 		$index = Api::index(true);
+		$index->create(array(), true);
 
 		Indexer::clear();
 
@@ -124,7 +127,7 @@ class IndexerIntegrationTest extends BaseTestCase
 
 	public function testMapNumeric()
 	{
-		update_option('server_url', 'http://site:74f7074c9bed64b4b367664f282e7d21@api.searchbox.io/');
+		update_option('server_url', 'http://127.0.0.1:9200/');
 		update_option('server_index', 'travisci');
 		update_option('fields', array('field3' => 1));
 		update_option('numeric', array('field3' => 1));
@@ -142,6 +145,7 @@ class IndexerIntegrationTest extends BaseTestCase
 		));
 
 		$index = Api::index(false);
+		$index->create(array(), true);
 
 		Indexer::clear();
 
@@ -173,7 +177,7 @@ class IndexerIntegrationTest extends BaseTestCase
 
 	public function testMapNonNumeric()
 	{
-		update_option('server_url', 'http://site:74f7074c9bed64b4b367664f282e7d21@api.searchbox.io/');
+		update_option('server_url', 'http://127.0.0.1:9200/');
 		update_option('server_index', 'travisci');
 		update_option('fields', array('field5' => 1));
 
@@ -190,6 +194,7 @@ class IndexerIntegrationTest extends BaseTestCase
 		));
 
 		$index = Api::index(false);
+		$index->create(array(), true);
 
 		Indexer::clear();
 
