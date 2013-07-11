@@ -1,13 +1,53 @@
 <?php
 namespace elasticsearch;
 
-class SearchTest extends BaseIntegrationTestCase
+class SearcherIntegrationTest extends BaseIntegrationTestCase
 {
 	public function setUp()
 	{
 		parent::setUp();
 
 		$this->searcher = new Searcher();
+	}
+
+	public function testScoreSort()
+	{
+		update_option('fields', array('field1' => 1, 'field2' => 1));
+		update_option('score_field_field1', 1);
+		update_option('score_field_field2', 2);
+
+		register_post_type('post');
+
+		Indexer::addOrUpdate($this->index, (object) array(
+			'post_type' => 'post',
+			'ID' => 1,
+			'field1' => 'value1',
+			'field2' => 'value2'
+		));
+
+		Indexer::addOrUpdate($this->index, (object) array(
+			'post_type' => 'post',
+			'ID' => 2,
+			'field1' => 'value2',
+			'field2' => 'value1'
+		));
+
+		$this->index->refresh();
+
+		$results = $this->searcher->search('value1');
+
+		$this->assertEquals(2, $results['total']);
+		$this->assertEquals(array(2, 1), $results['ids']);
+
+		$results = $this->searcher->search('value2');
+
+		$this->assertEquals(2, $results['total']);
+		$this->assertEquals(array(1, 2), $results['ids']);
+
+		$results = $this->searcher->search('value1 value2');
+
+		$this->assertEquals(2, $results['total']);
+		$this->assertEquals(array(1, 2), $results['ids']);
 	}
 
 	public function testType()
