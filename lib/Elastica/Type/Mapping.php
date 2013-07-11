@@ -1,4 +1,11 @@
 <?php
+
+namespace Elastica\Type;
+
+use Elastica\Exception\InvalidException;
+use Elastica\Request;
+use Elastica\Type;
+
 /**
  * Elastica Mapping object
  *
@@ -7,7 +14,7 @@
  * @author Nicolas Ruflin <spam@ruflin.com>
  * @link http://www.elasticsearch.org/guide/reference/mapping/
  */
-class Elastica_Type_Mapping
+class Mapping
 {
     /**
      * Mapping
@@ -19,17 +26,17 @@ class Elastica_Type_Mapping
     /**
      * Type
      *
-     * @var Elastica_Type Type object
+     * @var \Elastica\Type Type object
      */
     protected $_type = null;
 
     /**
      * Construct Mapping
      *
-     * @param Elastica_Type $type       OPTIONAL Type object
+     * @param \Elastica\Type $type       OPTIONAL Type object
      * @param array         $properties OPTIONAL Properties
      */
-    public function __construct(Elastica_Type $type = null, array $properties = array())
+    public function __construct(Type $type = null, array $properties = array())
     {
         if ($type) {
             $this->setType($type);
@@ -43,10 +50,10 @@ class Elastica_Type_Mapping
     /**
      * Sets the mapping type
      * Enter description here ...
-     * @param  Elastica_Type         $type Type object
-     * @return Elastica_Type_Mapping Current object
+     * @param  \Elastica\Type             $type Type object
+     * @return \Elastica\Type\Mapping Current object
      */
-    public function setType(Elastica_Type $type)
+    public function setType(Type $type)
     {
         $this->_type = $type;
 
@@ -54,10 +61,10 @@ class Elastica_Type_Mapping
     }
 
     /**
-     * Sets the mapping properites
+     * Sets the mapping properties
      *
-     * @param  array                 $properties Prpoerties
-     * @return Elastica_Type_Mapping Mapping object
+     * @param  array                     $properties Properties
+     * @return \Elastica\Type\Mapping Mapping object
      */
     public function setProperties(array $properties)
     {
@@ -65,9 +72,20 @@ class Elastica_Type_Mapping
     }
 
     /**
+     * Sets the mapping _meta
+     * @param array $meta metadata
+     * @return \Elastica\Type\Mapping Mapping object
+     * @link http://www.elasticsearch.org/guide/reference/mapping/meta.html
+     */
+    public function setMeta(array $meta)
+    {
+        return $this->setParam('_meta', $meta);
+    }
+
+    /**
      * Returns mapping type
      *
-     * @return Elastica_Type Type
+     * @return \Elastica\Type Type
      */
     public function getType()
     {
@@ -80,8 +98,8 @@ class Elastica_Type_Mapping
      * To disable source, argument is
      * array('enabled' => false)
      *
-     * @param  array                 $source Source array
-     * @return Elastica_Type_Mapping Current object
+     * @param  array                     $source Source array
+     * @return \Elastica\Type\Mapping Current object
      * @link http://www.elasticsearch.org/guide/reference/mapping/source-field.html
      */
     public function setSource(array $source)
@@ -94,8 +112,8 @@ class Elastica_Type_Mapping
      *
      * Param can be set to true to enable again
      *
-     * @param  bool                  $enabled OPTIONAL (default = false)
-     * @return Elastica_Type_Mapping Current object
+     * @param  bool                      $enabled OPTIONAL (default = false)
+     * @return \Elastica\Type\Mapping Current object
      */
     public function disableSource($enabled = false)
     {
@@ -119,9 +137,9 @@ class Elastica_Type_Mapping
      * _size
      * properties
      *
-     * @param  string                $key   Key name
-     * @param  mixed                 $value Key value
-     * @return Elastica_Type_Mapping Current object
+     * @param  string                    $key   Key name
+     * @param  mixed                     $value Key value
+     * @return \Elastica\Type\Mapping Current object
      */
     public function setParam($key, $value)
     {
@@ -131,10 +149,32 @@ class Elastica_Type_Mapping
     }
 
     /**
+     * Sets params for the "_all" field
+     *
+     * @param array                       $params _all Params (enabled, store, term_vector, analyzer)
+     * @return \Elastica\Type\Mapping
+     */
+    public function setAllField(array $params)
+    {
+        return $this->setParam('_all', $params);
+    }
+
+    /**
+     * Enables the "_all" field
+     *
+     * @param  bool                      $enabled OPTIONAL (default = true)
+     * @return \Elastica\Type\Mapping
+     */
+    public function enableAllField($enabled = true)
+    {
+        return $this->setAllField(array('enabled' => $enabled));
+    }
+
+    /**
      * Set TTL
      *
-     * @param  array                 $params TTL Params (enabled, default, ...)
-     * @return Elastica_Type_Mapping
+     * @param  array                     $params TTL Params (enabled, default, ...)
+     * @return \Elastica\Type\Mapping
      */
     public function setTtl(array $params)
     {
@@ -143,10 +183,10 @@ class Elastica_Type_Mapping
     }
 
     /**
-     * Enables TTL for all documens in this type
+     * Enables TTL for all documents in this type
      *
-     * @param  bool                  $enabled OPTIONAL (default = true)
-     * @return Elastica_Type_Mapping
+     * @param  bool                      $enabled OPTIONAL (default = true)
+     * @return \Elastica\Type\Mapping
      */
     public function enableTtl($enabled = true)
     {
@@ -154,51 +194,63 @@ class Elastica_Type_Mapping
     }
 
     /**
+     * Set parent type
+     *
+     * @param string                     $type Parent type
+     * @return \Elastica\Type\Mapping
+     */
+    public function setParent($type)
+    {
+        return $this->setParam('_parent', array('type' => $type));
+    }
+
+    /**
      * Converts the mapping to an array
      *
-     * @return array Mapping as array
+     * @throws \Elastica\Exception\InvalidException
+     * @return array                               Mapping as array
      */
     public function toArray()
     {
         $type = $this->getType();
 
         if (empty($type)) {
-            throw new Elastica_Exception_Invalid('Type has to be set');
+            throw new InvalidException('Type has to be set');
         }
 
-        return array($type->getType() => $this->_mapping);
+        return array($type->getName() => $this->_mapping);
     }
 
     /**
      * Submits the mapping and sends it to the server
      *
-     * @return Elastica_Response Response object
+     * @return \Elastica\Response Response object
      */
     public function send()
     {
         $path = '_mapping';
 
-        return $this->getType()->request($path, Elastica_Request::PUT, $this->toArray());
+        return $this->getType()->request($path, Request::PUT, $this->toArray());
     }
 
     /**
      * Creates a mapping object
      *
-     * @param  array|Elastica_Type_Mapping $mapping Mapping object or properties array
-     * @return Elastica_Type_Mapping       Mapping object
-     * @throws Elastica_Exception_Invalid  If invalid type
+     * @param  array|\Elastica\Type\Mapping     $mapping Mapping object or properties array
+     * @return \Elastica\Type\Mapping           Mapping object
+     * @throws \Elastica\Exception\InvalidException If invalid type
      */
     public static function create($mapping)
     {
         if (is_array($mapping)) {
-            $mappingObject = new Elastica_Type_Mapping();
+            $mappingObject = new Mapping();
             $mappingObject->setProperties($mapping);
         } else {
             $mappingObject = $mapping;
         }
 
-        if (!$mappingObject instanceof Elastica_Type_Mapping) {
-            throw new Elastica_Exception_Invalid('Invalid object type');
+        if (!$mappingObject instanceof Mapping) {
+            throw new InvalidException('Invalid object type');
         }
 
         return $mappingObject;

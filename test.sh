@@ -39,15 +39,17 @@ fi
 echo "Starting PHPUnit Tests."
 phpunit $ARGS
 
-if [ "$1" == "kill" ]; then
-	echo "Killing ElasticSearch instance"
-	kill -9 `cat es.pid`
-	rm es.pid
-else
-	echo "To kill ElasticSearch when running tests, use './test.sh kill'"
-fi
+if [ $? -eq 0 ]; then
+	if [ "$1" == "kill" ]; then
+		echo "Killing ElasticSearch instance"
+		kill -9 `cat es.pid`
+		rm es.pid
+	else
+		echo "To kill ElasticSearch when running tests, use './test.sh kill'"
+	fi
 
-if [ $XDEBUG -eq 0 ]; then
-	echo "Opening Coverage Report."
-	open report/index.html
+	if [ $XDEBUG -eq 0 ]; then
+		echo "Opening Coverage Report."
+		open report/index.html
+	fi
 fi

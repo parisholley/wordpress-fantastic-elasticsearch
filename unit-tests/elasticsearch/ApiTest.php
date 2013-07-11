@@ -82,7 +82,7 @@ class ApiTest extends BaseTestCase
 	}
 
 	/**
-     * @expectedException Elastica_Exception_Invalid
+     * @expectedException \Elastica\Exception\InvalidException
      */
 	public function testIndexNotDefined()
 	{

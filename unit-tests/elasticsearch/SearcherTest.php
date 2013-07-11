@@ -636,8 +636,8 @@ class SearcherTest extends BaseTestCase
 			)
 		);
 
-		$response = new \Elastica_Response(json_encode($data));
-		$results = new \Elastica_ResultSet($response);
+		$response = new \Elastica\Response(json_encode($data));
+		$results = new \Elastica\ResultSet($response, new \Elastica\Query());
 
 		$output = $searcher->_parseResults($results);
 

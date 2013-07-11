@@ -182,7 +182,7 @@ class ClassLoader
     public function loadClass($class)
     {
         if ($file = $this->findFile($class)) {
-            include $file;
+            require_once $file;
 
             return true;
         }

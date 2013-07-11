@@ -24,7 +24,7 @@ class Searcher{
 	}
 
 	public function _query($args, $pageIndex, $size, $type = null){
-		$query =new \Elastica_Query($args);
+		$query =new \Elastica\Query($args);
 		$query->setFrom($pageIndex * $size);
 		$query->setSize($size);
 		$query->setFields(array('id'));
@@ -34,7 +34,7 @@ class Searcher{
 		try{
 			$index = Api::index(false);
 
-			$search = new \Elastica_Search($index->getClient());
+			$search = new \Elastica\Search($index->getClient());
 			$search->addIndex($index);
 
 			if($type){

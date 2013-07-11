@@ -18,7 +18,7 @@ class IndexerIntegrationTest extends BaseIntegrationTestCase
 
 		$this->index->refresh();
 
-		$this->assertEquals(1, $this->index->count(new \Elastica_Query(array(
+		$this->assertEquals(1, $this->index->count(new \Elastica\Query(array(
 			'query' => array(
 				'bool' => array(
 					'must' => array(
@@ -72,7 +72,7 @@ class IndexerIntegrationTest extends BaseIntegrationTestCase
 
 		$this->index->refresh();
 
-		$this->assertEquals(1, $this->index->count(new \Elastica_Query(array(
+		$this->assertEquals(1, $this->index->count(new \Elastica\Query(array(
 			'query' => array(
 				'bool' => array(
 					'must' => array(
@@ -107,7 +107,7 @@ class IndexerIntegrationTest extends BaseIntegrationTestCase
 
 		$this->index->refresh();
 
-		$this->assertEquals(1, $this->index->count(new \Elastica_Query(array(
+		$this->assertEquals(1, $this->index->count(new \Elastica\Query(array(
 			'query' => array(
 				'bool' => array(
 					'must' => array(
@@ -142,10 +142,10 @@ class IndexerIntegrationTest extends BaseIntegrationTestCase
 
 		$this->index->refresh();
 
-		$search = new \Elastica_Search($this->index->getClient());
+		$search = new \Elastica\Search($this->index->getClient());
 		$search->addIndex($this->index);
 
-		$results = $search->search(new \Elastica_Query(array(
+		$results = $search->search(new \Elastica\Query(array(
 			'sort' => array('field3' => array('order' => 'asc'))
 		)))->getResults();
 
@@ -153,7 +153,7 @@ class IndexerIntegrationTest extends BaseIntegrationTestCase
 		$this->assertEquals(1, $results[0]->getId());
 		$this->assertEquals(2, $results[1]->getId());
 
-		$results = $search->search(new \Elastica_Query(array(
+		$results = $search->search(new \Elastica\Query(array(
 			'sort' => array('field3' => array('order' => 'desc'))
 		)))->getResults();
 
@@ -183,10 +183,10 @@ class IndexerIntegrationTest extends BaseIntegrationTestCase
 
 		$this->index->refresh();
 
-		$search = new \Elastica_Search($this->index->getClient());
+		$search = new \Elastica\Search($this->index->getClient());
 		$search->addIndex($this->index);
 
-		$results = $search->search(new \Elastica_Query(array(
+		$results = $search->search(new \Elastica\Query(array(
 			'sort' => array('field5' => array('order' => 'asc'))
 		)))->getResults();
 
@@ -194,7 +194,7 @@ class IndexerIntegrationTest extends BaseIntegrationTestCase
 		$this->assertEquals(2, $results[0]->getId());
 		$this->assertEquals(1, $results[1]->getId());
 
-		$results = $search->search(new \Elastica_Query(array(
+		$results = $search->search(new \Elastica\Query(array(
 			'sort' => array('field5' => array('order' => 'desc'))
 		)))->getResults();
 
@@ -224,10 +224,10 @@ class IndexerIntegrationTest extends BaseIntegrationTestCase
 
 		$this->index->refresh();
 
-		$search = new \Elastica_Search($this->index->getClient());
+		$search = new \Elastica\Search($this->index->getClient());
 		$search->addIndex($this->index);
 
-		$results = $search->search(new \Elastica_Query(array(
+		$results = $search->search(new \Elastica\Query(array(
 			'sort' => array('post_date' => array('order' => 'asc'))
 		)))->getResults();
 
@@ -235,7 +235,7 @@ class IndexerIntegrationTest extends BaseIntegrationTestCase
 		$this->assertEquals(2, $results[0]->getId());
 		$this->assertEquals(1, $results[1]->getId());
 
-		$results = $search->search(new \Elastica_Query(array(
+		$results = $search->search(new \Elastica\Query(array(
 			'sort' => array('post_date' => array('order' => 'desc'))
 		)))->getResults();
 

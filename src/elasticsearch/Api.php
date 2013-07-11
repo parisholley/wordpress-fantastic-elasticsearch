@@ -55,7 +55,7 @@ class Api{
 			$settings['timeout'] = self::option('server_timeout_read') ?: 1;
 		}
 
-		return new \Elastica_Client($settings);
+		return new \Elastica\Client($settings);
 	}
 
 	static function index($write = false){

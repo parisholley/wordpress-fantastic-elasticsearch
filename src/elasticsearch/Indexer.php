@@ -88,7 +88,7 @@ class Indexer{
 			foreach(Api::types() as $type){
 				$type = $index->getType($type);
 
-				$mapping = new \Elastica_Type_Mapping($type);
+				$mapping = new \Elastica\Type\Mapping($type);
 				$mapping->setProperties(array($field => array(
 					'type' => $estype
 				)));
@@ -138,7 +138,7 @@ class Indexer{
 
 		$data = self::build_document($post);
 
-		$type->addDocument(new \Elastica_Document($post->ID, $data));		
+		$type->addDocument(new \Elastica\Document($post->ID, $data));		
 	}
 }
 ?>

@@ -1,71 +1,86 @@
 <?php
+
+namespace Elastica;
+
 /**
  * Percolator class
  *
  * @category Xodoa
  * @package Elastica
  * @author Nicolas Ruflin <spam@ruflin.com>
- * @link http://www.elasticsearch.org/guide/reference/api/percolate.html
+ * @link http://www.elasticsearch.org/guide/reference/api/percolate/
  */
-class Elastica_Percolator
+class Percolator
 {
     /**
      * Index object
      *
-     * @var Elastica_Index
+     * @var \Elastica\Index
      */
     protected $_index = null;
 
     /**
-     * Construct new perlocator
+     * Construct new percolator
      *
-     * @param Elastica_Index $index
+     * @param \Elastica\Index $index
      */
-    public function __construct(Elastica_Index $index)
+    public function __construct(Index $index)
     {
         $this->_index = $index;
     }
 
     /**
-     * Registers a percolator query
+     * Registers a percolator query, with optional extra fields to include in the registered query.
      *
-     * @param  string                                        $name  Query name
-     * @param  string|Elastica_Query|Elastica_Query_Abstract $query Query to add
-     * @return Elastica_Response
+     * @param  string                                               $name   Query name
+     * @param  string|\Elastica\Query|\Elastica\Query\AbstractQuery $query  Query to add
+     * @param  array                                                $fields Extra fields to include in the registered query
+     *                                                                      and can be used to filter executed queries. 
+     * @return \Elastica\Response
      */
-    public function registerQuery($name, $query)
+    public function registerQuery($name, $query, $fields = array())
     {
         $path = '_percolator/' . $this->_index->getName() . '/' . $name;
-        $query = Elastica_Query::create($query);
+        $query = Query::create($query);
+        
+        $data = array_merge($query->toArray(), $fields);
 
-        return $this->_index->getClient()->request($path, Elastica_Request::PUT, $query->toArray());
+        return $this->_index->getClient()->request($path, Request::PUT, $data);
     }
 
     /**
      * Removes a percolator query
      * @param  string            $name query name
-     * @return Elastica_Response
+     * @return \Elastica\Response
      */
     public function unregisterQuery($name)
     {
         $path = '_percolator/' . $this->_index->getName() . '/' . $name;
 
-        return $this->_index->getClient()->request($path, Elastica_Request::DELETE);
+        return $this->_index->getClient()->request($path, Request::DELETE);
     }
 
     /**
      * Match a document to percolator queries
      *
-     * @param  Elastica_Document                             $doc
-     * @param  string|Elastica_Query|Elastica_Query_Abstract $query Not implemented yet
-     * @return Elastica_Response
+     * @param  \Elastica\Document                                   $doc
+     * @param  string|\Elastica\Query|\Elastica\Query\AbstractQuery $query Query to filter the percolator queries which
+     *                                                                     are executed.
+     * @param  string                                               $type
+     * @return array With matching registered queries.
      */
-    public function matchDoc(Elastica_Document $doc, $query = null)
+    public function matchDoc(Document $doc, $query = null, $type = 'type')
     {
-        $path = $this->_index->getName() . '/type/_percolate';
+        $path = $this->_index->getName() . '/' . $type . '/_percolate';
         $data = array('doc' => $doc->getData());
 
-        $response = $this->getIndex()->getClient()->request($path, Elastica_Request::GET, $data);
+        // Add query to filter the percolator queries which are executed.
+        if ($query) {
+            $query = Query::create($query);
+            $data['query'] = $query->getQuery();
+        }
+
+        $response = $this->getIndex()->getClient()->request($path, Request::GET, $data);
         $data = $response->getData();
 
         return $data['matches'];
@@ -74,7 +89,7 @@ class Elastica_Percolator
     /**
      * Return index object
      *
-     * @return Elastica_Index
+     * @return \Elastica\Index
      */
     public function getIndex()
     {

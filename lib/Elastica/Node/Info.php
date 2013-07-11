@@ -1,4 +1,10 @@
 <?php
+
+namespace Elastica\Node;
+
+use Elastica\Node as BaseNode;
+use Elastica\Request;
+
 /**
  * Elastica cluster node object
  *
@@ -7,12 +13,12 @@
  * @author Nicolas Ruflin <spam@ruflin.com>
  * @link http://www.elasticsearch.org/guide/reference/api/admin-indices-status.html
  */
-class Elastica_Node_Info
+class Info
 {
     /**
      * Response
      *
-     * @var Elastica_Response Response object
+     * @var \Elastica\Response Response object
      */
     protected $_response = null;
 
@@ -26,17 +32,24 @@ class Elastica_Node_Info
     /**
      * Node
      *
-     * @var Elastica_Node Node object
+     * @var \Elastica\Node Node object
      */
     protected $_node = null;
 
     /**
+     * Query parameters
+     *
+     * @var array
+     */
+    protected $_params = array();
+
+    /**
      * Create new info object for node
      *
-     * @param Elastica_Node $node   Node object
+     * @param \Elastica\Node $node   Node object
      * @param array         $params List of params to return. Can be: settings, os, process, jvm, thread_pool, network, transport, http
      */
-    public function __construct(Elastica_Node $node, array $params = array())
+    public function __construct(BaseNode $node, array $params = array())
     {
         $this->_node = $node;
         $this->refresh($params);
@@ -98,6 +111,36 @@ class Elastica_Node_Info
     }
 
     /**
+     * Return data regarding plugins installed on this node
+     * @return array plugin data
+     * @link http://www.elasticsearch.org/guide/reference/api/admin-cluster-nodes-info/
+     */
+    public function getPlugins()
+    {
+        if(!in_array('plugin', $this->_params)) {
+            //Plugin data was not retrieved when refresh() was called last. Get it now.
+            $this->_params[] = 'plugin';
+            $this->refresh($this->_params);
+        }
+        return $this->get('plugins');
+    }
+
+    /**
+     * Check if the given plugin is installed on this node
+     * @param string $name plugin name
+     * @return bool true if the plugin is installed, false otherwise
+     */
+    public function hasPlugin($name)
+    {
+        foreach($this->getPlugins() as $plugin) {
+            if($plugin['name'] == $name) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Return all info data
      *
      * @return array Data array
@@ -110,7 +153,7 @@ class Elastica_Node_Info
     /**
      * Return node object
      *
-     * @return Elastica_Node Node object
+     * @return \Elastica\Node Node object
      */
     public function getNode()
     {
@@ -120,7 +163,7 @@ class Elastica_Node_Info
     /**
      * Returns response object
      *
-     * @return Elastica_Response Response object
+     * @return \Elastica\Response Response object
      */
     public function getResponse()
     {
@@ -130,11 +173,13 @@ class Elastica_Node_Info
     /**
      * Reloads all nodes information. Has to be called if informations changed
      *
-     * @param  array             $params Params to return (default none). Possible options: settings, os, process, jvm, thread_pool, network, transport, http
-     * @return Elastica_Response Response object
+     * @param  array             $params Params to return (default none). Possible options: settings, os, process, jvm, thread_pool, network, transport, http, plugin
+     * @return \Elastica\Response Response object
      */
     public function refresh(array $params = array())
     {
+        $this->_params = $params;
+
         $path = '_cluster/nodes/' . $this->getNode()->getName();
 
         if (!empty($params)) {
@@ -144,7 +189,7 @@ class Elastica_Node_Info
             }
         }
 
-        $this->_response = $this->getNode()->getClient()->request($path, Elastica_Request::GET);
+        $this->_response = $this->getNode()->getClient()->request($path, Request::GET);
         $data = $this->getResponse()->getData();
         $this->_data = reset($data['nodes']);
     }
