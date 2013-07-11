@@ -2,18 +2,28 @@
 namespace elasticsearch;
 
 class Searcher{
-	public function query($search, $pageIndex, $size, $facets = array()){
-		$bytype = null;
+	public function type($type, $pageIndex = 0, $size = 10, $facets = array()){
+		$args = self::_buildQuery(null, $facets);
 
-		foreach(Api::types() as $type){
-			if($type == $search){
-				$bytype = $search;
-				$search = null;
-			}
-		}
+		return self::_query($args, $pageIndex, $size, $type);
+	}
 
+	public function search($search, $pageIndex = 0, $size = 10, $facets = array()){
 		$args = self::_buildQuery($search, $facets);
 
+		if(empty($args)){
+			return array(
+				'total' => 0,
+				'ids' => array(),
+				'scores' => array(),
+				'facets' => array()
+			);
+		}
+
+		return self::_query($args, $pageIndex, $size);
+	}
+
+	public function _query($args, $pageIndex, $size, $type = null){
 		$query =new \Elastica_Query($args);
 		$query->setFrom($pageIndex * $size);
 		$query->setSize($size);
@@ -27,8 +37,8 @@ class Searcher{
 			$search = new \Elastica_Search($index->getClient());
 			$search->addIndex($index);
 
-			if($bytype){
-				$search->addType($index->getType($bytype));
+			if($type){
+				$search->addType($index->getType($type));
 			}
 
 			Api::apply_filters('elastica_search', $search);
@@ -39,6 +49,8 @@ class Searcher{
 
 			return Api::apply_filters('query_response', $val, $results);
 		}catch(\Exception $ex){
+			error_log($ex);
+
 			return null;
 		}
 	}
@@ -59,7 +71,10 @@ class Searcher{
 
 			if(isset($facet['ranges'])){
 				foreach($facet['ranges'] as $range){
-					$val['facets'][$name][$range['from'] . '-' . $range['to']] = $range['count'];
+					$from = isset($range['from']) ? $range['from'] : '';
+					$to = isset($range['to']) ? $range['to'] : '';
+
+					$val['facets'][$name][$from . '-' . $to] = $range['count'];
 				}
 			}
 		}
@@ -90,7 +105,7 @@ class Searcher{
 				}
 			}
 
-			self::_facet($tax, $facets, 'term', $musts, $filters);
+			self::_filterBySelectedFacets($tax, $facets, 'term', $musts, $filters);
 		}
 
 		$args = array();
@@ -113,7 +128,7 @@ class Searcher{
 				$ranges = Api::ranges($field);
 
 				if(count($ranges) > 0 ){
-					self::_facet($field, $facets, 'range', $musts, $filters, $ranges);
+					self::_filterBySelectedFacets($field, $facets, 'range', $musts, $filters, $ranges);
 				}
 			}
 		}
@@ -132,38 +147,25 @@ class Searcher{
 
 		$args = Api::apply_filters('query_pre_facet_filter', $args);
 
+		// return facets
 		foreach(Api::facets() as $facet){
 			$args['facets'][$facet]['terms']['field'] = $facet;
-
-			if(count($filters) > 0){
-				foreach($filters as $filter){
-					if(!isset($filter['term'][$facet])){
-						$args['facets'][$facet]['facet_filter']['bool']['should'][] = $filter;
-					}
-				}
-			}
 		}
 
-		if($numeric) {
+		if(is_array($numeric)){
 			foreach(array_keys($numeric) as $facet){
 				$ranges = Api::ranges($facet);
 
 				if(count($ranges) > 0 ){
 					$args['facets'][$facet]['range'][$facet] = array_values($ranges);
-					
-					if(count($filters) > 0){
-						foreach($filters as $filter){
-							$args['facets'][$facet]['facet_filter']['bool']['should'][] = $filter;
-						}
-					}
 				}
 			}
 		}
-
+		
 		return Api::apply_filters('query_post_facet_filter', $args);
 	}
 
-	public function _facet($name, $facets, $type, &$musts, &$filters, $translate = array()){
+	public function _filterBySelectedFacets($name, $facets, $type, &$musts, &$filters, $translate = array()){
 		if(isset($facets[$name])){
 			$output = &$musts;
 
@@ -174,18 +176,17 @@ class Searcher{
 			}
 
 			foreach($facets as $operation => $facet){
-				if(is_string($operation)){
-					if($operation == 'or'){
-						$output = &$filters;
+				if(is_string($operation) && $operation == 'or'){
+					// use filters so faceting isn't affecting, allowing the user to select more "or" options
+					$output = &$filters;
+				}
+
+				if(is_array($facet)){
+					foreach($facet as $value){
+						$output[] = array( $type => array( $name => isset($translate[$value]) ? $translate[$value] : $value ));
 					}
 
-					if(is_array($facet)){
-						foreach($facet as $value){
-							$output[] = array( $type => array( $name => isset($translate[$value]) ? $translate[$value] : $value ));
-						}
-
-						continue;
-					}
+					continue;
 				}
 				
 				$output[] = array( $type => array( $name => isset($translate[$facet]) ? $translate[$facet] : $facet ));

@@ -1,35 +1,24 @@
 <?php
 namespace elasticsearch;
 
-class IndexerIntegrationTest extends BaseTestCase
+class IndexerIntegrationTest extends BaseIntegrationTestCase
 {
 	public function testAddOrUpdate()
 	{
-		update_option('server_url', 'http://127.0.0.1:9200/');
-		update_option('server_index', 'travisci');
 		update_option('fields', array('field1' => 1, 'field2' => 1));
 
 		register_post_type('post');
 
-		$post = (object) array(
+		Indexer::addOrUpdate($this->index, (object) array(
 			'post_type' => 'post',
 			'ID' => 1,
 			'field1' => 'value1',
 			'field2' => 'value2'
-		);
+		));
 
-		$index = Api::index(true);
-		$index->create(array(), true);
+		$this->index->refresh();
 
-		Indexer::clear();
-
-		$this->assertEquals(0, $index->count());
-
-		Indexer::addOrUpdate($index, $post);
-
-		sleep(1);
-
-		$this->assertEquals(1, $index->count(new \Elastica_Query(array(
+		$this->assertEquals(1, $this->index->count(new \Elastica_Query(array(
 			'query' => array(
 				'bool' => array(
 					'must' => array(
@@ -40,12 +29,34 @@ class IndexerIntegrationTest extends BaseTestCase
 				)
 			)
 		))));
+	}
+
+	public function testClear()
+	{
+		update_option('fields', array('field1' => 1, 'field2' => 1));
+
+		register_post_type('post');
+
+		Indexer::addOrUpdate($this->index, (object) array(
+			'post_type' => 'post',
+			'ID' => 1,
+			'field1' => 'value1',
+			'field2' => 'value2'
+		));
+
+		$this->index->refresh();
+
+		$this->assertEquals(1, $this->index->count());
+
+		Indexer::clear();
+
+		$this->index->refresh();
+
+		$this->assertEquals(0, $this->index->count());
 	}
 
 	public function testDelete()
 	{
-		update_option('server_url', 'http://127.0.0.1:9200/');
-		update_option('server_index', 'travisci');
 		update_option('fields', array('field1' => 1, 'field2' => 1));
 
 		register_post_type('post');
@@ -57,18 +68,11 @@ class IndexerIntegrationTest extends BaseTestCase
 			'field2' => 'value2'
 		);
 
-		$index = Api::index(true);
-		$index->create(array(), true);
+		Indexer::addOrUpdate($this->index, $post);
 
-		Indexer::clear();
+		$this->index->refresh();
 
-		$this->assertEquals(0, $index->count());
-
-		Indexer::addOrUpdate($index, $post);
-
-		sleep(1);
-
-		$this->assertEquals(1, $index->count(new \Elastica_Query(array(
+		$this->assertEquals(1, $this->index->count(new \Elastica_Query(array(
 			'query' => array(
 				'bool' => array(
 					'must' => array(
@@ -80,17 +84,15 @@ class IndexerIntegrationTest extends BaseTestCase
 			)
 		))));
 
-		Indexer::delete($index, $post);
+		Indexer::delete($this->index, $post);
 
-		sleep(1);
+		$this->index->refresh();
 
-		$this->assertEquals(0, $index->count());
+		$this->assertEquals(0, $this->index->count());
 	}
 
 	public function testReindex()
 	{
-		update_option('server_url', 'http://127.0.0.1:9200/');
-		update_option('server_index', 'travisci');
 		update_option('fields', array('field1' => 1, 'field2' => 1));
 
 		register_post_type('post');
@@ -101,18 +103,11 @@ class IndexerIntegrationTest extends BaseTestCase
 			'field2' => 'value2'
 		));
 
-		$index = Api::index(true);
-		$index->create(array(), true);
-
-		Indexer::clear();
-
-		$this->assertEquals(0, $index->count());
-
 		Indexer::reindex();
 
-		sleep(1);
+		$this->index->refresh();
 
-		$this->assertEquals(1, $index->count(new \Elastica_Query(array(
+		$this->assertEquals(1, $this->index->count(new \Elastica_Query(array(
 			'query' => array(
 				'bool' => array(
 					'must' => array(
@@ -127,8 +122,6 @@ class IndexerIntegrationTest extends BaseTestCase
 
 	public function testMapNumeric()
 	{
-		update_option('server_url', 'http://127.0.0.1:9200/');
-		update_option('server_index', 'travisci');
 		update_option('fields', array('field3' => 1));
 		update_option('numeric', array('field3' => 1));
 
@@ -144,19 +137,13 @@ class IndexerIntegrationTest extends BaseTestCase
 			'field3' => '30'
 		));
 
-		$index = Api::index(false);
-		$index->create(array(), true);
-
-		Indexer::clear();
-
-		$this->assertEquals(0, $index->count());
-
+		Indexer::map();
 		Indexer::reindex();
 
-		sleep(1);
+		$this->index->refresh();
 
-		$search = new \Elastica_Search($index->getClient());
-		$search->addIndex($index);
+		$search = new \Elastica_Search($this->index->getClient());
+		$search->addIndex($this->index);
 
 		$results = $search->search(new \Elastica_Query(array(
 			'sort' => array('field3' => array('order' => 'asc'))
@@ -177,8 +164,6 @@ class IndexerIntegrationTest extends BaseTestCase
 
 	public function testMapNonNumeric()
 	{
-		update_option('server_url', 'http://127.0.0.1:9200/');
-		update_option('server_index', 'travisci');
 		update_option('fields', array('field5' => 1));
 
 		register_post_type('post');
@@ -193,19 +178,13 @@ class IndexerIntegrationTest extends BaseTestCase
 			'field5' => '30'
 		));
 
-		$index = Api::index(false);
-		$index->create(array(), true);
-
-		Indexer::clear();
-
-		$this->assertEquals(0, $index->count());
-
+		Indexer::map();
 		Indexer::reindex();
 
-		sleep(1);
+		$this->index->refresh();
 
-		$search = new \Elastica_Search($index->getClient());
-		$search->addIndex($index);
+		$search = new \Elastica_Search($this->index->getClient());
+		$search->addIndex($this->index);
 
 		$results = $search->search(new \Elastica_Query(array(
 			'sort' => array('field5' => array('order' => 'asc'))
@@ -217,6 +196,47 @@ class IndexerIntegrationTest extends BaseTestCase
 
 		$results = $search->search(new \Elastica_Query(array(
 			'sort' => array('field5' => array('order' => 'desc'))
+		)))->getResults();
+
+		$this->assertCount(2, $results);
+		$this->assertEquals(1, $results[0]->getId());
+		$this->assertEquals(2, $results[1]->getId());
+	}
+
+	public function testMapDate()
+	{
+		update_option('fields', array('post_date' => 1));
+
+		register_post_type('post');
+
+		wp_insert_post(array(
+			'post_type' => 'post',
+			'post_date' => '07/30/1989 00:00:00 CST'
+		));
+
+		wp_insert_post(array(
+			'post_type' => 'post',
+			'post_date' => '10/30/1988 00:00:00 CST'
+		));
+
+		Indexer::map();
+		Indexer::reindex();
+
+		$this->index->refresh();
+
+		$search = new \Elastica_Search($this->index->getClient());
+		$search->addIndex($this->index);
+
+		$results = $search->search(new \Elastica_Query(array(
+			'sort' => array('post_date' => array('order' => 'asc'))
+		)))->getResults();
+
+		$this->assertCount(2, $results);
+		$this->assertEquals(2, $results[0]->getId());
+		$this->assertEquals(1, $results[1]->getId());
+
+		$results = $search->search(new \Elastica_Query(array(
+			'sort' => array('post_date' => array('order' => 'desc'))
 		)))->getResults();
 
 		$this->assertCount(2, $results);

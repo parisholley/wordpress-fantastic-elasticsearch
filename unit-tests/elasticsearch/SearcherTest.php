@@ -12,7 +12,7 @@ class SearcherTest extends BaseTestCase
 		$musts = array();
 		$filters = array();
 
-		$searcher->_facet('facet', $facets, 'term', $musts, $filters);
+		$searcher->_filterBySelectedFacets('facet', $facets, 'term', $musts, $filters);
 
 		$this->assertCount(0, $musts);
 		$this->assertCount(0, $filters);
@@ -29,7 +29,7 @@ class SearcherTest extends BaseTestCase
 		$musts = array();
 		$filters = array();
 
-		$searcher->_facet('facet', $facets, 'term', $musts, $filters);
+		$searcher->_filterBySelectedFacets('facet', $facets, 'term', $musts, $filters);
 
 		$this->assertCount(1, $musts);
 		$this->assertCount(0, $filters);
@@ -57,7 +57,7 @@ class SearcherTest extends BaseTestCase
 			'value' => 'foobar'
 		);
 
-		$searcher->_facet('facet', $facets, 'term', $musts, $filters, $translate);
+		$searcher->_filterBySelectedFacets('facet', $facets, 'term', $musts, $filters, $translate);
 
 		$this->assertCount(1, $musts);
 		$this->assertCount(0, $filters);
@@ -82,7 +82,7 @@ class SearcherTest extends BaseTestCase
 		$musts = array();
 		$filters = array();
 
-		$searcher->_facet('facet', $facets, 'term', $musts, $filters);
+		$searcher->_filterBySelectedFacets('facet', $facets, 'term', $musts, $filters);
 
 		$this->assertCount(2, $musts);
 		$this->assertCount(0, $filters);
@@ -115,7 +115,7 @@ class SearcherTest extends BaseTestCase
 		$musts = array();
 		$filters = array();
 
-		$searcher->_facet('facet', $facets, 'term', $musts, $filters);
+		$searcher->_filterBySelectedFacets('facet', $facets, 'term', $musts, $filters);
 
 		$this->assertCount(2, $musts);
 		$this->assertCount(2, $filters);
@@ -161,7 +161,7 @@ class SearcherTest extends BaseTestCase
 		$musts = array();
 		$filters = array();
 
-		$searcher->_facet('facet', $facets, 'term', $musts, $filters);
+		$searcher->_filterBySelectedFacets('facet', $facets, 'term', $musts, $filters);
 
 		$this->assertCount(1, $musts);
 		$this->assertCount(1, $filters);
@@ -402,22 +402,6 @@ class SearcherTest extends BaseTestCase
 				'tax2' => array(
 					'terms' => array(
 						'field' => 'tax2'
-					),
-					'facet_filter' => array(
-						'bool' => array(
-							'should' => array(
-								array(
-									'term' => array(
-										'tax1' => 'value1'
-									)
-								),
-								array(
-									'term' => array(
-										'tax1' => 'value2'
-									)
-								)
-							)
-						)
 					)
 				)
 			)
@@ -589,22 +573,6 @@ class SearcherTest extends BaseTestCase
 							array(
 								'from' => 20
 							),
-						)
-					),
-					'facet_filter' => array(
-						'bool' => array(
-							'should' => array(
-								array(
-									'term' => array(
-										'tax1' => 'value1'
-									)
-								),
-								array(
-									'term' => array(
-										'tax1' => 'value2'
-									)
-								)
-							)
 						)
 					)
 				),

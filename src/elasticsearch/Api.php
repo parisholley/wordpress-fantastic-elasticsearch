@@ -27,11 +27,11 @@ class Api{
 
 				$tmp = array();
 
-				if($ends[0]){
+				if(is_numeric($ends[0])){
 					$tmp['from'] = $ends[0];
 				}
 
-				if($ends[1]){
+				if(is_numeric($ends[1])){
 					$tmp['to'] = $ends[1];
 				}
 

@@ -6,6 +6,7 @@ namespace elasticsearch{
 	$loader->add(null, __DIR__.'/../src', true);
 	$loader->add(null, __DIR__.'/../lib', true);
 	$loader->add(null, __DIR__.'/../unit-tests', true);
+	$loader->add(null, __DIR__.'/../integration-tests', true);
 
 	class TestContext{
 		static $options = array();
