@@ -1,6 +1,6 @@
 <?php
 namespace elasticsearch{
-	error_reporting(E_ALL);
+	error_reporting(E_ALL | E_STRICT);
 
 	$loader = require __DIR__.'/../src/bootstrap.php';
 	$loader->add(null, __DIR__.'/../src', true);
