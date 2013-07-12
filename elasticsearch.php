@@ -34,12 +34,12 @@ if(!class_exists('NHP_Options')){
 
 require 'src/bootstrap.php';
 
-require 'theme/search.php';
-require 'theme/category.php';
-require 'admin/hooks.php';
+require 'wordpress/theme/search.php';
+require 'wordpress/theme/category.php';
+require 'wordpress/admin/hooks.php';
 
 add_action( 'admin_enqueue_scripts', function() {
-	wp_register_style( 'custom_wp_admin_css', plugins_url('/css/admin.css', __FILE__) );
+	wp_register_style( 'custom_wp_admin_css', plugins_url('wordpress/css/admin.css', __FILE__) );
 	wp_enqueue_style( 'custom_wp_admin_css' );
 });
 
@@ -65,17 +65,17 @@ add_action('init', function(){
 	$args['show_import_export'] = false;
 	$args['page_position'] = 10241988;
 	$args['dev_mode'] = false;
-	$args['menu_icon'] = plugins_url('/images/menu.png', __FILE__);
+	$args['menu_icon'] = plugins_url('/wordpress/images/menu.png', __FILE__);
 	$args['page_icon'] = 'elasticsearch-icon';
 
 	$sections = array();
 
-	require('admin/sections/wordpress-integration.php');
-	require('admin/sections/server-settings.php');
-	require('admin/sections/content-indexing.php');
-	require('admin/sections/field-mapping.php');
-	require('admin/sections/results-scoring.php');
-	require('admin/sections/manage-index.php');
+	require('wordpress/admin/sections/wordpress-integration.php');
+	require('wordpress/admin/sections/server-settings.php');
+	require('wordpress/admin/sections/content-indexing.php');
+	require('wordpress/admin/sections/field-mapping.php');
+	require('wordpress/admin/sections/results-scoring.php');
+	require('wordpress/admin/sections/manage-index.php');
 
 	global $NHP_Options;
 

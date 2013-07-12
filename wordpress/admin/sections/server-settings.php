@@ -9,7 +9,7 @@ add_action('nhp-opts-options-validate-elasticsearch', function($new, $current){
 	}
 
 	if($new['server_url']){
-		$client = new \Elastica_Client(array(
+		$client = new \Elastica\Client(array(
 			'url' => $new['server_url']
 		));
 

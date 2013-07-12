@@ -46,7 +46,7 @@ add_action('nhp-opts-options-validate-elasticsearch', function(){
 					foreach(Api::types() as $type){
 						$type = $index->getType($type);
 
-						$mapping = new \Elastica_Type_Mapping($type);
+						$mapping = new \Elastica\Type\Mapping($type);
 						$mapping->setProperties(array($field => array(
 							'type' => 'float',
 							'store' => 'yes',
@@ -58,6 +58,8 @@ add_action('nhp-opts-options-validate-elasticsearch', function(){
 				}
 			}
 		}catch(\Exception $ex){
+			error_log($ex);
+			
 			$field = $NHP_Options->sections['field']['fields']['numeric'];
 			$field['msg'] = 'There was a problem configuring field mapping.';
 

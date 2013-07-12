@@ -3,7 +3,6 @@ namespace elasticsearch{
 	error_reporting(E_ALL | E_STRICT);
 
 	$loader = require __DIR__.'/../src/bootstrap.php';
-	$loader->add(null, __DIR__.'/../src', true);
 	$loader->add(null, __DIR__.'/../lib', true);
 	$loader->add(null, __DIR__.'/../unit-tests', true);
 	$loader->add(null, __DIR__.'/../integration-tests', true);
