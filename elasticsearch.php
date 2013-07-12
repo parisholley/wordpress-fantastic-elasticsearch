@@ -3,7 +3,7 @@
 Plugin Name: Fantastic ElasticSearch
 Plugin URI: http://wordpress.org/extend/plugins/fantastic-elasticsearch/
 Description: Improve wordpress search performance and accuracy by leveraging an ElasticSearch server.
-Version: 1.2.3
+Version: 2.0.0
 Author: Paris Holley
 Author URI: http://www.linkedin.com/in/parisholley
 Author Email: mail@parisholley.com
@@ -32,18 +32,7 @@ if(!class_exists('NHP_Options')){
 	require_once( dirname( __FILE__ ) . '/lib/nhp/options/options.php' );
 }
 
-spl_autoload_register(function($class){
-	$path = str_replace('elasticsearch', '', $class);
-	$path = str_replace(array('_', "\\"), DIRECTORY_SEPARATOR, $path);
-
-	if (file_exists(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . $path . '.php')) {
-		require_once(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . $path . '.php');
-	}
-
-	if (file_exists(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'api' . DIRECTORY_SEPARATOR . $path . '.php')) {
-		require_once(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'api' . DIRECTORY_SEPARATOR . $path . '.php');
-	}
-});
+require 'src/bootstrap.php';
 
 require 'theme/search.php';
 require 'theme/category.php';
