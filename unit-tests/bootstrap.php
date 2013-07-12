@@ -99,6 +99,14 @@ namespace {
 		return null;
 	}
 
+	function get_terms($tax){
+		if(isset(elasticsearch\TestContext::$terms[$tax])){
+			return elasticsearch\TestContext::$terms[$tax];
+		}		
+
+		return null;
+	}
+
 	function get_object_taxonomies($type){
 		if(isset(elasticsearch\TestContext::$taxes[$type])){
 			return elasticsearch\TestContext::$taxes[$type];

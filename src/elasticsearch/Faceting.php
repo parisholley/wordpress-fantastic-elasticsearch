@@ -41,7 +41,7 @@ class Faceting{
 
 		if($ranges){
 			foreach($ranges as $slug => $range){
-				$split = split('-', $slug);
+				$split = explode('-', $slug);
 
 				$item = array(
 					'slug' => $slug,
@@ -50,9 +50,9 @@ class Faceting{
 					'from' => $split[0]
 				);
 
-				if(in_array($slug, $_GET[$field]['and'])){
+				if(isset($_GET[$field]) && in_array($slug, $_GET[$field]['and'])){
 					$result['selected'][$slug] = $item;
-				}else{
+				}else if($item['count'] > 0){
 					$result['available'][$slug] = $item;
 					$result['total'] += $item['count'];
 				}
@@ -80,11 +80,15 @@ class Faceting{
 					'slug' => $term->slug
 				);
 
-				if(in_array($term->slug, $_GET[$tax]['and'])){
+				if(isset($_GET[$tax]) && in_array($term->slug, $_GET[$tax]['and'])){
 					$taxonomy['selected'][$term->slug] = $item;
-				}else if($item['count'] = $facets[$tax][$term->slug]){
-					$taxonomy['available'][$term->slug] = $item;
-					$taxonomy['total'] += $item['count'];
+				}else if(isset($facets[$tax][$term->slug])){
+					$count = $item['count'] = $facets[$tax][$term->slug];
+
+					if($count > 0){
+						$taxonomy['available'][$term->slug] = $item;
+						$taxonomy['total'] += $item['count'];
+					}
 				}
 			}
 		}
@@ -106,7 +110,15 @@ class Faceting{
 
 	static function urlAdd($url, $type, $value, $operation = 'and'){
 		$filter = $_GET;
-		$filter[$type][$operation][] = $value;
+
+		$op = $operation;
+
+		if(isset($filter[$type])){
+			$op = array_keys($filter[$type]);
+			$op = $op[0];
+		}
+
+		$filter[$type][$op][] = $value;
 
 		$newurl = http_build_url($url, array(
 			'query' => http_build_str($filter)
@@ -117,20 +129,25 @@ class Faceting{
 
 	static function urlRemove($url, $type, $value, $operation = 'and'){
 		$filter = $_GET;
-		$index = array_search($value, $filter[$type][$operation]);
 
-		unset($filter[$type][$operation][$index]);
+		if(isset($filter[$type][$operation])){
+			$index = array_search($value, $filter[$type][$operation]);
 
-		if(count($filter[$type][$operation]) == 0){
-			unset($filter[$type][$operation]);
-		}
+			if($index !== false){
+				unset($filter[$type][$operation][$index]);
 
-		if(count($filter[$type]) == 0){
-			unset($filter[$type]);
+				if(count($filter[$type][$operation]) == 0){
+					unset($filter[$type][$operation]);
+				}
+
+				if(count($filter[$type]) == 0){
+					unset($filter[$type]);
+				}
+			}
 		}
 
 		$newurl = http_build_url($url, array(
-			'query' => http_build_str($filter) . '#'
+			'query' => http_build_str($filter)
 		));
 
 		return $newurl;

@@ -15,6 +15,8 @@ class BaseTestCase extends \PHPUnit_Framework_TestCase{
 		$this->reset(TestContext::$termrel);
 
 		$wp_query = new \stdClass();
+
+		$_GET = array();
 	}
 
 	private function reset(&$array){
