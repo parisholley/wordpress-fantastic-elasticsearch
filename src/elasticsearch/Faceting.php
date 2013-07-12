@@ -120,11 +120,10 @@ class Faceting{
 
 		$filter[$type][$op][] = $value;
 
-		$newurl = http_build_url($url, array(
-			'query' => http_build_str($filter)
-		));
+		$url = new \Purl\Url($url);
+		$url->query->setData($filter);
 
-		return $newurl;
+		return $url->getUrl();
 	}
 
 	static function urlRemove($url, $type, $value, $operation = 'and'){
@@ -146,11 +145,10 @@ class Faceting{
 			}
 		}
 
-		$newurl = http_build_url($url, array(
-			'query' => http_build_str($filter)
-		));
+		$url = new \Purl\Url($url);
+		$url->query->setData($filter);
 
-		return $newurl;
+		return $url->getUrl();
 	}
 }
 
