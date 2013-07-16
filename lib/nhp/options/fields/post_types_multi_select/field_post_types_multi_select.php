@@ -34,7 +34,7 @@ class NHP_Options_post_types_multi_select extends NHP_Options{
 
 		$args = wp_parse_args($this->field['args'], array());
 		
-		$args = array('public'   => true, '_builtin' => true, 'publicly_queryable' => true );
+		$args = array('public'   => true, '_builtin' => false );
 		$post_types = get_post_types($args, 'objects', 'or'); 
 		foreach ( $post_types as $post_type ) {
 			$selected = (is_array($this->value) && in_array($post_type->name, $this->value))?' selected="selected"':'';

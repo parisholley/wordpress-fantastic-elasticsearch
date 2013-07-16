@@ -17,14 +17,14 @@ class Page{
 
 		$page = get_queried_object();
 
-		$enabled = Api::option('enable_categories');
+		$enabled = Api::option('enable_pages');
 		
 		if(!$wp_query->is_main_query() || !(is_page() || $slug) || is_admin() || !$enabled || !in_array($page->ID, $enabled)){
 			return;
 		}
 
 		$args = $_GET;
-
+		
 		if(!$args[$page->post_name]){
 			$args[$page->post_name]['or'][] = $slug;
 		}

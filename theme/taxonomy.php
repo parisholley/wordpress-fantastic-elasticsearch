@@ -16,7 +16,7 @@ class Taxonomy{
 		$this->searched = false;
 
 		$tax = get_queried_object();
-
+			
 		$enabled = Api::option('enable_taxonomies');
 		
 		if(!$wp_query->is_main_query() || !(is_tax() || $slug) || is_admin() || !$enabled || !in_array($tax->taxonomy, $enabled)){

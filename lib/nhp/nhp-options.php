@@ -52,14 +52,6 @@ function change_framework_args($args){
 }//function
 //add_filter('nhp-opts-args-twenty_eleven', 'change_framework_args');
 
-
-
-
-
-
-
-
-
 /*
  * This is the meat of creating the optons page
  *
