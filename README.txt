@@ -52,6 +52,9 @@ By default, the plugin will look for those facet names (taxonomies) in the query
 
 == Changelog ==
 
+= 1.2.4 =
+* Allow plugin to work if downloaded from github or wordpress (images weren't showing up in admin)
+
 = 1.2.3 = 
 * Bug fixes as result of merge
 
