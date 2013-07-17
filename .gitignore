@@ -1,0 +1,4 @@
+composer.lock
+elasticsearch-*/
+es.pid
+report/

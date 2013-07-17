@@ -1,7 +1,15 @@
-<phpunit>
+<phpunit bootstrap="unit-tests/bootstrap.php">
 	<testsuites>
-		<testsuite name="Tests">
-			<directory>tests</directory>
+		<testsuite name="Unit Tests">
+			<directory>unit-tests</directory>
+		</testsuite>
+		<testsuite name="Integration Tests">
+			<directory>integration-tests</directory>
 		</testsuite>
 	</testsuites>
+	<filter>
+		<whitelist>
+			<directory suffix=".php">src/elasticsearch</directory>
+		</whitelist>
+	</filter>
 </phpunit>

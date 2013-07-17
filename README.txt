@@ -52,8 +52,12 @@ By default, the plugin will look for those facet names (taxonomies) in the query
 
 == Changelog ==
 
-= 1.2.4 =
-* Allow plugin to work if downloaded from github or wordpress (images weren't showing up in admin)
+= 2.0.0 =
+* Large cleanup effort
+* Unit tests to adhere to STRICT 5.3, 5.4, 5.5 compatability
+* Integeration tests to ensure intended behavior with ElasticSearch 0.20.6 and 0.90.2
+* Continuous integration setup with travis-ci
+* Developer documentation for faceting and extending
 
 = 1.2.3 = 
 * Bug fixes as result of merge
