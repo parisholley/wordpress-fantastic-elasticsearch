@@ -216,8 +216,8 @@ class Taxonomies_Filter_Widget extends \WP_Widget {
 
 		if( 'widgets.php' != $hook )
         	return;
-		wp_enqueue_script( 'taxonomies-filter-widget-admin-script', plugins_url( 'fantastic-elasticsearch/lib/facet-widget/js/admin.js' ), array('jquery'), false, true );
-		wp_enqueue_style( 'taxonomies-filter-widget-admin-styles', plugins_url( 'fantastic-elasticsearch/lib/facet-widget/css/admin.css' ) );
+		wp_enqueue_script( 'taxonomies-filter-widget-admin-script', plugins_url( ES_PLUGIN_DIR.'/lib/facet-widget/js/admin.js' ), array('jquery'), false, true );
+		wp_enqueue_style( 'taxonomies-filter-widget-admin-styles', plugins_url( ES_PLUGIN_DIR.'/lib/facet-widget/css/admin.css' ) );
 		
 	} // end register_admin_scripts
 	
@@ -228,8 +228,8 @@ class Taxonomies_Filter_Widget extends \WP_Widget {
 		global $NHP_Options;
 
 		wp_enqueue_script('jquery');
-		wp_enqueue_script( 'taxonomies-filter-widget-slider-script', plugins_url( 'fantastic-elasticsearch/lib/facet-widget/js/jquery.nouislider.min.js' ), array('jquery'), false, true );
-		wp_enqueue_script( 'taxonomies-filter-widget-script', plugins_url( 'fantastic-elasticsearch/lib/facet-widget/js/widget.js' ), array('jquery'), false, true );
+		wp_enqueue_script( 'taxonomies-filter-widget-slider-script', plugins_url( ES_PLUGIN_DIR.'/lib/facet-widget/js/jquery.nouislider.min.js' ), array('jquery'), false, true );
+		wp_enqueue_script( 'taxonomies-filter-widget-script', plugins_url( ES_PLUGIN_DIR.'/lib/facet-widget/js/widget.js' ), array('jquery'), false, true );
 		wp_localize_script( 'taxonomies-filter-widget-script', 'ajax_object', array( 'ajax_url' => admin_url( 'admin-.php' )));
 
 	} // end register_widget_scripts
@@ -238,8 +238,8 @@ class Taxonomies_Filter_Widget extends \WP_Widget {
 	 * Registers and enqueues widget-specific styles.
 	 */
 	public function register_widget_styles() {
-		wp_register_style( 'taxonomies-filter-widget-styles', plugins_url( 'fantastic-elasticsearch/lib/facet-widget/css/widget.css' ) );
-		wp_register_style( 'taxonomies-filter-widget-slider-styles', plugins_url( 'fantastic-elasticsearch/lib/facet-widget/css/nouislider.fox.css' ) );
+		wp_register_style( 'taxonomies-filter-widget-styles', plugins_url( ES_PLUGIN_DIR.'/lib/facet-widget/css/widget.css' ) );
+		wp_register_style( 'taxonomies-filter-widget-slider-styles', plugins_url( ES_PLUGIN_DIR.'/lib/facet-widget/css/nouislider.fox.css' ) );
 		wp_enqueue_style( 'taxonomies-filter-widget-styles' );
 		wp_enqueue_style( 'taxonomies-filter-widget-slider-styles' );
 	} // end register_widget_styles

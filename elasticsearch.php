@@ -3,7 +3,7 @@
 Plugin Name: Fantastic ElasticSearch
 Plugin URI: http://wordpress.org/extend/plugins/fantastic-elasticsearch/
 Description: Improve wordpress search performance and accuracy by leveraging an ElasticSearch server.
-Version: 1.2.3
+Version: 1.2.4
 Author: Paris Holley
 Author URI: http://www.linkedin.com/in/parisholley
 Author Email: mail@parisholley.com
@@ -28,8 +28,10 @@ License:
 
 namespace elasticsearch;
 
+define('ES_PLUGIN_DIR', basename(dirname(__FILE__)));
+
 if(!class_exists('NHP_Options')){
-	require_once( dirname( __FILE__ ) . '/lib/nhp/options/options.php' );
+	require_once( (dirname( __FILE__ )) . '/lib/nhp/options/options.php' );
 }
 
 spl_autoload_register(function($class){
