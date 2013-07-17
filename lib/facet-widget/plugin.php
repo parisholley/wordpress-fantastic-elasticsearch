@@ -1,18 +1,6 @@
 <?php
 namespace elasticsearch;
 
-/*
-Plugin Name: Taxonomies Filter Widget
-Plugin URI: http://webcodesigner.com
-Description: Creates a widget for filtering posts and pages by Categories, Tags, Custom Taxonomies and Custom Fields. You can even set your own order and specify how you want each option to be displayed.
-Version: 2.0
-Author: Cristian Ionel
-Author URI: http://webcodesigner.com
-Author Email: cristian.ionel@gmail.com
-Text Domain: taxonomies-filter-widget
-Domain Path: /lang/
-
-*/
 require_once( plugin_dir_path(__FILE__) . '/inc/walkers.php' );
 require_once( plugin_dir_path(__FILE__) . '/inc/helpers.php' );
 
