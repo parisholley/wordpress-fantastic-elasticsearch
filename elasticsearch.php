@@ -31,7 +31,7 @@ namespace elasticsearch;
 define('ES_PLUGIN_DIR', basename(dirname(__FILE__)));
 
 if(!class_exists('NHP_Options')){
-	require_once( (dirname( __FILE__ )) . '/lib/nhp/options/options.php' );
+	require_once( dirname( __FILE__ ) . '/lib/nhp/options/options.php' );
 }
 
 spl_autoload_register(function($class){
