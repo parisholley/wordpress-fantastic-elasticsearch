@@ -53,7 +53,7 @@ require 'theme/taxonomy.php';
 require 'theme/page.php';
 require 'theme/post_type.php';
 require 'admin/hooks.php';
-require 'facet-widget/plugin.php';
+require 'lib/facet-widget/plugin.php';
 
 add_action( 'admin_enqueue_scripts', function() {
 	wp_register_style( 'custom_wp_admin_css', plugins_url('/css/admin.css', __FILE__) );
