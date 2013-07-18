@@ -56,6 +56,7 @@ require 'theme/page.php';
 require 'theme/post_type.php';
 require 'admin/hooks.php';
 require 'lib/facet-widget/plugin.php';
+require 'lib/map-widget/address-geocoder/address-geocoder.php';
 
 add_action( 'admin_enqueue_scripts', function() {
 	wp_register_style( 'custom_wp_admin_css', plugins_url('/css/admin.css', __FILE__) );
@@ -96,6 +97,7 @@ add_action('init', function(){
 	require('admin/sections/results-scoring.php');
 	require('admin/sections/manage-index.php');
 	require('admin/sections/facet-widget.php');
+	require('admin/sections/map-widget.php');
 
 	global $NHP_Options;
 
