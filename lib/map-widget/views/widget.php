@@ -1,35 +1,29 @@
-<?php 
-namespace elasticsearch;
-
-echo $before_title . $title . $after_title; 
-global $wp; 
-$current_url = add_query_arg( $wp->query_string, '', home_url( $wp->request ) ); 
-?>
-	<form action="<?php echo esc_url( $current_url.'/'); ?>" role="search" method="get" class="taxonomies-filter-widget-form <?php if( Api::option(auto_submit) ) echo 'tfw_auto'; ?>"><div>
-		<input type="hidden" name="post_type" value="<?php echo $tfw_post_type ?>" />
-		<ul>
-<?php
-	foreach ($selected_filters as $filter) {
-		switch($filter['mode']) {
-	        case 'dropdown':	$this->taxonomy_dropdown_walker($filter['name']);	break;
-	        case 'multiselect':	$this->print_multiselect_taxonomy($filter['name']);	break;
-	        case 'checkbox':	$this->print_checkbox_taxonomy($filter['name']);	break;
-	        case 'radio':		$this->print_radio_taxonomy($filter['name']);		break;
-	    	} //end switch
-	} //end foreach
-
-	if( Api::option(display_search_box) && !empty($search_box_label) ){
-	echo '<li class="search_box"><label class="taxlabel">'.$search_box_label.'</label><input type="text" name="s" class="input_search" value="'.get_search_query().'" /></li>';
-	} 
-	echo '<li>';
-	global $wp;
-	$current_url = add_query_arg( '', '', home_url( $wp->request ) );
-	if( Api::option(display_reset_button) && !empty($reset_button_label) ){
-		echo '<a class="reset_button" href="'. esc_url( $current_url.'/' ).'" >'.$reset_button_label.'</a>';
-	} // end if
-
-	if (Api::option(auto_submit)) {   echo '<noscript>';  } 
-		echo '<input type="submit" value="'.$submit.'" />';
-	if (Api::option(auto_submit)) {   echo '</noscript>';  } 
-	
-	echo '</li></ul></div></form>';
+<div class='container'>
+	<div class='lead'>Drag the circle or change the radius to find results. Click a pin to highlight a result.</div>
+    <div id='map-canvas'></div>
+    <div id='radius-controls'>
+      Radius:
+      <span id='radius-val'></span>
+    </div>
+    <div id='radius-slider'></div>
+    <h3>
+      Results
+      <span id='max_results'></span>
+    </h3>
+    <div class='row'>
+      <div class='span12'>
+        <table class='table table-striped table-bordered table-condensed'>
+          <thead>
+            <tr>
+              <th>First Name</th>
+              <th>Last Name</th>
+              <th>Email</th>
+              <th>Latitude</th>
+              <th>Longitude</th>
+            </tr>
+          </thead>
+          <tbody id='results'></tbody>
+        </table>
+      </div>
+    </div>
+</div>
