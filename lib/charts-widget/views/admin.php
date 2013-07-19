@@ -32,10 +32,6 @@
 
 	</ul>
 
-<p><label for="<?php echo $this->get_field_id('labels'); ?>"><?php _e( 'Labels for bar, line or polararea charts:', 'charts-widget' ); ?></label>
-<input class="widefat" id="<?php echo $this->get_field_id('labels'); ?>" name="<?php echo $this->get_field_name('labels'); ?>" type="text" value="<?php echo $labels; ?>" />
-</p>
-
 <p><label for="<?php echo $this->get_field_id('colors'); ?>"><?php _e( 'Comma-separated hexadecimals (same number as number of taxonomies) for colors:', 'charts-widget' ); ?></label>
 <input class="widefat" id="<?php echo $this->get_field_id('colors'); ?>" name="<?php echo $this->get_field_name('colors'); ?>" type="text" value="<?php echo $colors; ?>" />
 </p>

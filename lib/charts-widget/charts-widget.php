@@ -2,6 +2,8 @@
 namespace elasticsearch;
 
 require_once( plugin_dir_path(__FILE__) . 'wp-charts/wordpress_charts_js.php' );
+require_once( plugin_dir_path(__FILE__) . '/inc/walkers.php' );
+require_once( plugin_dir_path(__FILE__) . '/inc/helpers.php' );
 
 class Charts_Widget extends \WP_Widget {
 
@@ -57,16 +59,15 @@ class Charts_Widget extends \WP_Widget {
 	public function widget( $args, $instance ) {
 
 		extract( $args );
-		is_array($this->tfw_options) && extract( $this->tfw_options );
+		is_array($this->charts_options) && extract( $this->charts_options );
 
 		$title 				 = apply_filters('widget_title', empty( $instance['title'] ) ? '' : $instance['title'], $instance, $this->id_base);
 		$selected_filters 	 = isset( $instance['selected_filters'] ) ? $instance['selected_filters'] : array();
 		$charts_post_type 	 = isset( $instance['charts_post_type'] ) ? $instance['charts_post_type'] : 'post';
 		// labels
-		$submit 			 = empty( $instance['labels'] ) ? '' : $instance['labels'];
-		$select_all  		 = empty( $instance['colors'] ) ? '' : $instance['colors'];
-       	$search_box_label 	 = empty( $instance['fillopacity'] ) ? '' : $instance['fillopacity'];
-       	$reset_button_label  = empty( $instance['pointstrokecolor'] ) ? '' : $instance['pointstrokecolor'];
+		$colors  		 	 = empty( $instance['colors'] ) ? '' : $instance['colors'];
+       	$fillopacity 	 	 = empty( $instance['fillopacity'] ) ? '' : $instance['fillopacity'];
+       	$pointstrokecolor  	 = empty( $instance['pointstrokecolor'] ) ? '' : $instance['pointstrokecolor'];
 
 		
 		$this->selected_filters = $selected_filters;
@@ -91,7 +92,6 @@ class Charts_Widget extends \WP_Widget {
 		$instance['charts_post_type'] 	= isset( $new_instance['charts_post_type'] ) ? $new_instance['charts_post_type'] : 'post';
 
 		//labels
-		$instance['labels'] 			= strip_tags($new_instance['labels']);
 		$instance['colors'] 			= strip_tags($new_instance['colors']);
 		$instance['fillopacity'] 		= strip_tags($new_instance['fillopacity']);
 		$instance['pointstrokecolor']   = strip_tags($new_instance['pointstrokecolor']);
@@ -121,10 +121,9 @@ class Charts_Widget extends \WP_Widget {
 			'title' => '', 
 			'filters' => array(), 
 			'charts_post_type' => 'post',
-			'labels' => 'Labels',
-			'colors' => 'colors',
-			'fillopacity' => 'fillopacity',
-			'pointstrokecolor' => 'pointstrokecolor'
+			'colors' => '#69D2E7,#E0E4CC,#F38630,#96CE7F,#CEBC17,#CE4264',
+			'fillopacity' => '0.7',
+			'pointstrokecolor' => '#FFFFFF'
 		));
 
 		$title 				= esc_attr( $instance['title'] );
@@ -132,10 +131,9 @@ class Charts_Widget extends \WP_Widget {
 		$charts_post_type 	= isset( $instance['charts_post_type'] ) ? $instance['charts_post_type'] : 'post';
 
 		//labels
-		$submit 			= esc_attr( $instance['labels'] );
-		$select_all 		= esc_attr( $instance['colors'] );
-		$search_box_label 	= esc_attr( $instance['fillopacity'] );
-		$reset_button_label = esc_attr( $instance['pointstrokecolor'] );
+		$colors 			= esc_attr( $instance['colors'] );
+		$fillopacity 		= esc_attr( $instance['fillopacity'] );
+		$pointstrokecolor   = esc_attr( $instance['pointstrokecolor'] );
 
 
 		// Get already selected filters and put them at the top
@@ -203,7 +201,6 @@ class Charts_Widget extends \WP_Widget {
 	 * Registers and enqueues widget-specific scripts.
 	 */
 	public function register_widget_scripts() {
-		global $NHP_Options;
 		wp_enqueue_script('jquery');
 		wp_localize_script( 'charts-widget-script', 'ajax_object', array( 'ajax_url' => admin_url( 'admin-.php' )));
 
@@ -214,7 +211,6 @@ class Charts_Widget extends \WP_Widget {
 	 */
 	public function register_widget_styles() {
 		wp_register_style( 'charts-widget-styles', plugins_url( ES_PLUGIN_DIR.'/lib/charts-widget/css/widget.css' ) );
-		wp_register_style( 'charts-widget-slider-styles', plugins_url( ES_PLUGIN_DIR.'/lib/charts-widgetcss/nouislider.fox.css' ) );
 		wp_enqueue_style( 'charts-widget-styles' );
 		wp_enqueue_style( 'charts-widget-slider-styles' );
 	} // end register_widget_styles
@@ -330,8 +326,50 @@ class Charts_Widget extends \WP_Widget {
 		$parent_term = get_term_by( 'id', intval($term->parent) , $taxonomy);
 		return $parent_term;
 	}
-	
 
+		/**
+	* Prints comma-separated list of facet names  
+	* @param 	string 	taxonomy 	Name of the taxonomy to be printed out
+	**/
+	public function facet_names($taxonomy){      
+ 		if ( taxonomy_exists($taxonomy) ) {
+ 			$tax_name = fix_taxonomy_name($taxonomy);
+			$categories = get_categories(array(
+				'orderby'  	=> 'name',
+				'order'    	=> 'ASC',
+				'name'		=> "$tax_name", 
+				'hide_empty' => 0,
+				'taxonomy' 	=> $taxonomy    
+			));
+			foreach ($categories as $category) {
+				$cat_name = $category->cat_name;
+				return $cat_name.",";
+			}
+		} //end if
+	} //end print_checkbox_taxonomy
+
+		/**
+	* Prints comma-separated list of facet counts  
+	* @param 	string 	taxonomy 	Name of the taxonomy to be printed out
+	**/
+	public function facet_counts($taxonomy){      
+ 		if ( taxonomy_exists($taxonomy) ) {
+ 			global $NHP_Options;
+ 			$tax_name = fix_taxonomy_name($taxonomy);
+			$categories = get_categories(array(
+				'orderby'  	=> 'name',
+				'order'    	=> 'ASC',
+				'name'		=> "$tax_name", 
+				'hide_empty' => 0,
+				'taxonomy' 	=> $taxonomy    
+			));
+			foreach ($categories as $category) {
+				$facets = Template::facets(); 
+				$facet_counts = $facets[$category->taxonomy][$category->slug];
+			}
+		} //end if
+	} //end print_checkbox_taxonomy
+		
 	/**
 	* Prints out the taxonomy or return a string with the dropdown code using the wp_dropdown_categories function
 	* @param 	string	taxonomy	Taxonomy name
@@ -340,52 +378,100 @@ class Charts_Widget extends \WP_Widget {
 	* @param	bool	echo		echo html when true; returns string when false				
 	* @return	mixed	html|string
 	**/
+
+	public function print_checkbox_taxonomy($taxonomy){      
+ 		if ( taxonomy_exists($taxonomy) ) {
+ 			global $NHP_Options;
+ 			$tax = get_taxonomy($taxonomy); 
+ 			$tax_name = fix_taxonomy_name($taxonomy);
+ 			$output = '
+ 				<li class="'.$tax_name.'_li">
+ 					<label class="taxlabel">'.$tax->label.'</label>
+ 					<ul class="checkboxes_list">';
+			$output_list = wp_list_categories(array(
+				'walker'   	=> new Walker_TaxonomiesChecklist(),
+				'orderby'  	=> 'name',
+				'order'    	=> 'ASC',
+				'name'		=> "$tax_name", 
+				'title_li' 	=> '',
+				'style'    	=> 'list',
+				'echo'	   	=> 0,
+				'show_count' => $NHP_Options->get('post_count'),
+				'hide_empty' => Api::option('hide_empty'),
+				'taxonomy' 	=> $taxonomy    
+			));
+
 			
-	public function print_pie($taxonomy, $name){      
- 		global $NHP_Options;
-		if ( taxonomy_exists($taxonomy) ) { 
-			$tax = get_taxonomy($taxonomy);
-		 echo do_shortcode('[wp_charts title="mypie" type="pie" data="10,32,50,25,5" colors = "#69D2E7,#E0E4CC,#F38630,#96CE7F,#CEBC17,#CE4264" fillopacity = "0.7"]');
+			if (trim( $output_list )) {  
+				$output .= $output_list;
+				echo $output;
+			}
+		} //end if
+	} //end print_checkbox_taxonomy
+			
+	public function print_pie($taxonomy){      
+ 		if ( taxonomy_exists($taxonomy) ) {
+ 			global $NHP_Options;
+
+ 			$tax = get_taxonomy($taxonomy); 
+ 			$tax_name = fix_taxonomy_name($taxonomy);
+			$categories = get_categories(array(
+				'orderby'  	=> 'name',
+				'order'    	=> 'ASC',
+				'name'		=> "$tax_name", 
+				'hide_empty' => 0,
+				'taxonomy' 	=> $taxonomy    
+			));
+
+			$facet_counts = array();
+			// Filter out the ones not selected
+			foreach ($categories as $category) {
+				$facets = Template::facets(); 
+				$facet_counts[] = $facets[$category->taxonomy][$category->slug];
+			}
+			$counts = implode(",", $facet_counts);
+
+			echo do_shortcode('[wp_charts title="'.$tax_name.'" type="pie" data="1,2,3,4" colors="charts_options[colors ]');
 		} // end if
 	} //end print_dropdown_taxonomy
 
-	public function print_doughnut ($taxonomy, $name){      
+	public function print_doughnut($taxonomy){      
  		global $NHP_Options;
 		if ( taxonomy_exists($taxonomy) ) { 
-			$tax = get_taxonomy($taxonomy);
-			 echo do_shortcode('[wp_charts title="mydough" type="doughnut" data="30,10,55,25,15" colors = "#69D2E7,#E0E4CC,#F38630,#96CE7F,#CEBC17,#CE4264" fillopacity = "0.7"]');
+			$tax_name = fix_taxonomy_name($taxonomy);
+			 echo do_shortcode('[wp_charts title="'.$tax_name.'" type="doughnut" data="'.facet_counts($taxonomy).'" colors = "charts_options[colors ]');
 		} // end if
 	} //end print_dropdown_taxonomy
 
-	public function print_radar ($taxonomy, $name){      
+	public function print_radar($taxonomy){      
  		global $NHP_Options;
 		if ( taxonomy_exists($taxonomy) ) { 
 			$tax = get_taxonomy($taxonomy);
-			 echo do_shortcode('[wp_charts title="mypolar" type="polarArea" data="40,32,5,25,50" labels="one,two,three,four,five" colors = "#69D2E7,#E0E4CC,#F38630,#96CE7F,#CEBC17,#CE4264" fillopacity = "0.7"]');
+			 echo do_shortcode('[wp_charts title="'.$tax_name.'" type="radar" data="'.facet_counts($taxonomy).'" labels="'.facet_names($taxonomy).'" colors = "charts_options[colors ]');
 		} // end if
 	} //end print_dropdown_taxonomy
 
-	public function print_polararea ($taxonomy, $name){      
+	public function print_polararea($taxonomy){      
  		global $NHP_Options;
 		if ( taxonomy_exists($taxonomy) ) { 
-			$tax = get_taxonomy($taxonomy);
-			 echo do_shortcode('[wp_charts title="barchart" type="bar" datasets="40,32,50,35,5 next 20,25,45,42 next 40,43, 61,50 next 33,15,40,22" labels="one,two,three,four" colors = "#69D2E7,#E0E4CC,#F38630,#96CE7F,#CEBC17,#CE4264" fillopacity = "0.7" pointstrokecolor = "#FFFFFF"]');
+			$tax_name = fix_taxonomy_name($taxonomy);
+			 echo do_shortcode('[wp_charts title="'.$tax_name.'" type="polarArea" datasets="'.facet_counts($taxonomy).'" labels="'.facet_names($taxonomy).'" colors = "charts_options[colors]" fillopacity = "charts_options[fillopacity]" pointstrokecolor = "charts_options[pointstrokecolor ]');
 		} // end if
 	} //end print_dropdown_taxonomy
 
-	public function print_bar ($taxonomy, $name){      
+	public function print_bar($taxonomy){      
  		global $NHP_Options;
 		if ( taxonomy_exists($taxonomy) ) { 
-			$tax = get_taxonomy($taxonomy);
-			 echo do_shortcode('[wp_charts title="linechart" type="line" datasets="40,43,61,50 next 33,15,40,22" labels="one,two,three,four" colors = "#69D2E7,#E0E4CC,#F38630,#96CE7F,#CEBC17,#CE4264" fillopacity = "0.7"]');
+			$tax_name = fix_taxonomy_name($taxonomy);
+			 echo do_shortcode('[wp_charts title="'.$tax_name.'" type="bar" datasets="'.facet_counts($taxonomy).'" colors = "charts_options[colors]" fillopacity = "charts_options[fillopacity ]');
 		} // end if
 	} //end print_dropdown_taxonomy
 
-	public function print_line($taxonomy, $name){      
+	public function print_line($taxonomy){      
  		global $NHP_Options;
 		if ( taxonomy_exists($taxonomy) ) { 
-			$tax = get_taxonomy($taxonomy);
-			echo do_shortcode('[wp_charts title="radarchart" type="radar" datasets="20,22,40,25,55 next 15,20,30,40,35" labels="one,two,three,four,five" colors = "#69D2E7,#E0E4CC,#F38630,#96CE7F,#CEBC17,#CE4264" fillopacity = "0.7" pointstrokecolor = "#FFFFFF"]');
+			$tax_name = fix_taxonomy_name($taxonomy);
+			echo do_shortcode('[wp_charts title="'.$tax_name.'" type="line" datasets="'.facet_counts($taxonomy).'" labels='.facet_names($taxonomy).'" colors = "charts_options[colors]" fillopacity = "charts_options[fillopacity]" pointstrokecolor = "charts_options[pointstrokecolor ]');
 		} // end if
 	} //end print_dropdown_taxonomy
 
