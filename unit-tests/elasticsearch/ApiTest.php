@@ -55,7 +55,7 @@ class ApiTest extends BaseTestCase
 
 	public function testClientWriteDefault()
 	{
-		$client = Config::client(true);
+		$client = Indexer::client(true);
 		$this->assertEquals(300, $client->getConfig('timeout'));
 	}
 
@@ -63,13 +63,13 @@ class ApiTest extends BaseTestCase
 	{
 		update_option('server_timeout_write', 30);
 
-		$client = Config::client(true);
+		$client = Indexer::client(true);
 		$this->assertEquals(30, $client->getConfig('timeout'));
 	}
 
 	public function testClientReadDefault()
 	{
-		$client = Config::client(false);
+		$client = Indexer::client(false);
 		$this->assertEquals(1, $client->getConfig('timeout'));
 	}
 
@@ -77,7 +77,7 @@ class ApiTest extends BaseTestCase
 	{
 		update_option('server_timeout_read', 100);
 
-		$client = Config::client(false);
+		$client = Indexer::client(false);
 		$this->assertEquals(100, $client->getConfig('timeout'));
 	}
 

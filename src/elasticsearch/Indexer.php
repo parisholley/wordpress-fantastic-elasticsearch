@@ -145,20 +145,20 @@ class Indexer{
 
 	static function client($write = false){
 		$settings = array(
-			'url' => self::option('server_url')
+			'url' => Config::option('server_url')
 		);
 		
 		if($write){
-			$settings['timeout'] = self::option('server_timeout_write') ?: 300;
+			$settings['timeout'] = Config::option('server_timeout_write') ?: 300;
 		}else{
-			$settings['timeout'] = self::option('server_timeout_read') ?: 1;
+			$settings['timeout'] = Config::option('server_timeout_read') ?: 1;
 		}
 
 		return new \Elastica\Client($settings);
 	}
 
 	static function index($write = false){
-		return self::client($write)->getIndex(self::option('server_index'));
+		return self::client($write)->getIndex(Config::option('server_index'));
 	}
 }
 ?>

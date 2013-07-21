@@ -14,7 +14,7 @@ class BaseIntegrationTestCase extends BaseTestCase
 		$this->index->create(array(), true);
 		
 		// make sure index is available before continuing
-        Config::client(true)->request('_cluster/health/travisci?wait_for_status=yellow', \Elastica\Request::GET);
+        Indexer::client(true)->request('_cluster/health/travisci?wait_for_status=yellow', \Elastica\Request::GET);
 
 		$this->assertEquals(0, $this->index->count());
 	}
