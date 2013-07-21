@@ -10,7 +10,7 @@ class BaseIntegrationTestCase extends BaseTestCase
 		update_option('server_url', 'http://127.0.0.1:9200/');
 		update_option('server_index', 'travisci');	
 
-		$this->index = Config::index(true);
+		$this->index = Indexer::index(true);
 		$this->index->create(array(), true);
 		
 		// make sure index is available before continuing

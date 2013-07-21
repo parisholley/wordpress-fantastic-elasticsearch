@@ -32,7 +32,7 @@ class Searcher{
 		Config::apply_filters('elastica_query', $query);
 
 		try{
-			$index = Config::index(false);
+			$index = Indexer::index(false);
 
 			$search = new \Elastica\Search($index->getClient());
 			$search->addIndex($index);

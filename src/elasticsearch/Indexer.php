@@ -74,7 +74,7 @@ class Indexer{
 
 	static function map(){
 		$numeric = Config::option('numeric');
-		$index = Config::index(false);
+		$index = Indexer::index(false);
 
 		foreach(Config::fields() as $field){
 			$estype = 'string';
@@ -100,7 +100,7 @@ class Indexer{
 
 	static function clear(){
 		foreach(Config::types() as $type){
-			$type = Config::index(true)->getType($type);
+			$type = Indexer::index(true)->getType($type);
 
 			try{
 				$type->delete();
@@ -116,7 +116,7 @@ class Indexer{
 	}
 
 	static function reindex($page = 1){
-		$index = Config::index(true);
+		$index = Indexer::index(true);
 
 		$posts = self::get_posts($page);
 
@@ -127,7 +127,9 @@ class Indexer{
 		return count($posts);
 	}
 
-	static function delete($index, $post){
+	static function delete($post){
+		$index = self::index(true);
+
 		$type = $index->getType($post->post_type);
 
 		$type->deleteById($post->ID);
@@ -139,6 +141,24 @@ class Indexer{
 		$data = self::build_document($post);
 
 		$type->addDocument(new \Elastica\Document($post->ID, $data));		
+	}
+
+	static function client($write = false){
+		$settings = array(
+			'url' => self::option('server_url')
+		);
+		
+		if($write){
+			$settings['timeout'] = self::option('server_timeout_write') ?: 300;
+		}else{
+			$settings['timeout'] = self::option('server_timeout_read') ?: 1;
+		}
+
+		return new \Elastica\Client($settings);
+	}
+
+	static function index($write = false){
+		return self::client($write)->getIndex(self::option('server_index'));
 	}
 }
 ?>

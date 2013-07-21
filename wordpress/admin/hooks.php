@@ -19,7 +19,7 @@ class Hooks{
 			return;
 		}
 
-		$index = Config::index(true);
+		$index = Indexer::index(true);
 
 		if ($post->post_status == 'trash'){
 			Indexer::delete($index, $post);
@@ -41,7 +41,7 @@ class Hooks{
 			return;
 		}
 
-		$index = Config::index(true);
+		$index = Indexer::index(true);
 		Indexer::delete($index, $post);
 	}
 }

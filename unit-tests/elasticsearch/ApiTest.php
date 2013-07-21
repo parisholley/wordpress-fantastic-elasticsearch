@@ -86,14 +86,14 @@ class ApiTest extends BaseTestCase
      */
 	public function testIndexNotDefined()
 	{
-		$client = Config::index(false);
+		$client = Indexer::index(false);
 	}
 
 	public function testIndexDefined()
 	{
 		update_option('server_index', 'index_name');
 
-		$index = Config::index(false);
+		$index = Indexer::index(false);
 		$this->assertEquals('index_name', $index->getName());
 	}
 
