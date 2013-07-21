@@ -1,3 +1,4 @@
+*.tar.gz
 composer.lock
 elasticsearch-*/
 es.pid
