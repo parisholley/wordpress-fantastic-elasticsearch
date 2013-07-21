@@ -5,3 +5,5 @@ php:
   - 5.3
 services:
   - elasticsearch
+before_script:
+  - sleep 3 # wait to make sure ES is up
