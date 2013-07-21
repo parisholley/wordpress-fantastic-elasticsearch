@@ -15,11 +15,11 @@ class Hooks{
 			$post = get_post( $post_id );
 		}
 
-		if(!in_array($post->post_type, Api::types())){
+		if(!in_array($post->post_type, Config::types())){
 			return;
 		}
 
-		$index = Api::index(true);
+		$index = Config::index(true);
 
 		if ($post->post_status == 'trash'){
 			Indexer::delete($index, $post);
@@ -37,11 +37,11 @@ class Hooks{
 			$post = get_post( $post_id );
 		}
 
-		if(!in_array($post->post_type, Api::types())){
+		if(!in_array($post->post_type, Config::types())){
 			return;
 		}
 
-		$index = Api::index(true);
+		$index = Config::index(true);
 		Indexer::delete($index, $post);
 	}
 }

@@ -3,13 +3,13 @@ namespace elasticsearch;
 
 class Indexer{
 	static function per_page(){
-		return Api::apply_filters('indexer_per_page', 10);
+		return Config::apply_filters('indexer_per_page', 10);
 	}
 
 	static function get_posts($page = 1){
-		$args = Api::apply_filters('indexer_get_posts', array(
+		$args = Config::apply_filters('indexer_get_posts', array(
 			'posts_per_page' => self::per_page(),
-			'post_type' => Api::types(),
+			'post_type' => Config::types(),
 			'paged' => $page,
 			'post_status' => 'publish'
 		));
@@ -19,7 +19,7 @@ class Indexer{
 
 	static function get_count(){
 		$query = new \WP_Query(array(
-			'post_type' => Api::types(),
+			'post_type' => Config::types(),
 			'post_status' => 'publish'
 		));
 
@@ -29,7 +29,7 @@ class Indexer{
 	static function build_document($post){
 		$document = array();
 
-		foreach(Api::fields() as $field){
+		foreach(Config::fields() as $field){
 			if(isset($post->$field)){
 				if($field == 'post_date'){
 					$document[$field] = date('c',strtotime($post->$field));
@@ -40,7 +40,7 @@ class Indexer{
 		}
 
 		if(isset($post->post_type)){
-			$taxes = array_intersect(Api::taxonomies(), get_object_taxonomies($post->post_type));
+			$taxes = array_intersect(Config::taxonomies(), get_object_taxonomies($post->post_type));
 
 			foreach($taxes as $tax){
 				$document[$tax] = array();
@@ -69,14 +69,14 @@ class Indexer{
 			}
 		}
 		
-		return Api::apply_filters('indexer_build_document', $document, $post);
+		return Config::apply_filters('indexer_build_document', $document, $post);
 	}
 
 	static function map(){
-		$numeric = Api::option('numeric');
-		$index = Api::index(false);
+		$numeric = Config::option('numeric');
+		$index = Config::index(false);
 
-		foreach(Api::fields() as $field){
+		foreach(Config::fields() as $field){
 			$estype = 'string';
 
 			if(isset($numeric[$field])){
@@ -85,7 +85,7 @@ class Indexer{
 				$estype = 'date';
 			}
 
-			foreach(Api::types() as $type){
+			foreach(Config::types() as $type){
 				$type = $index->getType($type);
 
 				$mapping = new \Elastica\Type\Mapping($type);
@@ -99,8 +99,8 @@ class Indexer{
 	}
 
 	static function clear(){
-		foreach(Api::types() as $type){
-			$type = Api::index(true)->getType($type);
+		foreach(Config::types() as $type){
+			$type = Config::index(true)->getType($type);
 
 			try{
 				$type->delete();
@@ -116,7 +116,7 @@ class Indexer{
 	}
 
 	static function reindex($page = 1){
-		$index = Api::index(true);
+		$index = Config::index(true);
 
 		$posts = self::get_posts($page);
 

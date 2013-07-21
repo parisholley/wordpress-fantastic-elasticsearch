@@ -5,13 +5,13 @@ class Faceting{
 	static function all($minFont = 12, $maxFont = 24){
 		$options = array();
 
-		foreach(Api::taxonomies() as $tax){
+		foreach(Config::taxonomies() as $tax){
 			$options[$tax] = self::taxonomy($tax);
 		}
 
-		$numeric = Api::option('numeric');
+		$numeric = Config::option('numeric');
 
-		foreach(Api::fields() as $field){
+		foreach(Config::fields() as $field){
 			if($numeric[$field]){
 				$options[$field] = self::range($field);
 			}
@@ -37,7 +37,7 @@ class Faceting{
 			'total' => 0
 		);
 
-		$ranges = Api::ranges($field);
+		$ranges = Config::ranges($field);
 
 		if($ranges){
 			foreach($ranges as $slug => $range){

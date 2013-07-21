@@ -3,7 +3,7 @@ namespace elasticsearch;
 
 $fields = array();
 
-foreach(Api::fields() as $field){
+foreach(Config::fields() as $field){
 	$fields[] = array(
 		'id' => 'score_field_' . $field,
 		'type' => 'text',
@@ -14,7 +14,7 @@ foreach(Api::fields() as $field){
 	);
 }
 
-foreach(Api::taxonomies() as $tax){
+foreach(Config::taxonomies() as $tax){
 	$fields[] = array(
 		'id' => 'score_tax_' . $tax,
 		'type' => 'text',

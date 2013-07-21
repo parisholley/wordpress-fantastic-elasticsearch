@@ -19,7 +19,7 @@ class Category{
 
 		$cat = get_category_by_slug($slug);
 
-		$enabled = Api::option('enable_categories');
+		$enabled = Config::option('enable_categories');
 		
 		if(!$wp_query->is_main_query() || !(is_tax() || $slug) || is_admin() || !$enabled || !in_array($cat->term_id, $enabled)){
 			return;

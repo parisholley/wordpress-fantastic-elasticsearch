@@ -23,7 +23,7 @@ class IndexerTest extends BaseTestCase
 
 		$this->assertEquals(array(
 			'posts_per_page' => 10,
-			'post_type' => Api::types(),
+			'post_type' => Config::types(),
 			'paged' => 2,
 			'post_status' => 'publish'
 		), Indexer::get_posts(2));

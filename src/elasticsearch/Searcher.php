@@ -29,10 +29,10 @@ class Searcher{
 		$query->setSize($size);
 		$query->setFields(array('id'));
 
-		Api::apply_filters('elastica_query', $query);
+		Config::apply_filters('elastica_query', $query);
 
 		try{
-			$index = Api::index(false);
+			$index = Config::index(false);
 
 			$search = new \Elastica\Search($index->getClient());
 			$search->addIndex($index);
@@ -41,13 +41,13 @@ class Searcher{
 				$search->addType($index->getType($type));
 			}
 
-			Api::apply_filters('elastica_search', $search);
+			Config::apply_filters('elastica_search', $search);
 
 			$results = $search->search($query);
 
 			$val = self::_parseResults($results);
 
-			return Api::apply_filters('query_response', $val, $results);
+			return Config::apply_filters('query_response', $val, $results);
 		}catch(\Exception $ex){
 			error_log($ex);
 
@@ -85,7 +85,7 @@ class Searcher{
 
 		$val['ids'] = array_keys($val['scores']);
 
-		return Api::apply_filters('elastica_results', $val, $response);		
+		return Config::apply_filters('elastica_results', $val, $response);		
 	}
 
 	public function _buildQuery($search, $facets = array()){
@@ -93,9 +93,9 @@ class Searcher{
 		$musts = array();
 		$filters = array();
 
-		foreach(Api::taxonomies() as $tax){
+		foreach(Config::taxonomies() as $tax){
 			if($search){
-				$score = Api::score('tax', $tax);
+				$score = Config::score('tax', $tax);
 
 				if($score > 0){
 					$shoulds[] = array('text' => array( $tax => array(
@@ -110,11 +110,11 @@ class Searcher{
 
 		$args = array();
 
-		$numeric = Api::option('numeric');
+		$numeric = Config::option('numeric');
 
-		foreach(Api::fields() as $field){
+		foreach(Config::fields() as $field){
 			if($search){
-				$score = Api::score('field', $field);
+				$score = Config::score('field', $field);
 
 				if($score > 0){
 					$shoulds[] = array('text' => array($field => array(
@@ -125,7 +125,7 @@ class Searcher{
 			}
 
 			if(isset($numeric[$field]) && $numeric[$field]){
-				$ranges = Api::ranges($field);
+				$ranges = Config::ranges($field);
 
 				if(count($ranges) > 0 ){
 					self::_filterBySelectedFacets($field, $facets, 'range', $musts, $filters, $ranges);
@@ -145,16 +145,16 @@ class Searcher{
 			$args['query']['bool']['must'] = $musts;
 		}
 
-		$args = Api::apply_filters('query_pre_facet_filter', $args);
+		$args = Config::apply_filters('query_pre_facet_filter', $args);
 
 		// return facets
-		foreach(Api::facets() as $facet){
+		foreach(Config::facets() as $facet){
 			$args['facets'][$facet]['terms']['field'] = $facet;
 		}
 
 		if(is_array($numeric)){
 			foreach(array_keys($numeric) as $facet){
-				$ranges = Api::ranges($facet);
+				$ranges = Config::ranges($facet);
 
 				if(count($ranges) > 0 ){
 					$args['facets'][$facet]['range'][$facet] = array_values($ranges);
@@ -162,7 +162,7 @@ class Searcher{
 			}
 		}
 		
-		return Api::apply_filters('query_post_facet_filter', $args);
+		return Config::apply_filters('query_post_facet_filter', $args);
 	}
 
 	public function _filterBySelectedFacets($name, $facets, $type, &$musts, &$filters, $translate = array()){

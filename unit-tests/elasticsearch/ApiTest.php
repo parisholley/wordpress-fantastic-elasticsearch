@@ -7,31 +7,31 @@ class ApiTest extends BaseTestCase
 	{
 		update_option('foo', 'bar');
 
-		$this->assertEquals('bar', Api::option('foo'));
+		$this->assertEquals('bar', Config::option('foo'));
 	}
 
 	public function testOptionNotDefined()
 	{
-		$this->assertNull(Api::option('baz'));
+		$this->assertNull(Config::option('baz'));
 	}
 
 	public function testScoreOption()
 	{
 		update_option('score_type_name', 'bar');
 
-		$this->assertEquals('bar', Api::score('type', 'name'));
+		$this->assertEquals('bar', Config::score('type', 'name'));
 	}
 
 	public function testRangesFieldNotFound()
 	{
-		$this->assertNull(Api::ranges('field'));
+		$this->assertNull(Config::ranges('field'));
 	}
 
 	public function testRangesFieldFound()
 	{
 		update_option('field_range', '-10,10-20,20-');
 
-		$ranges = Api::ranges('field');
+		$ranges = Config::ranges('field');
 
 		$this->assertCount(3, $ranges);
 		
@@ -55,7 +55,7 @@ class ApiTest extends BaseTestCase
 
 	public function testClientWriteDefault()
 	{
-		$client = Api::client(true);
+		$client = Config::client(true);
 		$this->assertEquals(300, $client->getConfig('timeout'));
 	}
 
@@ -63,13 +63,13 @@ class ApiTest extends BaseTestCase
 	{
 		update_option('server_timeout_write', 30);
 
-		$client = Api::client(true);
+		$client = Config::client(true);
 		$this->assertEquals(30, $client->getConfig('timeout'));
 	}
 
 	public function testClientReadDefault()
 	{
-		$client = Api::client(false);
+		$client = Config::client(false);
 		$this->assertEquals(1, $client->getConfig('timeout'));
 	}
 
@@ -77,7 +77,7 @@ class ApiTest extends BaseTestCase
 	{
 		update_option('server_timeout_read', 100);
 
-		$client = Api::client(false);
+		$client = Config::client(false);
 		$this->assertEquals(100, $client->getConfig('timeout'));
 	}
 
@@ -86,27 +86,27 @@ class ApiTest extends BaseTestCase
      */
 	public function testIndexNotDefined()
 	{
-		$client = Api::index(false);
+		$client = Config::index(false);
 	}
 
 	public function testIndexDefined()
 	{
 		update_option('server_index', 'index_name');
 
-		$index = Api::index(false);
+		$index = Config::index(false);
 		$this->assertEquals('index_name', $index->getName());
 	}
 
 	public function testFieldsDefault()
 	{
-		$this->assertEquals(array('post_date', 'post_content', 'post_title'), Api::fields());
+		$this->assertEquals(array('post_date', 'post_content', 'post_title'), Config::fields());
 	}
 
 	public function testFieldsDefined()
 	{
 		update_option('fields', array('post_date' => 1, 'post_content' => 1));
 
-		$this->assertEquals(array('post_date', 'post_content'), Api::fields());
+		$this->assertEquals(array('post_date', 'post_content'), Config::fields());
 	}
 
 	public function testFieldsFilter()
@@ -115,14 +115,14 @@ class ApiTest extends BaseTestCase
 			return array('filtered');
 		});
 
-		$this->assertEquals(array('filtered'), Api::fields());
+		$this->assertEquals(array('filtered'), Config::fields());
 	}
 
 	public function testTaxonomiesDefined()
 	{
 		update_option('taxonomies', array('tax1' => 1, 'tax2' => 1));
 
-		$this->assertEquals(array('tax1', 'tax2'), Api::taxonomies());
+		$this->assertEquals(array('tax1', 'tax2'), Config::taxonomies());
 	}
 
 	public function testTaxonomiesDefault()
@@ -131,7 +131,7 @@ class ApiTest extends BaseTestCase
 		register_taxonomy('tax1', 'post');
 		register_taxonomy('tax2', 'post');
 
-		$this->assertEquals(array('tax1', 'tax2'), Api::taxonomies());
+		$this->assertEquals(array('tax1', 'tax2'), Config::taxonomies());
 	}
 
 	public function testTypesDefined()
@@ -139,14 +139,14 @@ class ApiTest extends BaseTestCase
 		register_post_type('post');
 		register_post_type('review');
 
-		$this->assertEquals(array('post', 'review'), Api::types());
+		$this->assertEquals(array('post', 'review'), Config::types());
 	}
 
 	public function testTypesDefault()
 	{
 		update_option('types', array('post' => 1, 'review' => 1));
 
-		$this->assertEquals(array('post', 'review'), Api::types());
+		$this->assertEquals(array('post', 'review'), Config::types());
 	}
 }
 ?>

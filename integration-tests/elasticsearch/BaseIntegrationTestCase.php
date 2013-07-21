@@ -10,11 +10,11 @@ class BaseIntegrationTestCase extends BaseTestCase
 		update_option('server_url', 'http://127.0.0.1:9200/');
 		update_option('server_index', 'travisci');	
 
-		$this->index = Api::index(true);
+		$this->index = Config::index(true);
 		$this->index->create(array(), true);
 		
 		// make sure index is available before continuing
-        Api::client(true)->request('_cluster/health/travisci?wait_for_status=yellow', \Elastica\Request::GET);
+        Config::client(true)->request('_cluster/health/travisci?wait_for_status=yellow', \Elastica\Request::GET);
 
 		$this->assertEquals(0, $this->index->count());
 	}

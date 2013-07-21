@@ -10,11 +10,11 @@ $fields = array(
 	)
 );
 
-foreach(Api::fields() as $field){
+foreach(Config::fields() as $field){
 	$fields['numeric']['options'][$field] = $field;
 }
 
-$numeric_option = Api::option('numeric');
+$numeric_option = Config::option('numeric');
 
 if ($numeric_option) {
 	foreach(array_keys($numeric_option) as $numeric){
@@ -39,11 +39,11 @@ add_action('nhp-opts-options-validate-elasticsearch', function(){
 
 	if($_POST['elasticsearch']['last_tab'] == 'field'){
 		try{
-			foreach(Api::fields() as $field){
+			foreach(Config::fields() as $field){
 				if($_POST['elasticsearch']['numeric'][$field]){
-					$index = Api::index(false);
+					$index = Config::index(false);
 
-					foreach(Api::types() as $type){
+					foreach(Config::types() as $type){
 						$type = $index->getType($type);
 
 						$mapping = new \Elastica\Type\Mapping($type);
