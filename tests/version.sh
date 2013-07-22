@@ -23,7 +23,7 @@ if [ ! -f "es.pid" ]; then
 fi
 
 echo "Starting PHPUnit Tests."
-phpunit $ARGS
+phpunit --configuration=../phpunit.xml $ARGS
 
 PASSED=$?
 

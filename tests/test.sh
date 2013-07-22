@@ -1,4 +1,5 @@
 export ARGS=""
+cd `dirname $0`
 
 echo "Checking for XDebug.";
 
