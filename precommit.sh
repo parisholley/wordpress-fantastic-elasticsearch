@@ -5,6 +5,10 @@ echo "-- Ensure git is in good state"
 git submodule init
 git submodule update
 
+echo "-- Updating dependencies"
+
+composer update
+
 echo "-- Executing Tests"
 
 tests/test.sh
