@@ -1,5 +1,10 @@
 VERSION=2\\.0\\.0
 
+echo "-- Ensure git is in good state"
+
+git submodule init
+git submodule update
+
 echo "-- Executing Tests"
 
 tests/test.sh
