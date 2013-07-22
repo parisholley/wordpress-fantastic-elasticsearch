@@ -6,7 +6,7 @@ Requires at least: 3.5
 Tested up to: 3.5
 Stable tag: trunk
 
-Improve wordpress search performance and accuracy by leveraging an ElasticSearch server.
+Improve wordpress search performance/accuracy and enable faceted search by leveraging an ElasticSearch server.
 
 == Description ==
 
