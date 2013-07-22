@@ -1,16 +1,26 @@
 VERSION=2\\.0\\.0
 
-echo "-- Updating version numbers in files."
+echo "-- Executing Tests"
 
-grep -rl "@version" src/elasticsearch | xargs sed -i.bak "s/@version .*/@version $VERSION/g"
-sed -i.bak "s/Version .*/Version $VERSION/g" elasticsearch.php
+tests/test.sh
 
-# mac require -i extension
-find . | grep .bak | xargs rm
+if [ $? -eq 0 ]; then
+	echo "-- Updating version numbers in files."
 
-echo "-- Generating documentation."
+	grep -rl "@version" src/elasticsearch | xargs sed -i.bak "s/@version .*/@version $VERSION/g"
+	sed -i.bak "s/Version .*/Version $VERSION/g" elasticsearch.php
 
-type apigen >/dev/null 2>&1 || { echo >&2 "ApiGen is not installed."; exit 1; }
+	# mac require -i extension
+	find . | grep .bak | xargs rm
 
-apigen --source=src/elasticsearch/ --destination=docs/api
+	echo "-- Generating documentation."
+
+	type apigen >/dev/null 2>&1 || { echo >&2 "ApiGen is not installed."; exit 1; }
+
+	apigen --source=src/elasticsearch/ --destination=docs/api
+
+	echo "-- It is safe to commit!"
+else
+	echo "-- THE TESTS FAILED, DO NOT COMMIT!"
+fi
 

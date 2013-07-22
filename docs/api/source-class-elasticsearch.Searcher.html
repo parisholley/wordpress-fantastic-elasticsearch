@@ -128,7 +128,7 @@
 </span><span id="46" class="l"><a class="l" href="#46"> 46: </a>        Config::apply_filters(<span class="php-quote">'elastica_query'</span>, <span class="php-var">$query</span>);
 </span><span id="47" class="l"><a class="l" href="#47"> 47: </a>
 </span><span id="48" class="l"><a class="l" href="#48"> 48: </a>        <span class="php-keyword1">try</span>{
-</span><span id="49" class="l"><a class="l" href="#49"> 49: </a>            <span class="php-var">$index</span> = Indexer::index(<span class="php-keyword1">false</span>);
+</span><span id="49" class="l"><a class="l" href="#49"> 49: </a>            <span class="php-var">$index</span> = Indexer::_index(<span class="php-keyword1">false</span>);
 </span><span id="50" class="l"><a class="l" href="#50"> 50: </a>
 </span><span id="51" class="l"><a class="l" href="#51"> 51: </a>            <span class="php-var">$search</span> = <span class="php-keyword1">new</span> \Elastica\Search(<span class="php-var">$index</span>-&gt;getClient());
 </span><span id="52" class="l"><a class="l" href="#52"> 52: </a>            <span class="php-var">$search</span>-&gt;addIndex(<span class="php-var">$index</span>);

@@ -163,7 +163,7 @@
 </span><span id="81" class="l"><a class="l" href="#81"> 81: </a>        <span class="php-var">$posts</span> = self::get_posts(<span class="php-var">$page</span>);
 </span><span id="82" class="l"><a class="l" href="#82"> 82: </a>
 </span><span id="83" class="l"><a class="l" href="#83"> 83: </a>        <span class="php-keyword1">foreach</span>(<span class="php-var">$posts</span> <span class="php-keyword1">as</span> <span class="php-var">$post</span>){
-</span><span id="84" class="l"><a class="l" href="#84"> 84: </a>            self::addOrUpdate(<span class="php-var">$index</span>, <span class="php-var">$post</span>);
+</span><span id="84" class="l"><a class="l" href="#84"> 84: </a>            self::addOrUpdate(<span class="php-var">$post</span>);
 </span><span id="85" class="l"><a class="l" href="#85"> 85: </a>        }
 </span><span id="86" class="l"><a class="l" href="#86"> 86: </a>
 </span><span id="87" class="l"><a class="l" href="#87"> 87: </a>        <span class="php-keyword1">return</span> <span class="php-keyword2">count</span>(<span class="php-var">$posts</span>);

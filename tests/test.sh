@@ -26,5 +26,9 @@ if [ $PASSED -eq 0 ]; then
 			echo "Opening Coverage Report."
 			open report/index.html
 		fi
+
+		exit 0
 	fi
 fi
+
+exit 1
