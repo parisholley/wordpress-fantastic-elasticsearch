@@ -17,9 +17,9 @@ if [ $? -eq 0 ]; then
 
 	type apigen >/dev/null 2>&1 || { echo >&2 "ApiGen is not installed."; exit 1; }
 
-	apigen --source=src/elasticsearch/ --destination=docs/api
+	apigen --source=src/elasticsearch/ --destination=docs
 
-	echo "-- It is safe to commit!"
+	echo "-- It is safe to commit! Make sure to commit the docs directory first."
 else
 	echo "-- THE TESTS FAILED, DO NOT COMMIT!"
 fi
