@@ -60,6 +60,9 @@ Use the elasticsearch\Faceting methods as documented at http://parisholley.githu
 * Continuous integration setup with travis-ci
 * Developer documentation for faceting and extending
 
+= 1.2.4 =
+* Allow plugin to work if downloaded from github or wordpress (images weren't showing up in admin)
+
 = 1.2.3 = 
 * Bug fixes as result of merge
 
