@@ -16,15 +16,16 @@ This plugin is NOT a simple drop-in, it is expected you have some understanding 
 * Ability to specify what data points should be indexed and what the relevancy of those points are.
 * Fall back to default wordpress search if ElasticSearch server is not responsive.
 * Update ElasticSearch server when posts are removed/added/unpublished.
-
-Future Features
-
-* Facet utilities for building your own faceted search (javascript components, etc)
+* Provide facet widgets that can be used in your themes
+* Provide a faceting API for building your own custom searches
 
 Please submit bugs or contributions to the github location and not here on wordpress' system:
 
 https://github.com/parisholley/wordpress-fantastic-elasticsearch/
 
+API documentation can be found here:
+
+http://parisholley.github.io/wordpress-fantastic-elasticsearch/
 
 == Installation ==
 
@@ -41,7 +42,7 @@ Rather than re-index every time taxonomies change, we expect that will be a manu
 
 = How do I filter my search results using facets? =
 
-By default, the plugin will look for those facet names (taxonomies) in the query string along with the search (ie: ?s=test&category[]=1). The more facets you add to the URL, the more it will filter. Facets values and counts are available at $WP_Query->facets.
+Use the elasticsearch\Faceting methods as documented at http://parisholley.github.io/wordpress-fantastic-elasticsearch/
 
 == Screenshots ==
 
