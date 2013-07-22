@@ -1,3 +1,5 @@
+master.zip
+vagrantpress-master/
 *.tar.gz
 composer.lock
 elasticsearch-*/

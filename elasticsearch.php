@@ -29,17 +29,17 @@ License:
 namespace elasticsearch;
 
 if(!class_exists('NHP_Options')){
-	require_once( dirname( __FILE__ ) . '/lib/nhp/options/options.php' );
+	require_once( dirname( __FILE__ ) . '/wp/lib/nhp/options/options.php' );
 }
 
 require 'src/bootstrap.php';
 
-require 'wordpress/theme/search.php';
-require 'wordpress/theme/category.php';
-require 'wordpress/admin/hooks.php';
+require 'wp/theme/search.php';
+require 'wp/theme/category.php';
+require 'wp/admin/hooks.php';
 
 add_action( 'admin_enqueue_scripts', function() {
-	wp_register_style( 'custom_wp_admin_css', plugins_url('wordpress/css/admin.css', __FILE__) );
+	wp_register_style( 'custom_wp_admin_css', plugins_url('wp/css/admin.css', __FILE__) );
 	wp_enqueue_style( 'custom_wp_admin_css' );
 });
 
@@ -65,17 +65,17 @@ add_action('init', function(){
 	$args['show_import_export'] = false;
 	$args['page_position'] = 10241988;
 	$args['dev_mode'] = false;
-	$args['menu_icon'] = plugins_url('/wordpress/images/menu.png', __FILE__);
+	$args['menu_icon'] = plugins_url('/wp/images/menu.png', __FILE__);
 	$args['page_icon'] = 'elasticsearch-icon';
 
 	$sections = array();
 
-	require('wordpress/admin/sections/wordpress-integration.php');
-	require('wordpress/admin/sections/server-settings.php');
-	require('wordpress/admin/sections/content-indexing.php');
-	require('wordpress/admin/sections/field-mapping.php');
-	require('wordpress/admin/sections/results-scoring.php');
-	require('wordpress/admin/sections/manage-index.php');
+	require('wp/admin/sections/wordpress-integration.php');
+	require('wp/admin/sections/server-settings.php');
+	require('wp/admin/sections/content-indexing.php');
+	require('wp/admin/sections/field-mapping.php');
+	require('wp/admin/sections/results-scoring.php');
+	require('wp/admin/sections/manage-index.php');
 
 	global $NHP_Options;
 
