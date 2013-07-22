@@ -62,9 +62,6 @@ class FacetingTest extends BaseTestCase
 		$url = Faceting::urlRemove('http://site.com/my/sub/page/', 'facet', 'facet2');
 		$this->assertEquals('http://site.com/my/sub/page/?facet%5Band%5D%5B0%5D=facet1', $url);
 
-		$url = Faceting::urlRemove('http://site.com/my/sub/page/', 'facet', 'facet1', 'or');
-		$this->assertEquals('http://site.com/my/sub/page/?facet%5Band%5D%5B0%5D=facet1', $url);
-
 		$url = Faceting::urlRemove('http://site.com/my/sub/page/', 'facet', 'facet1');
 		$this->assertEquals('http://site.com/my/sub/page/', $url);
 	}

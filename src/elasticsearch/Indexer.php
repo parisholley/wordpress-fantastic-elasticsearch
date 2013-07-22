@@ -1,11 +1,30 @@
 <?php
 namespace elasticsearch;
 
+/**
+* This class handles the magic of building documents and sending them to ElasticSearch for indexing.
+*
+* @license http://opensource.org/licenses/MIT
+* @author Paris Holley <mail@parisholley.com>
+* @version 2.0.0
+**/
 class Indexer{
+	/**
+	* The number of posts to index per page when re-indexing
+	*
+	* @return integer posts per page
+	**/
 	static function per_page(){
 		return Config::apply_filters('indexer_per_page', 10);
 	}
 
+	/**
+	* Retrieve the posts for the page provided
+	*
+	* @param integer $page The page of results to retrieve for indexing
+	*
+	* @return WP_Post[] posts
+	**/
 	static function get_posts($page = 1){
 		$args = Config::apply_filters('indexer_get_posts', array(
 			'posts_per_page' => self::per_page(),
@@ -17,6 +36,11 @@ class Indexer{
 		return get_posts($args);
 	}
 
+	/**
+	* Retrieve count of the number of posts available for indexing
+	*
+	* @return integer number of posts
+	**/
 	static function get_count(){
 		$query = new \WP_Query(array(
 			'post_type' => Config::types(),
@@ -26,7 +50,107 @@ class Indexer{
 		return $query->found_posts; //performance risk?
 	}
 
-	static function build_document($post){
+	/**
+	* Removes all data in the ElasticSearch index
+	**/
+	static function clear(){
+		foreach(Config::types() as $type){
+			$type = self::_index(true)->getType($type);
+
+			try{
+				$type->delete();
+			}catch(\Exception $ex){
+				// no way to detect if type exists
+				if(strpos($ex->getMessage(), 'TypeMissingException') === false){
+					throw $ex;
+				}
+			}
+		}
+
+		self::_map();
+	}
+
+	/**
+	* Re-index the posts on the given page in the ElasticSearch index
+	*
+	* @param integer $page The page to re-index
+	**/
+	static function reindex($page = 1){
+		$index = self::_index(true);
+
+		$posts = self::get_posts($page);
+
+		foreach($posts as $post){
+			self::addOrUpdate($post);
+		}
+
+		return count($posts);
+	}
+
+	/**
+	* Removes a post from the ElasticSearch index
+	*
+	* @param WP_Post $post The wordpress post to remove
+	**/
+	static function delete($post){
+		$index = self::_index(true);
+
+		$type = $index->getType($post->post_type);
+
+		$type->deleteById($post->ID);
+	}
+
+	/**
+	* Updates an existing document in the ElasticSearch index (or creates it if it doesn't exist)
+	*
+	* @param WP_Post $post The wordpress post to remove
+	**/
+	static function addOrUpdate($post){
+		$type = self::_index(true)->getType($post->post_type);
+
+		$data = self::_build_document($post);
+
+		$type->addDocument(new \Elastica\Document($post->ID, $data));		
+	}
+
+	/**
+	* Reads F.E.S configuration and updates ElasticSearch field mapping information (this can corrupt existing data).
+	* @internal
+	**/
+	static function _map(){
+		$numeric = Config::option('numeric');
+		$index = self::_index(false);
+
+		foreach(Config::fields() as $field){
+			$estype = 'string';
+
+			if(isset($numeric[$field])){
+				$estype = 'float';
+			}elseif($field == 'post_date'){
+				$estype = 'date';
+			}
+
+			foreach(Config::types() as $type){
+				$type = $index->getType($type);
+
+				$mapping = new \Elastica\Type\Mapping($type);
+				$mapping->setProperties(array($field => array(
+					'type' => $estype
+				)));
+
+				$mapping->send();
+			}
+		}
+	}
+
+	/**
+	* Takes a wordpress post object and converts it into an associative array that can be sent to ElasticSearch
+	*
+	* @param WP_Post $post wordpress post object
+	* @return array document data
+	* @internal
+	**/
+	static function _build_document($post){
 		$document = array();
 
 		foreach(Config::fields() as $field){
@@ -72,78 +196,15 @@ class Indexer{
 		return Config::apply_filters('indexer_build_document', $document, $post);
 	}
 
-	static function map(){
-		$numeric = Config::option('numeric');
-		$index = Indexer::index(false);
-
-		foreach(Config::fields() as $field){
-			$estype = 'string';
-
-			if(isset($numeric[$field])){
-				$estype = 'float';
-			}elseif($field == 'post_date'){
-				$estype = 'date';
-			}
-
-			foreach(Config::types() as $type){
-				$type = $index->getType($type);
-
-				$mapping = new \Elastica\Type\Mapping($type);
-				$mapping->setProperties(array($field => array(
-					'type' => $estype
-				)));
-
-				$mapping->send();
-			}
-		}
-	}
-
-	static function clear(){
-		foreach(Config::types() as $type){
-			$type = Indexer::index(true)->getType($type);
-
-			try{
-				$type->delete();
-			}catch(\Exception $ex){
-				// no way to detect if type exists
-				if(strpos($ex->getMessage(), 'TypeMissingException') === false){
-					throw $ex;
-				}
-			}
-		}
-
-		self::map();
-	}
-
-	static function reindex($page = 1){
-		$index = Indexer::index(true);
-
-		$posts = self::get_posts($page);
-
-		foreach($posts as $post){
-			self::addOrUpdate($index, $post);
-		}
-
-		return count($posts);
-	}
-
-	static function delete($post){
-		$index = self::index(true);
-
-		$type = $index->getType($post->post_type);
-
-		$type->deleteById($post->ID);
-	}
-
-	static function addOrUpdate($index, $post){
-		$type = $index->getType($post->post_type);
-
-		$data = self::build_document($post);
-
-		$type->addDocument(new \Elastica\Document($post->ID, $data));		
-	}
-
-	static function client($write = false){
+	/**
+	* The Elastica\Client object used by F.E.S
+	*
+	* @param boolean $write Specifiy whether you are making read-only or write transactions (currently just adjusts timeout values)
+	*
+	* @return Elastica\Client
+	* @internal
+	**/
+	static function _client($write = false){
 		$settings = array(
 			'url' => Config::option('server_url')
 		);
@@ -157,8 +218,16 @@ class Indexer{
 		return new \Elastica\Client($settings);
 	}
 
-	static function index($write = false){
-		return self::client($write)->getIndex(Config::option('server_index'));
+	/**
+	* The Elastica\Index object used by F.E.S
+	*
+	* @param boolean $write Specifiy whether you are making read-only or write transactions (currently just adjusts timeout values)
+	*
+	* @return Elastica\Index
+	* @internal
+	**/
+	static function _index($write = false){
+		return self::_client($write)->getIndex(Config::option('server_index'));
 	}
 }
 ?>

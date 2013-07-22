@@ -1,13 +1,24 @@
 <?php
 namespace elasticsearch;
 
+/**
+* The searcher class provides all you need to query your ElasticSearch server.
+*
+* @license http://opensource.org/licenses/MIT
+* @author Paris Holley <mail@parisholley.com>
+* @version 2.0.0
+**/
 class Searcher{
-	public function type($type, $pageIndex = 0, $size = 10, $facets = array()){
-		$args = self::_buildQuery(null, $facets);
-
-		return self::_query($args, $pageIndex, $size, $type);
-	}
-
+	/**
+	* Initiate a search with the ElasticSearch server and return the results. Use Faceting to manipulate URLs.
+	* @param string $search A space delimited list of terms to search for
+	* @param integer $pageIndex The index that represents the current page
+	* @param integer $size The number of results to return per page
+	* @param array $facets An object that contains selected facets (typically the query string, ie: $_GET)
+	* @see Faceting
+	* 
+	* @return array The results of the search
+	**/
 	public function search($search, $pageIndex = 0, $size = 10, $facets = array()){
 		$args = self::_buildQuery($search, $facets);
 
@@ -23,6 +34,9 @@ class Searcher{
 		return self::_query($args, $pageIndex, $size);
 	}
 
+	/**
+	* @internal
+	**/
 	public function _query($args, $pageIndex, $size, $type = null){
 		$query =new \Elastica\Query($args);
 		$query->setFrom($pageIndex * $size);
@@ -32,7 +46,7 @@ class Searcher{
 		Config::apply_filters('elastica_query', $query);
 
 		try{
-			$index = Indexer::index(false);
+			$index = Indexer::_index(false);
 
 			$search = new \Elastica\Search($index->getClient());
 			$search->addIndex($index);
@@ -55,6 +69,9 @@ class Searcher{
 		}
 	}
 
+	/**
+	* @internal
+	**/
 	public function _parseResults($response){
 		$val = array(
 			'total' => $response->getTotalHits(),
@@ -88,6 +105,9 @@ class Searcher{
 		return Config::apply_filters('elastica_results', $val, $response);		
 	}
 
+	/**
+	* @internal
+	**/
 	public function _buildQuery($search, $facets = array()){
 		$shoulds = array();
 		$musts = array();
@@ -165,6 +185,9 @@ class Searcher{
 		return Config::apply_filters('query_post_facet_filter', $args);
 	}
 
+	/**
+	* @internal
+	**/
 	public function _filterBySelectedFacets($name, $facets, $type, &$musts, &$filters, $translate = array()){
 		if(isset($facets[$name])){
 			$output = &$musts;

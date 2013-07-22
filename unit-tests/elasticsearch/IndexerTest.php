@@ -3,6 +3,50 @@ namespace elasticsearch;
 
 class IndexerTest extends BaseTestCase
 {
+	public function testClientWriteDefault()
+	{
+		$client = Indexer::_client(true);
+		$this->assertEquals(300, $client->getConfig('timeout'));
+	}
+
+	public function testClientWriteConfig()
+	{
+		update_option('server_timeout_write', 30);
+
+		$client = Indexer::_client(true);
+		$this->assertEquals(30, $client->getConfig('timeout'));
+	}
+
+	public function testClientReadDefault()
+	{
+		$client = Indexer::_client(false);
+		$this->assertEquals(1, $client->getConfig('timeout'));
+	}
+
+	public function testClientReadConfig()
+	{
+		update_option('server_timeout_read', 100);
+
+		$client = Indexer::_client(false);
+		$this->assertEquals(100, $client->getConfig('timeout'));
+	}
+
+	/**
+     * @expectedException \Elastica\Exception\InvalidException
+     */
+	public function testIndexNotDefined()
+	{
+		$client = Indexer::_index(false);
+	}
+
+	public function testIndexDefined()
+	{
+		update_option('server_index', 'index_name');
+
+		$index = Indexer::_index(false);
+		$this->assertEquals('index_name', $index->getName());
+	}
+
 	public function testPerPage()
 	{
 		$this->assertEquals(10, Indexer::per_page());
@@ -55,7 +99,7 @@ class IndexerTest extends BaseTestCase
 			return array('wee');
 		});
 		
-		$document = Indexer::build_document(array());
+		$document = Indexer::_build_document(array());
 		$this->assertEquals(array('wee'), $document);
 	}
 
@@ -109,7 +153,7 @@ class IndexerTest extends BaseTestCase
 		
 		date_default_timezone_set('America/Chicago');
 		
-		$document = Indexer::build_document($post);
+		$document = Indexer::_build_document($post);
 		
 		date_default_timezone_set($tz);
 

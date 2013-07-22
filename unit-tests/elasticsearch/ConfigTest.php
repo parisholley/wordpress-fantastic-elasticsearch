@@ -53,50 +53,6 @@ class ApiTest extends BaseTestCase
 		$this->assertEquals(20, $ranges['20-']['from']);
 	}
 
-	public function testClientWriteDefault()
-	{
-		$client = Indexer::client(true);
-		$this->assertEquals(300, $client->getConfig('timeout'));
-	}
-
-	public function testClientWriteConfig()
-	{
-		update_option('server_timeout_write', 30);
-
-		$client = Indexer::client(true);
-		$this->assertEquals(30, $client->getConfig('timeout'));
-	}
-
-	public function testClientReadDefault()
-	{
-		$client = Indexer::client(false);
-		$this->assertEquals(1, $client->getConfig('timeout'));
-	}
-
-	public function testClientReadConfig()
-	{
-		update_option('server_timeout_read', 100);
-
-		$client = Indexer::client(false);
-		$this->assertEquals(100, $client->getConfig('timeout'));
-	}
-
-	/**
-     * @expectedException \Elastica\Exception\InvalidException
-     */
-	public function testIndexNotDefined()
-	{
-		$client = Indexer::index(false);
-	}
-
-	public function testIndexDefined()
-	{
-		update_option('server_index', 'index_name');
-
-		$index = Indexer::index(false);
-		$this->assertEquals('index_name', $index->getName());
-	}
-
 	public function testFieldsDefault()
 	{
 		$this->assertEquals(array('post_date', 'post_content', 'post_title'), Config::fields());

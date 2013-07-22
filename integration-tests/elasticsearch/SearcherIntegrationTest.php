@@ -18,14 +18,14 @@ class SearcherIntegrationTest extends BaseIntegrationTestCase
 
 		register_post_type('post');
 
-		Indexer::addOrUpdate($this->index, (object) array(
+		Indexer::addOrUpdate((object) array(
 			'post_type' => 'post',
 			'ID' => 1,
 			'field1' => 'value1',
 			'field2' => 'value2'
 		));
 
-		Indexer::addOrUpdate($this->index, (object) array(
+		Indexer::addOrUpdate((object) array(
 			'post_type' => 'post',
 			'ID' => 2,
 			'field1' => 'value2',
@@ -50,50 +50,20 @@ class SearcherIntegrationTest extends BaseIntegrationTestCase
 		$this->assertEquals(array(1, 2), $results['ids']);
 	}
 
-	public function testType()
-	{
-		update_option('fields', array('field1' => 1, 'field2' => 1));
-		update_option('score_field_field1', 1);
-		update_option('score_field_field2', 1);
-
-		register_post_type('post');
-
-		Indexer::addOrUpdate($this->index, (object) array(
-			'post_type' => 'post',
-			'ID' => 1,
-			'field1' => 'value1',
-			'field2' => 'value2'
-		));
-
-		Indexer::addOrUpdate($this->index, (object) array(
-			'post_type' => 'post',
-			'ID' => 2,
-			'field1' => 'value2',
-			'field2' => 'value3'
-		));
-
-		$this->index->refresh();
-
-		$results = $this->searcher->type('post');
-
-		$this->assertEquals(2, $results['total']);
-		$this->assertEquals(array(1, 2), $results['ids']);
-	}
-
 	public function testSearchNotScored()
 	{
 		update_option('fields', array('field1' => 1, 'field2' => 1));
 
 		register_post_type('post');
 
-		Indexer::addOrUpdate($this->index, (object) array(
+		Indexer::addOrUpdate((object) array(
 			'post_type' => 'post',
 			'ID' => 1,
 			'field1' => 'value1',
 			'field2' => 'value2'
 		));
 
-		Indexer::addOrUpdate($this->index, (object) array(
+		Indexer::addOrUpdate((object) array(
 			'post_type' => 'post',
 			'ID' => 2,
 			'field1' => 'value2',
@@ -116,14 +86,14 @@ class SearcherIntegrationTest extends BaseIntegrationTestCase
 
 		register_post_type('post');
 
-		Indexer::addOrUpdate($this->index, (object) array(
+		Indexer::addOrUpdate((object) array(
 			'post_type' => 'post',
 			'ID' => 1,
 			'field1' => 'value1',
 			'field2' => 'value2'
 		));
 
-		Indexer::addOrUpdate($this->index, (object) array(
+		Indexer::addOrUpdate((object) array(
 			'post_type' => 'post',
 			'ID' => 2,
 			'field1' => 'value2',
@@ -165,19 +135,19 @@ class SearcherIntegrationTest extends BaseIntegrationTestCase
 
 		register_post_type('post');
 
-		Indexer::addOrUpdate($this->index, (object) array(
+		Indexer::addOrUpdate((object) array(
 			'post_type' => 'post',
 			'ID' => 1,
 			'field1' => 'value1',
 		));
 
-		Indexer::addOrUpdate($this->index, (object) array(
+		Indexer::addOrUpdate((object) array(
 			'post_type' => 'post',
 			'ID' => 2,
 			'field1' => 'value1',
 		));
 
-		Indexer::addOrUpdate($this->index, (object) array(
+		Indexer::addOrUpdate((object) array(
 			'post_type' => 'post',
 			'ID' => 3,
 			'field1' => 'value1',
@@ -220,17 +190,17 @@ class SearcherIntegrationTest extends BaseIntegrationTestCase
 		wp_set_object_terms(2, array(2), 'tag');
 		wp_set_object_terms(3, array(1, 2), 'tag');
 
-		Indexer::addOrUpdate($this->index, (object) array(
+		Indexer::addOrUpdate((object) array(
 			'post_type' => 'post',
 			'ID' => 1
 		));
 
-		Indexer::addOrUpdate($this->index, (object) array(
+		Indexer::addOrUpdate((object) array(
 			'post_type' => 'post',
 			'ID' => 2
 		));
 
-		Indexer::addOrUpdate($this->index, (object) array(
+		Indexer::addOrUpdate((object) array(
 			'post_type' => 'post',
 			'ID' => 3
 		));
@@ -306,37 +276,37 @@ class SearcherIntegrationTest extends BaseIntegrationTestCase
 
 		register_post_type('post');
 
-		Indexer::addOrUpdate($this->index, (object) array(
+		Indexer::addOrUpdate((object) array(
 			'post_type' => 'post',
 			'ID' => 1,
 			'field1' => 5
 		));
 
-		Indexer::addOrUpdate($this->index, (object) array(
+		Indexer::addOrUpdate((object) array(
 			'post_type' => 'post',
 			'ID' => 2,
 			'field1' =>15
 		));
 
-		Indexer::addOrUpdate($this->index, (object) array(
+		Indexer::addOrUpdate((object) array(
 			'post_type' => 'post',
 			'ID' => 3,
 			'field1' =>17
 		));
 
-		Indexer::addOrUpdate($this->index, (object) array(
+		Indexer::addOrUpdate((object) array(
 			'post_type' => 'post',
 			'ID' => 4,
 			'field1' => 23
 		));
 
-		Indexer::addOrUpdate($this->index, (object) array(
+		Indexer::addOrUpdate((object) array(
 			'post_type' => 'post',
 			'ID' => 5,
 			'field1' => 25
 		));
 
-		Indexer::addOrUpdate($this->index, (object) array(
+		Indexer::addOrUpdate((object) array(
 			'post_type' => 'post',
 			'ID' => 6,
 			'field1' => 27
@@ -431,37 +401,37 @@ class SearcherIntegrationTest extends BaseIntegrationTestCase
 
 		register_post_type('post');
 
-		Indexer::addOrUpdate($this->index, (object) array(
+		Indexer::addOrUpdate((object) array(
 			'post_type' => 'post',
 			'ID' => 1,
 			'field1' => 5
 		));
 
-		Indexer::addOrUpdate($this->index, (object) array(
+		Indexer::addOrUpdate((object) array(
 			'post_type' => 'post',
 			'ID' => 2,
 			'field1' =>15
 		));
 
-		Indexer::addOrUpdate($this->index, (object) array(
+		Indexer::addOrUpdate((object) array(
 			'post_type' => 'post',
 			'ID' => 3,
 			'field1' =>17
 		));
 
-		Indexer::addOrUpdate($this->index, (object) array(
+		Indexer::addOrUpdate((object) array(
 			'post_type' => 'post',
 			'ID' => 4,
 			'field1' => 23
 		));
 
-		Indexer::addOrUpdate($this->index, (object) array(
+		Indexer::addOrUpdate((object) array(
 			'post_type' => 'post',
 			'ID' => 5,
 			'field1' => 25
 		));
 
-		Indexer::addOrUpdate($this->index, (object) array(
+		Indexer::addOrUpdate((object) array(
 			'post_type' => 'post',
 			'ID' => 6,
 			'field1' => 27
@@ -496,37 +466,37 @@ class SearcherIntegrationTest extends BaseIntegrationTestCase
 
 		register_post_type('post');
 
-		Indexer::addOrUpdate($this->index, (object) array(
+		Indexer::addOrUpdate((object) array(
 			'post_type' => 'post',
 			'ID' => 1,
 			'field1' => 5
 		));
 
-		Indexer::addOrUpdate($this->index, (object) array(
+		Indexer::addOrUpdate((object) array(
 			'post_type' => 'post',
 			'ID' => 2,
 			'field1' =>15
 		));
 
-		Indexer::addOrUpdate($this->index, (object) array(
+		Indexer::addOrUpdate((object) array(
 			'post_type' => 'post',
 			'ID' => 3,
 			'field1' =>17
 		));
 
-		Indexer::addOrUpdate($this->index, (object) array(
+		Indexer::addOrUpdate((object) array(
 			'post_type' => 'post',
 			'ID' => 4,
 			'field1' => 23
 		));
 
-		Indexer::addOrUpdate($this->index, (object) array(
+		Indexer::addOrUpdate((object) array(
 			'post_type' => 'post',
 			'ID' => 5,
 			'field1' => 25
 		));
 
-		Indexer::addOrUpdate($this->index, (object) array(
+		Indexer::addOrUpdate((object) array(
 			'post_type' => 'post',
 			'ID' => 6,
 			'field1' => 27

@@ -19,14 +19,12 @@ class Hooks{
 			return;
 		}
 
-		$index = Indexer::index(true);
-
 		if ($post->post_status == 'trash'){
-			Indexer::delete($index, $post);
+			Indexer::delete($post);
 		}
 
 		if ($post->post_status == 'publish'){
-			Indexer::addOrUpdate($index, $post);
+			Indexer::addOrUpdate($post);
 		}
 	}
 
@@ -41,8 +39,7 @@ class Hooks{
 			return;
 		}
 
-		$index = Indexer::index(true);
-		Indexer::delete($index, $post);
+		Indexer::delete($post);
 	}
 }
 

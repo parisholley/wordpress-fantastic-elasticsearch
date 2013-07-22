@@ -9,7 +9,7 @@ class IndexerIntegrationTest extends BaseIntegrationTestCase
 
 		register_post_type('post');
 
-		Indexer::addOrUpdate($this->index, (object) array(
+		Indexer::addOrUpdate((object) array(
 			'post_type' => 'post',
 			'ID' => 1,
 			'field1' => 'value1',
@@ -37,7 +37,7 @@ class IndexerIntegrationTest extends BaseIntegrationTestCase
 
 		register_post_type('post');
 
-		Indexer::addOrUpdate($this->index, (object) array(
+		Indexer::addOrUpdate((object) array(
 			'post_type' => 'post',
 			'ID' => 1,
 			'field1' => 'value1',
@@ -68,7 +68,7 @@ class IndexerIntegrationTest extends BaseIntegrationTestCase
 			'field2' => 'value2'
 		);
 
-		Indexer::addOrUpdate($this->index, $post);
+		Indexer::addOrUpdate($post);
 
 		$this->index->refresh();
 
@@ -84,7 +84,7 @@ class IndexerIntegrationTest extends BaseIntegrationTestCase
 			)
 		))));
 
-		Indexer::delete($this->index, $post);
+		Indexer::delete($post);
 
 		$this->index->refresh();
 
@@ -137,7 +137,7 @@ class IndexerIntegrationTest extends BaseIntegrationTestCase
 			'field3' => '30'
 		));
 
-		Indexer::map();
+		Indexer::_map();
 		Indexer::reindex();
 
 		$this->index->refresh();
@@ -178,7 +178,7 @@ class IndexerIntegrationTest extends BaseIntegrationTestCase
 			'field5' => '30'
 		));
 
-		Indexer::map();
+		Indexer::_map();
 		Indexer::reindex();
 
 		$this->index->refresh();
@@ -219,7 +219,7 @@ class IndexerIntegrationTest extends BaseIntegrationTestCase
 			'post_date' => '10/30/1988 00:00:00 CST'
 		));
 
-		Indexer::map();
+		Indexer::_map();
 		Indexer::reindex();
 
 		$this->index->refresh();
