@@ -21,6 +21,7 @@ class SearcherIntegrationTest extends BaseIntegrationTestCase
 		Indexer::addOrUpdate((object) array(
 			'post_type' => 'post',
 			'ID' => 1,
+			'post_date' => '10/24/1988 00:00:00 CST',
 			'field1' => 'value1',
 			'field2' => 'value2'
 		));
@@ -29,6 +30,7 @@ class SearcherIntegrationTest extends BaseIntegrationTestCase
 			'post_type' => 'post',
 			'ID' => 2,
 			'field1' => 'value2',
+			'post_date' => '10/24/1988 00:00:00 CST',
 			'field2' => 'value1'
 		));
 
@@ -59,6 +61,7 @@ class SearcherIntegrationTest extends BaseIntegrationTestCase
 		Indexer::addOrUpdate((object) array(
 			'post_type' => 'post',
 			'ID' => 1,
+			'post_date' => '10/24/1988 00:00:00 CST',
 			'field1' => 'value1',
 			'field2' => 'value2'
 		));
@@ -66,6 +69,7 @@ class SearcherIntegrationTest extends BaseIntegrationTestCase
 		Indexer::addOrUpdate((object) array(
 			'post_type' => 'post',
 			'ID' => 2,
+			'post_date' => '10/24/1988 00:00:00 CST',
 			'field1' => 'value2',
 			'field2' => 'value3'
 		));
@@ -89,6 +93,7 @@ class SearcherIntegrationTest extends BaseIntegrationTestCase
 		Indexer::addOrUpdate((object) array(
 			'post_type' => 'post',
 			'ID' => 1,
+			'post_date' => '10/24/1988 00:00:00 CST',
 			'field1' => 'value1',
 			'field2' => 'value2'
 		));
@@ -96,6 +101,7 @@ class SearcherIntegrationTest extends BaseIntegrationTestCase
 		Indexer::addOrUpdate((object) array(
 			'post_type' => 'post',
 			'ID' => 2,
+			'post_date' => '10/24/1988 00:00:00 CST',
 			'field1' => 'value2',
 			'field2' => 'value3'
 		));
@@ -138,18 +144,21 @@ class SearcherIntegrationTest extends BaseIntegrationTestCase
 		Indexer::addOrUpdate((object) array(
 			'post_type' => 'post',
 			'ID' => 1,
+			'post_date' => '10/24/1988 00:00:00 CST',
 			'field1' => 'value1',
 		));
 
 		Indexer::addOrUpdate((object) array(
 			'post_type' => 'post',
 			'ID' => 2,
+			'post_date' => '10/24/1988 00:00:00 CST',
 			'field1' => 'value1',
 		));
 
 		Indexer::addOrUpdate((object) array(
 			'post_type' => 'post',
 			'ID' => 3,
+			'post_date' => '10/24/1988 00:00:00 CST',
 			'field1' => 'value1',
 		));
 
@@ -192,16 +201,19 @@ class SearcherIntegrationTest extends BaseIntegrationTestCase
 
 		Indexer::addOrUpdate((object) array(
 			'post_type' => 'post',
+			'post_date' => '10/24/1988 00:00:00 CST',
 			'ID' => 1
 		));
 
 		Indexer::addOrUpdate((object) array(
 			'post_type' => 'post',
+			'post_date' => '10/24/1988 00:00:00 CST',
 			'ID' => 2
 		));
 
 		Indexer::addOrUpdate((object) array(
 			'post_type' => 'post',
+			'post_date' => '10/24/1988 00:00:00 CST',
 			'ID' => 3
 		));
 
@@ -278,36 +290,42 @@ class SearcherIntegrationTest extends BaseIntegrationTestCase
 
 		Indexer::addOrUpdate((object) array(
 			'post_type' => 'post',
+			'post_date' => '10/24/1988 00:00:00 CST',
 			'ID' => 1,
 			'field1' => 5
 		));
 
 		Indexer::addOrUpdate((object) array(
 			'post_type' => 'post',
+			'post_date' => '10/24/1988 00:00:00 CST',
 			'ID' => 2,
 			'field1' =>15
 		));
 
 		Indexer::addOrUpdate((object) array(
 			'post_type' => 'post',
+			'post_date' => '10/24/1988 00:00:00 CST',
 			'ID' => 3,
 			'field1' =>17
 		));
 
 		Indexer::addOrUpdate((object) array(
 			'post_type' => 'post',
+			'post_date' => '10/24/1988 00:00:00 CST',
 			'ID' => 4,
 			'field1' => 23
 		));
 
 		Indexer::addOrUpdate((object) array(
 			'post_type' => 'post',
+			'post_date' => '10/24/1988 00:00:00 CST',
 			'ID' => 5,
 			'field1' => 25
 		));
 
 		Indexer::addOrUpdate((object) array(
 			'post_type' => 'post',
+			'post_date' => '10/24/1988 00:00:00 CST',
 			'ID' => 6,
 			'field1' => 27
 		));
@@ -403,36 +421,42 @@ class SearcherIntegrationTest extends BaseIntegrationTestCase
 
 		Indexer::addOrUpdate((object) array(
 			'post_type' => 'post',
+			'post_date' => '10/24/1988 00:00:00 CST',
 			'ID' => 1,
 			'field1' => 5
 		));
 
 		Indexer::addOrUpdate((object) array(
 			'post_type' => 'post',
+			'post_date' => '10/24/1988 00:00:00 CST',
 			'ID' => 2,
 			'field1' =>15
 		));
 
 		Indexer::addOrUpdate((object) array(
 			'post_type' => 'post',
+			'post_date' => '10/24/1988 00:00:00 CST',
 			'ID' => 3,
 			'field1' =>17
 		));
 
 		Indexer::addOrUpdate((object) array(
 			'post_type' => 'post',
+			'post_date' => '10/24/1988 00:00:00 CST',
 			'ID' => 4,
 			'field1' => 23
 		));
 
 		Indexer::addOrUpdate((object) array(
 			'post_type' => 'post',
+			'post_date' => '10/24/1988 00:00:00 CST',
 			'ID' => 5,
 			'field1' => 25
 		));
 
 		Indexer::addOrUpdate((object) array(
 			'post_type' => 'post',
+			'post_date' => '10/24/1988 00:00:00 CST',
 			'ID' => 6,
 			'field1' => 27
 		));
@@ -468,36 +492,42 @@ class SearcherIntegrationTest extends BaseIntegrationTestCase
 
 		Indexer::addOrUpdate((object) array(
 			'post_type' => 'post',
+			'post_date' => '10/24/1988 00:00:00 CST',
 			'ID' => 1,
 			'field1' => 5
 		));
 
 		Indexer::addOrUpdate((object) array(
 			'post_type' => 'post',
+			'post_date' => '10/24/1988 00:00:00 CST',
 			'ID' => 2,
 			'field1' =>15
 		));
 
 		Indexer::addOrUpdate((object) array(
 			'post_type' => 'post',
+			'post_date' => '10/24/1988 00:00:00 CST',
 			'ID' => 3,
 			'field1' =>17
 		));
 
 		Indexer::addOrUpdate((object) array(
 			'post_type' => 'post',
+			'post_date' => '10/24/1988 00:00:00 CST',
 			'ID' => 4,
 			'field1' => 23
 		));
 
 		Indexer::addOrUpdate((object) array(
 			'post_type' => 'post',
+			'post_date' => '10/24/1988 00:00:00 CST',
 			'ID' => 5,
 			'field1' => 25
 		));
 
 		Indexer::addOrUpdate((object) array(
 			'post_type' => 'post',
+			'post_date' => '10/24/1988 00:00:00 CST',
 			'ID' => 6,
 			'field1' => 27
 		));
