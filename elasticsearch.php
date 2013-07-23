@@ -55,7 +55,13 @@ require 'theme/taxonomy.php';
 require 'theme/page.php';
 require 'theme/post_type.php';
 require 'admin/hooks.php';
+<<<<<<< HEAD
 require 'lib/facet-widget/plugin.php';
+=======
+require 'lib/facet-widget/facet-widget.php';
+require 'lib/map-widget/map-widget.php';
+require 'lib/charts-widget/charts-widget.php';
+>>>>>>> 5e773f83636de5a0b5ca97e2ac98e1f36b17bd6c
 
 add_action( 'admin_enqueue_scripts', function() {
 	wp_register_style( 'custom_wp_admin_css', plugins_url('/css/admin.css', __FILE__) );
@@ -96,6 +102,8 @@ add_action('init', function(){
 	require('admin/sections/results-scoring.php');
 	require('admin/sections/manage-index.php');
 	require('admin/sections/facet-widget.php');
+	require('admin/sections/map-widget.php');
+	require('admin/sections/charts-widget.php');
 
 	global $NHP_Options;
 
