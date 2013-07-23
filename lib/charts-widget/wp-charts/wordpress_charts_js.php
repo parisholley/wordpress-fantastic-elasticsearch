@@ -21,7 +21,7 @@ function wp_charts_html5_support () {
 function wp_charts_load_scripts() {
 
 	if ( !is_Admin() ) {
-		wp_register_script( 'charts-js', plugins_url('/js/Chart.min.js', __FILE__) );
+		wp_register_script( 'charts-js', plugins_url('/js/chart.js', __FILE__) );
 		wp_enqueue_script( 'charts-js' );
 	}
 
@@ -78,7 +78,7 @@ if (!function_exists('wp_charts_trailing_comma')) {
 
 // Chart Shortcode 1
 // - - - - - - - - - - - - - - - - - - - - - - -
-function wp_charts_shortcode( $atts ) {
+function wp_charts( $atts ) {
 
 	// Default Attributes
 	// - - - - - - - - - - - - - - - - - - - - - - -
@@ -98,7 +98,13 @@ function wp_charts_shortcode( $atts ) {
 			'datasets'         => '30,50,100 next 20,90,75',
 			'colors'           => '69D2E7,#E0E4CC,#F38630,#96CE7F,#CEBC17,#CE4264',
 			'fillopacity'      => '0.7',
-			'pointstrokecolor' => '#FFFFFF'
+			'pointstrokecolor' => '#FFFFFF',
+			'scaleSteps'	   => '5',
+			'scaleStepWidth'   => '1',
+			'scaleStartValue'  => '20',
+			'animation'  => 'true',
+			'show_charts_count' => 'true'
+
 		), $atts )
 	);
 
@@ -106,6 +112,7 @@ function wp_charts_shortcode( $atts ) {
 	// - - - - - - - - - - - - - - - - - - - - - - -
 	$title    = str_replace(' ', '', $title);
 	$data     = explode(',', str_replace(' ', '', $data));
+	$datasetsCount = explode(",", $datasets);
 	$datasets = explode("next", str_replace(' ', '', $datasets));
 	$colors   = explode(',', str_replace(' ','',$colors));
 	(strpos($type, 'lar') !== false ) ? $type = 'PolarArea' : $type = ucwords($type) ;
@@ -117,7 +124,7 @@ function wp_charts_shortcode( $atts ) {
 	<script>';
 
 	// start the js arrays correctly depending on type
-	if ($type == 'Line' || $type == 'Radar' || $type == 'Bar') {
+	if ($type == 'Line' || $type == 'Radar' || $type == 'Bar' ) {
 
 		wp_charts_compare_fill($datasets, $colors);
 		$total    = count($datasets);
@@ -130,7 +137,11 @@ function wp_charts_shortcode( $atts ) {
 			$labelstrings = explode(',',$labels);
 			// wp_charts_compare_fill($datasets, $labelstrings);
 			for ($j = 0; $j < count($labelstrings); $j++ ) {
-				$currentchart .= '"'.$labelstrings[$j].'"';
+				if ($show_charts_count == "true"){
+					$currentchart .= '"'.$labelstrings[$j].' ('.$datasetsCount[$j].')"';
+				}else{
+					$currentchart .= '"'.$labelstrings[$j].'"';
+				}
 				wp_charts_trailing_comma($j, count($labelstrings), $currentchart);
 			}
 			$currentchart .= 	'],';
@@ -149,11 +160,16 @@ function wp_charts_shortcode( $atts ) {
 		for ($i = 0; $i < $total; $i++) {
 
 			if ($type === 'Pie' || $type === 'Doughnut' || $type === 'PolarArea') {
-
+				$labelstrings = explode(',',$labels);
 				$currentchart .= '{
 					value 	: '. $data[$i] .',
-					color 	: '.'"'. $colors[$i].'"'.'
-				}';
+					color 	: '.'"'. $colors[$i].'"'.',';
+					if ($show_charts_count == "true"){
+						$currentchart .= 'label   : '.'"'. $labelstrings[$i].' ('.$data[$i].')"';
+					}else{
+						$currentchart .= 'label   : '.'"'. $labelstrings[$i].'"';
+					}
+				$currentchart .= '}';
 
 			} else if ($type === 'Bar') {
 
@@ -187,12 +203,27 @@ function wp_charts_shortcode( $atts ) {
 			$currentchart .=	'];';
 		}
 
-		$currentchart .= 'var wpChart'.$title.$type.' = new Chart(document.getElementById("'.$title.'").getContext("2d")).'.$type.'('.$title.'Data);
-	</script>';
+		// create the javascript array of data and attr correctly depending on type
 
+		if ($type == 'Line' || $type == 'Radar' || $type == 'Bar' || $type === 'PolarArea') {
+
+			$currentchart .= 'var '.$title.'Options = {
+				scaleOverride : true,
+				scaleSteps : '.$scaleSteps.',
+				scaleStepWidth : '.$scaleStepWidth.',
+				scaleStartValue : '.$scaleStartValue.',
+				animation : '.$animation.'
+			};';
+		}else{
+			$currentchart .= 'var '.$title.'Options = {
+				animation : '.$animation.'
+			};';
+		}
+
+		$currentchart .= 'var wpChart'.$title.$type.' = new Chart(document.getElementById("'.$title.'").getContext("2d")).'.$type.'('.$title.'Data,'.$title.'Options);
+	</script>';
+	
 	// return the final result
 	// - - - - - - - - - - - - - - - - - - - - - - -
 	return $currentchart;
 }
-
-add_shortcode( 'wp_charts', 'wp_charts_shortcode' );

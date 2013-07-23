@@ -1,5 +1,5 @@
 <div>
-<p><label for="<?php echo $this->get_field_id('title'); ?>"><?php _e( 'Title:','taxonomies-filter-widget' ); ?></label>
+<p><label for="<?php echo $this->get_field_id('title'); ?>"><?php _e( 'Title:','charts-widget' ); ?></label>
 <input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo $title; ?>" /></p>
 
 <p><label for="<?php echo $this->get_field_id('charts_post_type'); ?>"><?php _e( 'Select post type:','charts-widget' ); ?></label>
@@ -32,16 +32,40 @@
 
 	</ul>
 
-<p><label for="<?php echo $this->get_field_id('colors'); ?>"><?php _e( 'Comma-separated hexadecimals (same number as number of taxonomies) for colors:', 'charts-widget' ); ?></label>
+<p><label for="<?php echo $this->get_field_id('animation'); ?>"><?php _e('Animation?', 'charts-widget' ); ?></label>
+<input class="checkbox" type="checkbox" <?php echo $animation; ?> id="<?php echo $this->get_field_id('animation'); ?>" name="<?php echo $this->get_field_name('animation'); ?>" /> 
+</p>
+
+<p><label for="<?php echo $this->get_field_id('show_charts_count'); ?>"><?php _e('Display facet counts beside labels?', 'charts-widget' ); ?></label>
+<input class="checkbox" type="checkbox" <?php echo $show_charts_count; ?> id="<?php echo $this->get_field_id('show_charts_count'); ?>" name="<?php echo $this->get_field_name('show_charts_count'); ?>" /> 
+</p>
+
+<p><label for="<?php echo $this->get_field_id('width'); ?>"><?php _e( 'Chart width percentage:', 'charts-widget' ); ?></label>
+<input class="widefat" id="<?php echo $this->get_field_id('width'); ?>" name="<?php echo $this->get_field_name('width'); ?>" type="text" value="<?php echo $width; ?>" />
+</p>
+
+<p><label for="<?php echo $this->get_field_id('colors'); ?>"><?php _e( 'Comma-separated color values:', 'charts-widget' ); ?></label>
 <input class="widefat" id="<?php echo $this->get_field_id('colors'); ?>" name="<?php echo $this->get_field_name('colors'); ?>" type="text" value="<?php echo $colors; ?>" />
 </p>
 
-<p><label for="<?php echo $this->get_field_id('fillopacity'); ?>"><?php _e( 'Decimal between 0 and 1 that controls color fill opacity:', 'charts-widget' ); ?></label>
-<input class="widefat" id="<?php echo $this->get_field_id('fillopacity'); ?>" name="<?php echo $this->get_field_name('fillopacity'); ?>" type="text" value="<?php echo $fillopacity; ?>" />
+<p><label for="<?php echo $this->get_field_id('fillopacity'); ?>"><?php _e( 'Decimal controlling color fill opacity:', 'charts-widget' ); ?></label>
+<input class="widefat" id="<?php echo $this->get_field_id('fillopacity'); ?>" name="<?php echo $this->get_field_name('fillopacity'); ?>" type="number" value="<?php echo $fillopacity; ?>" />
 </p>
 
-<p><label for="<?php echo $this->get_field_id('pointstrokecolor'); ?>"><?php _e( 'Hexadecimal for chart point stroke color:', 'charts-widget' ); ?></label>
+<p><label for="<?php echo $this->get_field_id('pointstrokecolor'); ?>"><?php _e( 'Color value for chart point stroke color:', 'charts-widget' ); ?></label>
 <input class="widefat" id="<?php echo $this->get_field_id('pointstrokecolor'); ?>" name="<?php echo $this->get_field_name('pointstrokecolor'); ?>" type="text" value="<?php echo $pointstrokecolor; ?>" />
+</p>
+
+<p><label for="<?php echo $this->get_field_id('scaleSteps'); ?>"><?php _e( 'Number of scale steps:', 'charts-widget' ); ?></label>
+<input class="widefat" id="<?php echo $this->get_field_id('scaleSteps'); ?>" name="<?php echo $this->get_field_name('scaleSteps'); ?>" type="number" value="<?php echo $scaleSteps; ?>" />
+</p>
+
+<p><label for="<?php echo $this->get_field_id('scaleStepWidth'); ?>"><?php _e( 'Scale steps width:', 'charts-widget' ); ?></label>
+<input class="widefat" id="<?php echo $this->get_field_id('scaleStepWidth'); ?>" name="<?php echo $this->get_field_name('scaleStepWidth'); ?>" type="number" value="<?php echo $scaleStepWidth; ?>" />
+</p>
+
+<p><label for="<?php echo $this->get_field_id('scaleStartValue'); ?>"><?php _e( 'Scale start value:', 'charts-widget' ); ?></label>
+<input class="widefat" id="<?php echo $this->get_field_id('scaleStartValue'); ?>" name="<?php echo $this->get_field_name('scaleStartValue'); ?>" type="number" value="<?php echo $scaleStartValue; ?>" />
 </p>
 
 </div>

@@ -157,38 +157,37 @@ class Map_Widget extends \WP_Widget {
 
 		if( 'widgets.php' != $hook )
         	return;
+        wp_enqueue_style( 'taxonomies-filter-widget-admin-styles', plugins_url( ES_PLUGIN_DIR.'/lib/facet-widget/css/admin.css' ) );
 		wp_enqueue_script( 'taxonomies-filter-widget-admin-script', plugins_url( ES_PLUGIN_DIR.'/lib/facet-widget/js/admin.js' ), array('jquery'), false, true );
-		wp_enqueue_style( 'taxonomies-filter-widget-admin-styles', plugins_url( ES_PLUGIN_DIR.'/lib/facet-widget/css/admin.css' ) );
 		
 	} // end register_admin_scripts
-	
-	/**
-	 * Registers and enqueues widget-specific scripts.
-	 */
-	public function register_widget_scripts() {
-		wp_enqueue_script('jquery');
-		wp_enqueue_script( 'map-widget-script', plugins_url( ES_PLUGIN_DIR.'/lib/map-widget/js/qbox-map.js' ));
-		wp_enqueue_script( 'map-widget-script', plugins_url( ES_PLUGIN_DIR.'/lib/map-widget/js/bootstrap-slider.js' ));
-		wp_enqueue_script( 'map-widget-script', plugins_url( ES_PLUGIN_DIR.'/lib/map-widget/js/handlebars-1.0.0-rc.3.js' ));
-		wp_enqueue_script( 'map-widget-script', plugins_url( ES_PLUGIN_DIR.'/lib/map-widget/js/jquery.js' ));
-		wp_localize_script( 'map-widget-script', 'ajax_object', array( 'ajax_url' => admin_url( 'admin-.php' )));
-
-		wp_enqueue_script( 'map-widget-script', 'http://maps.googleapis.com/maps/api/js?key=AIzaSyCeTUZRe9qUJeOg2uZGC_O1zcgzrUH-88I&sensor=false' );
-
-	} // end register_widget_scripts
 
 	/**
 	 * Registers and enqueues widget-specific styles.
 	 */
 	public function register_widget_styles() {
-		wp_register_style( 'map-widget-styles', plugins_url( ES_PLUGIN_DIR.'/lib/map-widget/css/widget.css' ) );
-		wp_register_style( 'map-widget-slider-styles', plugins_url( ES_PLUGIN_DIR.'/lib/map-widget/css/app.css' ) );
-		wp_register_style( 'map-widget-slider-styles', plugins_url( ES_PLUGIN_DIR.'/lib/map-widget/css/slider.css' ) );
 		wp_register_style( 'map-widget-slider-styles', plugins_url( ES_PLUGIN_DIR.'/lib/map-widget/css/bootstrap.css' ) );
-		wp_enqueue_style( 'map-widget-styles' );
+		wp_register_style( 'map-widget-slider-styles', plugins_url( ES_PLUGIN_DIR.'/lib/map-widget/css/slider.css' ) );
+		wp_register_style( 'map-widget-slider-styles', plugins_url( ES_PLUGIN_DIR.'/lib/map-widget/css/app.css' ) );
+		wp_register_style( 'map-widget-styles', plugins_url( ES_PLUGIN_DIR.'/lib/map-widget/css/widget.css' ) );
 		wp_enqueue_style( 'map-widget-slider-styles' );
+		wp_enqueue_style( 'map-widget-styles' );
 	} // end register_widget_styles
-    
+	
+	/**
+	 * Registers and enqueues widget-specific scripts.
+	 */
+	public function register_widget_scripts() {
+		global $NHP_Options;
+		wp_enqueue_script('jquery');
+		wp_enqueue_script( 'map-widget-script4', plugins_url( ES_PLUGIN_DIR.'/lib/map-widget/js/jquery.js' ));
+		wp_enqueue_script( 'map-widget-script2', plugins_url( ES_PLUGIN_DIR.'/lib/map-widget/js/bootstrap-slider.js' ));
+		wp_enqueue_script( 'map-widget-script3', plugins_url( ES_PLUGIN_DIR.'/lib/map-widget/js/handlebars-1.0.0-rc.3.js' ));
+		wp_enqueue_script( 'map-widget-script6', 'http://maps.googleapis.com/maps/api/js?key='.$NHP_Options->get('map_api_key').'&sensor=false' );
+		wp_enqueue_script( 'map-widget-script1', plugins_url( ES_PLUGIN_DIR.'/lib/map-widget/js/qbox-map.js' ), array('jquery'), false, true );
+		wp_localize_script( 'map-widget-script5', 'ajax_object', array( 'ajax_url' => admin_url( 'admin-.php' )));
+
+	} // end register_widget_scripts
 
     /*--------------------------------------------------*/
 	/* Other Functions
