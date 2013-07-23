@@ -1,10 +1,10 @@
+cd `dirname $0`
+
 type phantomjs --help >/dev/null 2>&1 
 
 if [ ! $? -eq 0 ]; then
 	brew update && brew install phantomjs
 fi
-
-cd tests
 
 VERSION="selenium-server-standalone-2.33.0.jar"
 
@@ -54,11 +54,12 @@ if [ ! $? -eq 0 ]; then
 	pear install phpunit/PHPUnit_Selenium
 fi
 
-#wget https://github.com/parisholley/vagrantpress/archive/master.zip
-#unzip master.zip
-#rm master.zip
-cd ../vagrantpress-master
-#vagrant up
+wget https://github.com/parisholley/vagrantpress/archive/master.zip
+unzip master.zip
+rm master.zip
+
+cd vagrantpress-master
+vagrant up
 
 PLUGIN_DIR="wordpress/wp-content/plugins/wordpress-fantastic-elasticsearch"
 
@@ -67,11 +68,11 @@ if [ -d $PLUGIN_DIR ]; then
 fi
 
 mkdir $PLUGIN_DIR
-cp -rf ../elasticsearch.php $PLUGIN_DIR/
-cp -rf ../src/ $PLUGIN_DIR/src
-cp -rf ../vendor/ $PLUGIN_DIR/vendor
-cp -rf ../wp/ $PLUGIN_DIR/wp
+cp -rf ../../elasticsearch.php $PLUGIN_DIR/
+cp -rf ../../src/ $PLUGIN_DIR/src
+cp -rf ../../vendor/ $PLUGIN_DIR/vendor
+cp -rf ../../wp/ $PLUGIN_DIR/wp
 
 cd ..
 
-phpunit --no-configuration --verbose --bootstrap="tests/selenium-tests/bootstrap.php" tests/selenium-tests/
+phpunit --no-configuration --verbose --bootstrap="selenium-tests/bootstrap.php" selenium-tests
