@@ -1,10 +1,14 @@
+<<<<<<< HEAD
 <phpunit bootstrap="unit-tests/bootstrap.php">
+=======
+<phpunit bootstrap="tests/unit-tests/bootstrap.php">
+>>>>>>> upstream/2.0.0-wip
 	<testsuites>
 		<testsuite name="Unit Tests">
-			<directory>unit-tests</directory>
+			<directory>tests/unit-tests</directory>
 		</testsuite>
 		<testsuite name="Integration Tests">
-			<directory>integration-tests</directory>
+			<directory>tests/integration-tests</directory>
 		</testsuite>
 	</testsuites>
 	<filter>
@@ -12,4 +16,8 @@
 			<directory suffix=".php">src/elasticsearch</directory>
 		</whitelist>
 	</filter>
+<<<<<<< HEAD
 </phpunit>
+=======
+</phpunit>
+>>>>>>> upstream/2.0.0-wip

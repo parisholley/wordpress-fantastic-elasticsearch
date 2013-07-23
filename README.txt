@@ -6,7 +6,7 @@ Requires at least: 3.5
 Tested up to: 3.5
 Stable tag: trunk
 
-Improve wordpress search performance and accuracy by leveraging an ElasticSearch server.
+Improve wordpress search performance/accuracy and enable faceted search by leveraging an ElasticSearch server.
 
 == Description ==
 
@@ -16,15 +16,16 @@ This plugin is NOT a simple drop-in, it is expected you have some understanding 
 * Ability to specify what data points should be indexed and what the relevancy of those points are.
 * Fall back to default wordpress search if ElasticSearch server is not responsive.
 * Update ElasticSearch server when posts are removed/added/unpublished.
-
-Future Features
-
-* Facet utilities for building your own faceted search (javascript components, etc)
+* Provide facet widgets that can be used in your themes
+* Provide a faceting API for building your own custom searches
 
 Please submit bugs or contributions to the github location and not here on wordpress' system:
 
 https://github.com/parisholley/wordpress-fantastic-elasticsearch/
 
+API documentation can be found here:
+
+http://parisholley.github.io/wordpress-fantastic-elasticsearch/
 
 == Installation ==
 
@@ -41,7 +42,7 @@ Rather than re-index every time taxonomies change, we expect that will be a manu
 
 = How do I filter my search results using facets? =
 
-By default, the plugin will look for those facet names (taxonomies) in the query string along with the search (ie: ?s=test&category[]=1). The more facets you add to the URL, the more it will filter. Facets values and counts are available at $WP_Query->facets.
+Use the elasticsearch\Faceting methods as documented at http://parisholley.github.io/wordpress-fantastic-elasticsearch/
 
 == Screenshots ==
 
@@ -58,6 +59,12 @@ By default, the plugin will look for those facet names (taxonomies) in the query
 * Integeration tests to ensure intended behavior with ElasticSearch 0.20.6 and 0.90.2
 * Continuous integration setup with travis-ci
 * Developer documentation for faceting and extending
+<<<<<<< HEAD
+=======
+
+= 1.2.4 =
+* Allow plugin to work if downloaded from github or wordpress (images weren't showing up in admin)
+>>>>>>> upstream/2.0.0-wip
 
 = 1.2.3 = 
 * Bug fixes as result of merge
