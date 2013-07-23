@@ -1,7 +1,8 @@
-master.zip
+*.pid
+*.jar
+*.zip
 vagrantpress-master/
 *.tar.gz
 composer.lock
 elasticsearch-*/
-es.pid
 report/
