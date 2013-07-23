@@ -28,7 +28,7 @@ License:
 
 namespace elasticsearch;
 
-define('ES_PLUGIN_DIR', basename(dirname(__FILE__)));
+define('NHP_OPTIONS_URL', plugins_url('/wp/lib/nhp/options/', __FILE__));
 
 if(!class_exists('NHP_Options')){
 	require_once( dirname( __FILE__ ) . '/wp/lib/nhp/options/options.php' );

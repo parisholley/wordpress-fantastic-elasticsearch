@@ -55,14 +55,19 @@ class Indexer{
 	**/
 	static function clear(){
 		foreach(Config::types() as $type){
-			$type = self::_index(true)->getType($type);
+			$index = self::_index(true);
+			$mapping = $index->getMapping();
 
-			try{
-				$type->delete();
-			}catch(\Exception $ex){
-				// no way to detect if type exists
-				if(strpos($ex->getMessage(), 'TypeMissingException') === false){
-					throw $ex;
+			if(isset($mapping[Config::option('server_index')])){
+				try{
+					foreach($mapping[Config::option('server_index')] as $type => $props){
+						$index->getType($type)->delete();
+					}
+				}catch(\Exception $ex){
+					// no way to detect if type exists
+					if(strpos($ex->getMessage(), 'TypeMissingException') === false){
+						throw $ex;
+					}
 				}
 			}
 		}
@@ -97,7 +102,11 @@ class Indexer{
 
 		$type = $index->getType($post->post_type);
 
-		$type->deleteById($post->ID);
+		try{
+			$type->deleteById($post->ID);
+		}catch(\Elastica\Exception\NotFoundException $ex){
+			// ignore
+		}
 	}
 
 	/**
@@ -122,21 +131,22 @@ class Indexer{
 		$index = self::_index(false);
 
 		foreach(Config::fields() as $field){
-			$estype = 'string';
+			$props = array(
+				'type' => 'string'
+			);
 
 			if(isset($numeric[$field])){
-				$estype = 'float';
+				$props['type'] = 'float';
 			}elseif($field == 'post_date'){
-				$estype = 'date';
+				$props['type'] = 'date';
+				$props['format'] = 'date_time_no_millis';
 			}
 
 			foreach(Config::types() as $type){
 				$type = $index->getType($type);
 
 				$mapping = new \Elastica\Type\Mapping($type);
-				$mapping->setProperties(array($field => array(
-					'type' => $estype
-				)));
+				$mapping->setProperties(array($field => $props));
 
 				$mapping->send();
 			}

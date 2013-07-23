@@ -106,6 +106,9 @@ class Config{
 			$fieldnames = array_keys($fields);
 		}
 
+		// this should always exist so we have a default to sort on
+		$fieldnames[] = 'post_date';
+
 		return apply_filters('es_api_fields', $fieldnames);
 	}
 

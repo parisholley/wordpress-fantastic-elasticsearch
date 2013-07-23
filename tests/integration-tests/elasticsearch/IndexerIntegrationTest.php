@@ -55,6 +55,49 @@ class IndexerIntegrationTest extends BaseIntegrationTestCase
 		$this->assertEquals(0, $this->index->count());
 	}
 
+	public function testDeleteDontExist()
+	{
+		update_option('fields', array('field1' => 1, 'field2' => 1));
+
+		register_post_type('post');
+
+		$post = (object) array(
+			'post_type' => 'post',
+			'ID' => 1,
+			'field1' => 'value1',
+			'field2' => 'value2'
+		);
+
+		Indexer::addOrUpdate($post);
+
+		$this->index->refresh();
+
+		$this->assertEquals(1, $this->index->count(new \Elastica\Query(array(
+			'query' => array(
+				'bool' => array(
+					'must' => array(
+						array( 'match' => array( '_id' => 1 ) ),
+						array( 'match' => array( 'field1' => 'value1' ) ),
+						array( 'match' => array( 'field2' => 'value2' ) )
+					)
+				)
+			)
+		))));
+
+		$post = (object) array(
+			'post_type' => 'post',
+			'ID' => 2,
+			'field1' => 'value1',
+			'field2' => 'value2'
+		);
+
+		Indexer::delete($post);
+
+		$this->index->refresh();
+
+		$this->assertEquals(1, $this->index->count());
+	}
+
 	public function testDelete()
 	{
 		update_option('fields', array('field1' => 1, 'field2' => 1));

@@ -15,7 +15,7 @@ class Defaults{
 	* @return string[] field names
 	**/
 	static function fields(){
-		return array('post_date', 'post_content', 'post_title');
+		return array('post_content', 'post_title');
 	}
 
 	/**

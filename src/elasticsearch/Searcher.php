@@ -26,7 +26,6 @@ class Searcher{
 			return array(
 				'total' => 0,
 				'ids' => array(),
-				'scores' => array(),
 				'facets' => array()
 			);
 		}
@@ -54,6 +53,9 @@ class Searcher{
 			if($type){
 				$search->addType($index->getType($type));
 			}
+			
+			$query->addSort(array('post_date' => array('order' => 'desc')));
+			$query->addSort('_score');
 
 			Config::apply_filters('elastica_search', $search);
 
@@ -75,8 +77,8 @@ class Searcher{
 	public function _parseResults($response){
 		$val = array(
 			'total' => $response->getTotalHits(),
-			'scores' => array(),
-			'facets' => array()
+			'facets' => array(),
+			'ids' => array()
 		);
 
 		foreach($response->getFacets() as $name => $facet){
@@ -96,11 +98,11 @@ class Searcher{
 			}
 		}
 
-		foreach($response->getResults() as $result){
-			$val['scores'][$result->getId()] = $result->getScore();
-		}
 
-		$val['ids'] = array_keys($val['scores']);
+
+		foreach($response->getResults() as $result){
+			$val['ids'][] = $result->getId();
+		}
 
 		return Config::apply_filters('elastica_results', $val, $response);		
 	}
