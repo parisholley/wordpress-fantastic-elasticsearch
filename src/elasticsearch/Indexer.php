@@ -59,15 +59,8 @@ class Indexer{
 			$mapping = $index->getMapping();
 
 			if(isset($mapping[Config::option('server_index')])){
-				try{
-					foreach($mapping[Config::option('server_index')] as $type => $props){
-						$index->getType($type)->delete();
-					}
-				}catch(\Exception $ex){
-					// no way to detect if type exists
-					if(strpos($ex->getMessage(), 'TypeMissingException') === false){
-						throw $ex;
-					}
+				foreach($mapping[Config::option('server_index')] as $type => $props){
+					$index->getType($type)->delete();
 				}
 			}
 		}

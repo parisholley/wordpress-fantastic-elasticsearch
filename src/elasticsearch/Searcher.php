@@ -36,7 +36,7 @@ class Searcher{
 	/**
 	* @internal
 	**/
-	public function _query($args, $pageIndex, $size, $type = null){
+	public function _query($args, $pageIndex, $size){
 		$query =new \Elastica\Query($args);
 		$query->setFrom($pageIndex * $size);
 		$query->setSize($size);
@@ -49,10 +49,6 @@ class Searcher{
 
 			$search = new \Elastica\Search($index->getClient());
 			$search->addIndex($index);
-
-			if($type){
-				$search->addType($index->getType($type));
-			}
 			
 			$query->addSort(array('post_date' => array('order' => 'desc')));
 			$query->addSort('_score');
