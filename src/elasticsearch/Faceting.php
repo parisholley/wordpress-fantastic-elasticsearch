@@ -61,7 +61,7 @@ class Faceting{
 		$numeric = Config::option('numeric');
 
 		foreach(Config::fields() as $field){
-			if($numeric[$field]){
+			if(isset($numeric[$field])){
 				$options[$field] = self::range($field);
 			}
 		}

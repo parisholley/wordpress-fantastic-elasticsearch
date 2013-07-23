@@ -55,14 +55,14 @@ class ApiTest extends BaseTestCase
 
 	public function testFieldsDefault()
 	{
-		$this->assertEquals(array('post_date', 'post_content', 'post_title'), Config::fields());
+		$this->assertEquals(array('post_content', 'post_title', 'post_date'), Config::fields());
 	}
 
 	public function testFieldsDefined()
 	{
-		update_option('fields', array('post_date' => 1, 'post_content' => 1));
+		update_option('fields', array('post_content' => 1));
 
-		$this->assertEquals(array('post_date', 'post_content'), Config::fields());
+		$this->assertEquals(array('post_content', 'post_date'), Config::fields());
 	}
 
 	public function testFieldsFilter()

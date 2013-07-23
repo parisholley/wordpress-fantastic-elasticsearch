@@ -643,11 +643,6 @@ class SearcherTest extends BaseTestCase
 
 		$this->assertEquals(array(
 			'total' => 100,
-			'scores' => array(
-				1 => 5,
-				10 => 2,
-				100 => 3
-			),
 			'facets' => array(
 				'name1' => array(
 					'term1' => 10,
