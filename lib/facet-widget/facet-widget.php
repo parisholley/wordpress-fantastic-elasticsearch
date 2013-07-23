@@ -4,7 +4,7 @@ namespace elasticsearch;
 require_once( plugin_dir_path(__FILE__) . '/inc/walkers.php' );
 require_once( plugin_dir_path(__FILE__) . '/inc/helpers.php' );
 
-class Taxonomies_Filter_Widget extends \WP_Widget {
+class Facet_Widget extends \WP_Widget {
 
 	/*--------------------------------------------------*/
 	/* Constructor
