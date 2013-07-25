@@ -100,6 +100,46 @@ class Indexer{
 					$mapping->send();
 				}			
 			}
+
+			if($field == 'lat'){
+				foreach(Api::types() as $type){
+					$type = $index->getType($type);
+
+					$mapping = new \Elastica_Type_Mapping($type);
+					$mapping->setProperties(array($field => array(
+						'type' => 'float'
+					)));
+
+					$mapping->send();
+				}			
+			}
+
+			if($field == 'lon'){
+				foreach(Api::types() as $type){
+					$type = $index->getType($type);
+
+					$mapping = new \Elastica_Type_Mapping($type);
+					$mapping->setProperties(array($field => array(
+						'type' => 'float'
+					)));
+
+					$mapping->send();
+				}			
+			}
+
+
+			if($field == 'location'){
+				foreach(Api::types() as $type){
+					$type = $index->getType($type);
+
+					$mapping = new \Elastica_Type_Mapping($type);
+					$mapping->setProperties(array($field => array(
+						'type' => 'geo_point'
+					)));
+
+					$mapping->send();
+				}			
+			}
 		}
 	}
 

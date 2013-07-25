@@ -55,42 +55,12 @@ class Map_Widget extends \WP_Widget {
 	 * @param	array	instance	The current instance of the widget
 	 */
 	public function widget( $args, $instance ) {
-
-		extract( $args );
-		is_array($this->tfw_options) && extract( $this->tfw_options );
-
 		$title 				 = apply_filters('widget_title', empty( $instance['title'] ) ? '' : $instance['title'], $instance, $this->id_base);
-		
-		$this->selected_filters = $selected_filters;
 
 		echo $before_widget;
 		include( plugin_dir_path( __FILE__ ) . '/views/widget.php' );
 		echo $after_widget;
 	} // end widget
-	
-	/**
-	 * Processes the widget's options to be saved.
-	 *
-	 * @param	array	new_instance	The previous instance of values before the update.
-	 * @param	array	old_instance	The new instance of values to be generated via the update.
-	 */
-	public function update( $new_instance, $old_instance ) {
-	
-		$instance = $old_instance;
-		
-		$instance['title'] 				= strip_tags($new_instance['title']);
-
-		$selected_filters = array();
-		// Filter out the ones not selected
-		foreach ($instance['filters'] as $single_filter) {
-			if (array_key_exists( 'name', $single_filter )) {
-				$selected_filters[] = $single_filter;
-			}
-		}
-		$instance['selected_filters'] = $selected_filters;
-
-		return $instance;
-	} // end update
 	
 	/**
 	 * Generates the administration form for the widget.
@@ -106,9 +76,6 @@ class Map_Widget extends \WP_Widget {
 		));
 
 		$title 				= esc_attr( $instance['title'] );
-
-		// Get already selected filters and put them at the top
-		$all_filters = $selected_filters;
 
 		// Display the admin form
 		include( plugin_dir_path(__FILE__) . '/views/admin.php' );	
@@ -166,12 +133,9 @@ class Map_Widget extends \WP_Widget {
 	 * Registers and enqueues widget-specific styles.
 	 */
 	public function register_widget_styles() {
-		wp_register_style( 'map-widget-slider-styles', plugins_url( ES_PLUGIN_DIR.'/lib/map-widget/css/bootstrap.css' ) );
-		wp_register_style( 'map-widget-slider-styles', plugins_url( ES_PLUGIN_DIR.'/lib/map-widget/css/slider.css' ) );
-		wp_register_style( 'map-widget-slider-styles', plugins_url( ES_PLUGIN_DIR.'/lib/map-widget/css/app.css' ) );
-		wp_register_style( 'map-widget-styles', plugins_url( ES_PLUGIN_DIR.'/lib/map-widget/css/widget.css' ) );
-		wp_enqueue_style( 'map-widget-slider-styles' );
-		wp_enqueue_style( 'map-widget-styles' );
+		wp_enqueue_style( 'map-widget-slider-style1', plugins_url( ES_PLUGIN_DIR.'/lib/map-widget/css/bootstrap.css' ) );
+		wp_enqueue_style( 'map-widget-slider-style2', plugins_url( ES_PLUGIN_DIR.'/lib/map-widget/css/slider.css' ) );
+		wp_enqueue_style( 'map-widget-slider-style3', plugins_url( ES_PLUGIN_DIR.'/lib/map-widget/css/app.css' ) );
 	} // end register_widget_styles
 	
 	/**
@@ -179,13 +143,13 @@ class Map_Widget extends \WP_Widget {
 	 */
 	public function register_widget_scripts() {
 		global $NHP_Options;
-		wp_enqueue_script('jquery');
+		$elasticsearchUrl = $NHP_Options->get('server_url');
 		wp_enqueue_script( 'map-widget-script4', plugins_url( ES_PLUGIN_DIR.'/lib/map-widget/js/jquery.js' ));
 		wp_enqueue_script( 'map-widget-script2', plugins_url( ES_PLUGIN_DIR.'/lib/map-widget/js/bootstrap-slider.js' ));
 		wp_enqueue_script( 'map-widget-script3', plugins_url( ES_PLUGIN_DIR.'/lib/map-widget/js/handlebars-1.0.0-rc.3.js' ));
 		wp_enqueue_script( 'map-widget-script6', 'http://maps.googleapis.com/maps/api/js?key='.$NHP_Options->get('map_api_key').'&sensor=false' );
-		wp_enqueue_script( 'map-widget-script1', plugins_url( ES_PLUGIN_DIR.'/lib/map-widget/js/qbox-map.js' ), array('jquery'), false, true );
-		wp_localize_script( 'map-widget-script5', 'ajax_object', array( 'ajax_url' => admin_url( 'admin-.php' )));
+		wp_enqueue_script( 'map-widget-script1', plugins_url( ES_PLUGIN_DIR.'/lib/map-widget/js/qbox-map.js' ), array('map-widget-script4'), false, false );
+		wp_localize_script( 'map-widget-script1', 'elasticsearchUrl', $elasticsearchUrl);
 
 	} // end register_widget_scripts
 

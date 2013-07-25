@@ -3,7 +3,7 @@ namespace elasticsearch;
 
 class Defaults{
 	static function fields(){
-		return array('post_date', 'post_content', 'post_title');
+		return array('post_date', 'post_content', 'post_title', 'lat', 'lon');
 	}
 
 	static function types(){

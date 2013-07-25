@@ -9,12 +9,13 @@ $sections['charts'] = array(
 		'charts_widget_info' => array(
 			'id' => 'charts_widget_info',
 			'type' => 'info',
-			'desc' => 'The Charts Widget takes the facet counts tabulated by Elasticsearch and creates one of the following six charts using charts.js.',
 			'title' => 'Charts Widget Info',
+			'desc' => 'The Charts Widget takes the facet counts tabulated by Elasticsearch and creates one of the following six charts using charts.js.'
 		),
 		'line_charts' => array(
 			'id' => 'line_charts',
 			'type' => 'info',
+			'title' => 'Line Charts',
 			'desc' => '<div class="info_field_text">Line graphs are probably the most widely used graph for showing trends. Chart.js has a ton of customisation features for line graphs, along with support for multiple datasets to be plotted on one chart.</div>
 						<p></p>
 					   <div class="chart_pic" style="width:50%" height:"auto" margin:"auto" >
@@ -40,12 +41,13 @@ $sections['charts'] = array(
 							]
 						};
 						var lineDemo = new Chart(document.getElementById("lineChartCanvas").getContext("2d")).Line(lineDemoData);
-						</script>',
-			'title' => 'Line Charts',
+						</script>
+						</div>'
 		),
 		'bar_charts' => array(
 			'id' => 'bar_charts',
 			'type' => 'info',
+			'title' => 'Bar Charts',
 			'desc' => '<div class="info_field_text">Bar graphs are also great at showing trend data. Chart.js supports bar charts with a load of custom styles and the ability to show multiple bars for each x value.</div>
 						<p></p>
 					   <div class="chart_pic" style="width:50%" height:"auto" margin:"auto" >
@@ -67,12 +69,13 @@ $sections['charts'] = array(
 							]
 						};
 						var barDemo = new Chart(document.getElementById("barChartCanvas").getContext("2d")).Bar(barDemoData);
-						</script>',
-			'title' => 'Bar Charts',
+						</script>
+						</div>'
 		),
 		'radar_charts' => array(
 			'id' => 'radar_charts',
 			'type' => 'info',
+			'title' => 'Radar Charts',
 			'desc' =>  '<div class="info_field_text">Radar charts are good for comparing a selection of different pieces of data. Chart.js supports multiple data sets plotted on the same radar chart. It also supports all of the customisation and animation options you would expect.</div>
 					   <p></p>
 					   <div class="chart_pic" style="width:50%" height:"auto" margin:"auto" >
@@ -97,12 +100,13 @@ $sections['charts'] = array(
 							}
 						]};
 						var radarDemo = new Chart(document.getElementById("radarChartCanvas").getContext("2d")).Radar(radarDemoDatasets);
-						</script>',
-			'title' => 'Radar Charts',
+						</script>
+						</div>'
 		),
 		'pie_charts' => array(
 			'id' => 'pie_charts',
 			'type' => 'info',
+			'title' => 'Pie Charts',
 			'desc' => '<div class="info_field_text">Pie charts are great at comparing proportions within a single data set. Chart.js shows animated pie charts with customisable colours, strokes, animation easing and effects.</div>
 					   <p></p>
 					   <div class="chart_pic" style="width:50%" height:"auto" margin:"auto" >
@@ -126,12 +130,13 @@ $sections['charts'] = array(
 							}			
 						];
 						var pieDemo = new Chart(document.getElementById("pieChartCanvas").getContext("2d")).Pie(pieDemoData);
-						</script>',
-			'title' => 'Pie Charts',
+						</script>
+						</div>'
 		),
 		'polar_area_charts' => array(
 			'id' => 'polar_area_charts',
 			'type' => 'info',
+			'title' => 'Polar Area Charts',
 			'desc' => '<div class="info_field_text">Polar area charts are similar to pie charts, but the variable is not the circumference of the segment, but the radius of it. Chart.js delivers animated polar area charts with custom coloured segments, along with customisable scales and animation.</div>
 						<p></p>
 					   <div class="chart_pic" style="width:50%" height:"auto" margin:"auto" >
@@ -161,12 +166,13 @@ $sections['charts'] = array(
 							scaleStartValue : 70
 						};
 						var polarAreaDemo = new Chart(document.getElementById("polarAreaChartCanvas").getContext("2d")).PolarArea(polarAreaDemoData,polarAreaDemoOptions);
-						</script>',
-			'title' => 'Polar Area Charts',
+						</script>
+						</div>'
 		),
 		'doughnut_charts' => array(
 			'id' => 'doughnut_charts',
 			'type' => 'info',
+			'title' => 'Doughnut Charts',
 			'desc' => '<div class="info_field_text">Similar to pie charts, doughnut charts are great for showing proportional data. Chart.js offers the same customisation options as for pie charts, but with a custom sized inner cutout to turn your pies into doughnuts.</div>
 						<p></p>
 					   <div class="chart_pic" style="width:50%" height:"auto" margin:"auto" >
@@ -201,14 +207,14 @@ $sections['charts'] = array(
 
 						];
 						var doughnutDemo = new Chart(document.getElementById("doughnutChartCanvas").getContext("2d")).Doughnut(doughnutDemoData);
-						</script>',
-			'title' => 'Doughnut Charts',
+						</script>
+						</div>'
 		),
 		'charts_js_info' => array(
 			'id' => 'charts_js_info',
 			'type' => 'info',
-			'desc' => 'The Charts Widget is based on the charts.js library and the <a href= "http://wordpress.org/plugins/wp-charts/" target="_blank">WordPress Charts</a> plugin. For more information on all of the options provided by charts.js, please visit <a href= "http://www.chartjs.org/" target="_blank">chartsjs.org</a>.',
 			'title' => 'Charts.js Info',
+			'desc' => 'The Charts Widget is based on the charts.js library and the <a href= "http://wordpress.org/plugins/wp-charts/" target="_blank">WordPress Charts</a> plugin. For more information on all of the options provided by charts.js, please visit <a href= "http://www.chartjs.org/" target="_blank">chartsjs.org</a>.'
 		)
 	)
 );
