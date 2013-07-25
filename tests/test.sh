@@ -12,12 +12,18 @@ else
 	ARGS="--coverage-html ./report"
 fi
 
-./version.sh "0.20.6"
+if [ ! -d "work" ]; then
+	mkdir "work"
+fi
+
+cd work
+
+../version.sh "0.20.6"
 
 PASSED=$?
 
 if [ $PASSED -eq 0 ]; then
-	./version.sh "0.90.2"
+	../version.sh "0.90.2"
 
 	PASSED=$?
 

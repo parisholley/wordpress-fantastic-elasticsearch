@@ -4,5 +4,5 @@
 *vagrantpress*/
 *.tar.gz*
 composer.lock
+tests/work/
 elasticsearch-*/
-report/

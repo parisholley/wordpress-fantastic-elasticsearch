@@ -6,6 +6,12 @@ if [ ! $? -eq 0 ]; then
 	brew update && brew install phantomjs
 fi
 
+if [ ! -d "work" ]; then
+	mkdir "work"
+fi
+
+cd work
+
 VERSION="selenium-server-standalone-2.33.0.jar"
 
 if [ ! -f $VERSION ]; then
@@ -74,14 +80,14 @@ if [ -d $PLUGIN_DIR ]; then
 fi
 
 mkdir $PLUGIN_DIR
-cp -rf ../../elasticsearch.php $PLUGIN_DIR/
-cp -rf ../../src/ $PLUGIN_DIR/src
-cp -rf ../../vendor/ $PLUGIN_DIR/vendor
-cp -rf ../../wp/ $PLUGIN_DIR/wp
+cp -rf ../../../elasticsearch.php $PLUGIN_DIR/
+cp -rf ../../../src/ $PLUGIN_DIR/src
+cp -rf ../../../vendor/ $PLUGIN_DIR/vendor
+cp -rf ../../../wp/ $PLUGIN_DIR/wp
 
 cd ..
 
-phpunit --no-configuration --verbose --bootstrap="selenium-tests/bootstrap.php" selenium-tests;
+phpunit --no-configuration --verbose --bootstrap="../selenium-tests/bootstrap.php" ../selenium-tests;
 
 if [ -f "phantom.pid" ]; then
 	kill -9 `cat phantom.pid`
@@ -98,5 +104,5 @@ fi
 if [ $? -eq 0 ]; then
 	cd vagrantpress-wordpress-fantastic-elasticsearch;
 
-	#vagrant suspend
+	vagrant suspend
 fi
