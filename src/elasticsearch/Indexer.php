@@ -121,6 +121,8 @@ class Indexer{
 	**/
 	static function _map(){
 		$numeric = Config::option('numeric');
+		$notanalyzed = Config::option('not_analyzed');
+
 		$index = self::_index(false);
 
 		foreach(Config::fields() as $field){
@@ -133,6 +135,10 @@ class Indexer{
 			}elseif($field == 'post_date'){
 				$props['type'] = 'date';
 				$props['format'] = 'date_time_no_millis';
+			}elseif(isset($notanalyzed[$field])){
+				$props['index'] = 'not_analyzed';
+			}else{
+				$props['index'] = 'analyzed';
 			}
 
 			foreach(Config::types() as $type){

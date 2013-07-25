@@ -125,6 +125,65 @@ class SearcherIntegrationTest extends BaseIntegrationTestCase
 		$this->assertEquals(array('tag' => array('tag1' => 1)), $results['facets']);
 	}
 
+	public function testAnalyzed()
+	{
+		update_option('fields', array('field1' => 1));
+		update_option('score_field_field1', 1);
+
+		register_post_type('post');
+
+		Indexer::clear();
+
+		Indexer::addOrUpdate((object) array(
+			'post_type' => 'post',
+			'ID' => 1,
+			'post_date' => '10/24/1988 00:00:00 CST',
+			'field1' => 'foo bar'
+		));
+
+		$this->index->refresh();
+
+		$results = $this->searcher->search('foo');
+
+		$this->assertEquals(1, $results['total']);
+		$this->assertEquals(array(1), $results['ids']);
+
+		$results = $this->searcher->search('foo bar');
+
+		$this->assertEquals(1, $results['total']);
+		$this->assertEquals(array(1), $results['ids']);
+	}
+
+	public function testNotAnalyzed()
+	{
+		update_option('fields', array('field1' => 1));
+		update_option('not_analyzed', array('field1' => 1));
+		update_option('score_field_field1', 1);
+
+		register_post_type('post');
+
+		Indexer::clear();
+
+		Indexer::addOrUpdate((object) array(
+			'post_type' => 'post',
+			'ID' => 1,
+			'post_date' => '10/24/1988 00:00:00 CST',
+			'field1' => 'foo bar'
+		));
+
+		$this->index->refresh();
+
+		$results = $this->searcher->search('foo');
+
+		$this->assertEquals(0, $results['total']);
+		$this->assertEquals(array(), $results['ids']);
+
+		$results = $this->searcher->search('foo bar');
+
+		$this->assertEquals(1, $results['total']);
+		$this->assertEquals(array(1), $results['ids']);
+	}
+
 	public function testScoreSort()
 	{
 		update_option('fields', array('field1' => 1, 'field2' => 1));
