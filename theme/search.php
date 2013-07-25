@@ -27,6 +27,8 @@ class Search{
 			$wp_query->query_vars['posts_per_page'] = get_option('posts_per_page');
 		}
 
+		$wp_query->query_vars['posts_per_page'] = apply_filters( 'es_modify_posts_per_page', $wp_query->query_vars['posts_per_page'] );
+
 		$results = Searcher::query($search, $this->page, $wp_query->query_vars['posts_per_page'], $wp_query->query_vars);
 
 		if($results == null){
