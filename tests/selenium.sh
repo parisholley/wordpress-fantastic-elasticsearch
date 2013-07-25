@@ -13,38 +13,40 @@ if [ ! -f $VERSION ]; then
 fi
 
 if [ -f "selenium.pid" ]; then
-	ps -ef | grep `cat selenium.pid` | grep -v "grep" >/dev/null 2>&1
-	
-	if [ $? -eq 1 ]; then
-		echo "Process defined in selenium.pid is invalid."
-		rm selenium.pid;
-	fi
+	kill -9 `cat selenium.pid` &>/dev/null
+
+	rm selenium.pid
 fi
 
-if [ ! -f "selenium.pid" ]; then
-	java -jar $VERSION -role hub &>/dev/null &
+ps -ef | grep "java -jar selenium-server" | grep -v grep &>/dev/null
 
-	echo "$!" > selenium.pid
-
-	sleep 5s
+if [ $? -eq 0 ]; then
+	echo "WARNING: A version of selenium is already running."
 fi
+
+java -jar $VERSION -role hub &>/dev/null &
+
+echo "$!" > selenium.pid
+
+sleep 5s
 
 if [ -f "phantom.pid" ]; then
-	ps -ef | grep `cat phantom.pid` | grep -v "grep" >/dev/null 2>&1
+	kill -9 `cat phantom.pid` &>/dev/null
 	
-	if [ $? -eq 1 ]; then
-		echo "Process defined in phantom.pid is invalid."
-		rm phantom.pid;
-	fi
+	rm phantom.pid;
 fi
 
-if [ ! -f "phantom.pid" ]; then
-	phantomjs --webdriver=127.0.0.1:8910 --webdriver-selenium-grid-hub=http://127.0.0.1:4444 &>/dev/null &
+ps -ef | grep "phantomjs" | grep -v grep  &>/dev/null
 
-	echo "$!" > phantom.pid
-
-	sleep 2s
+if [ $? -eq 0 ]; then
+	echo "WARNING: A version of phantomjs is already running."
 fi
+
+phantomjs --webdriver=127.0.0.1:8910 --webdriver-selenium-grid-hub=http://127.0.0.1:4444 &>/dev/null &
+
+echo "$!" > phantom.pid
+
+sleep 2s
 
 type pear >/dev/null 2>&1 || { echo >&2 "Pear is not installed."; exit 1; }
 
@@ -54,11 +56,13 @@ if [ ! $? -eq 0 ]; then
 	pear install phpunit/PHPUnit_Selenium
 fi
 
-wget https://github.com/parisholley/vagrantpress/archive/master.zip
-unzip master.zip
-rm master.zip
+if [ ! -d "vagrantpress-wordpress-fantastic-elasticsearch" ]; then
+	wget https://github.com/parisholley/vagrantpress/archive/wordpress-fantastic-elasticsearch.zip
+	unzip wordpress-fantastic-elasticsearch.zip
+	rm wordpress-fantastic-elasticsearch.zip
+fi
 
-cd vagrantpress-master
+cd vagrantpress-wordpress-fantastic-elasticsearch
 vagrant up
 
 PLUGIN_DIR="wordpress/wp-content/plugins/wordpress-fantastic-elasticsearch"
@@ -75,4 +79,22 @@ cp -rf ../../wp/ $PLUGIN_DIR/wp
 
 cd ..
 
-phpunit --no-configuration --verbose --bootstrap="selenium-tests/bootstrap.php" selenium-tests
+phpunit --no-configuration --verbose --bootstrap="selenium-tests/bootstrap.php" selenium-tests;
+
+if [ -f "phantom.pid" ]; then
+	kill -9 `cat phantom.pid`
+	
+	rm phantom.pid;
+fi
+
+if [ -f "selenium.pid" ]; then
+	kill -9 `cat selenium.pid`
+
+	rm selenium.pid;
+fi
+
+if [ $? -eq 0 ]; then
+	cd vagrantpress-wordpress-fantastic-elasticsearch;
+
+	vagrant suspend
+fi
