@@ -130,7 +130,13 @@ class Searcher{
 
 		$numeric = Config::option('numeric');
 
+		$exclude = Config::apply_filters('searcher_query_exclude_fields', array('post_date'));
+
 		foreach(Config::fields() as $field){
+			if(in_array($field, $exclude)){
+				continue;
+			}
+
 			if($search){
 				$score = Config::score('field', $field);
 

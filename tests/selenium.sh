@@ -96,5 +96,5 @@ fi
 if [ $? -eq 0 ]; then
 	cd vagrantpress-wordpress-fantastic-elasticsearch;
 
-	vagrant suspend
+	#vagrant suspend
 fi
