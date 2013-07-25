@@ -40,16 +40,37 @@ namespace {
 		return count(elasticsearch\TestContext::$posts) > 0 ? elasticsearch\TestContext::$posts : $args;
 	}
 
+	function get_post_type_object($name){
+		foreach(elasticsearch\TestContext::$types as $type){
+			if($type->name == $name){
+				return $type;
+			}
+		}
+
+		return null;
+	}
+
 	function &get_option($name){
 		return elasticsearch\TestContext::$options;
 	}
 
 	function get_post_types(){
-		return elasticsearch\TestContext::$types;
+		$names = array();
+
+		foreach(elasticsearch\TestContext::$types as $type){
+			$names[] = $type->name;
+		}
+
+		return $names;
 	}
 
-	function register_post_type($type){
-		elasticsearch\TestContext::$types[count(elasticsearch\TestContext::$types)] = $type;
+	function register_post_type($type, $args = array()){
+		$args = array_merge(array(
+			'exclude_from_search' => false,
+			'name' => $type
+		), $args);
+
+		elasticsearch\TestContext::$types[count(elasticsearch\TestContext::$types)] = (object) $args;
 		elasticsearch\TestContext::$taxes[$type] = array();
 	}
 

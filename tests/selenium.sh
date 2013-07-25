@@ -46,7 +46,9 @@ phantomjs --webdriver=127.0.0.1:8910 --webdriver-selenium-grid-hub=http://127.0.
 
 echo "$!" > phantom.pid
 
-sleep 2s
+echo "Waiting for phantomjs to register with grid.."
+
+sleep 10s
 
 type pear >/dev/null 2>&1 || { echo >&2 "Pear is not installed."; exit 1; }
 
