@@ -154,7 +154,11 @@ class Indexer{
 	* @internal
 	**/
 	static function _build_document($post){
-		$document = array();
+		global $blog_id;
+		
+		$document = array(
+			'blog_id' => $blog_id
+		);
 
 		foreach(Config::fields() as $field){
 			if(isset($post->$field)){

@@ -161,7 +161,8 @@ class IndexerTest extends BaseTestCase
 			'field1' => 'value1',
 			'post_date' => '1988-10-24T01:00:00-05:00',
 			'tax1' => array('term3', 'term2', 'term1'),
-			'tax2' => array('term5', 'term6', 'term4')
+			'tax2' => array('term5', 'term6', 'term4'),
+			'blog_id' => 1
 		), $document);
 	}
 }

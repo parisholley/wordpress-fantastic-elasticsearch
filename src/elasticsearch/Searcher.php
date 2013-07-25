@@ -22,7 +22,7 @@ class Searcher{
 	public function search($search, $pageIndex = 0, $size = 10, $facets = array()){
 		$args = self::_buildQuery($search, $facets);
 
-		if(empty($args)){
+		if(empty($args) || (empty($args['query']) && empty($args['facets']))){
 			return array(
 				'total' => 0,
 				'ids' => array(),
@@ -107,6 +107,8 @@ class Searcher{
 	* @internal
 	**/
 	public function _buildQuery($search, $facets = array()){
+		global $blog_id;
+
 		$shoulds = array();
 		$musts = array();
 		$filters = array();
@@ -169,11 +171,14 @@ class Searcher{
 			$args['query']['bool']['must'] = $musts;
 		}
 
+		$args['filter']['bool']['must'][] = array( 'term' => array( 'blog_id' => $blog_id ) );
+
 		$args = Config::apply_filters('query_pre_facet_filter', $args);
 
 		// return facets
 		foreach(Config::facets() as $facet){
 			$args['facets'][$facet]['terms']['field'] = $facet;
+			$args['facets'][$facet]['facet_filter'] = array( 'term' => array( 'blog_id' => $blog_id ) );
 		}
 
 		if(is_array($numeric)){
@@ -182,6 +187,7 @@ class Searcher{
 
 				if(count($ranges) > 0 ){
 					$args['facets'][$facet]['range'][$facet] = array_values($ranges);
+					$args['facets'][$facet]['facet_filter'] = array( 'term' => array( 'blog_id' => $blog_id ) );
 				}
 			}
 		}
