@@ -19,7 +19,7 @@ This plugin is NOT a simple drop-in, it is expected you have some understanding 
 * Provide facet widgets that can be used in your themes
 * Provide a faceting API for building your own custom searches
 
-Please submit bugs or contributions to the github location and not here on wordpress' system:
+Please submit bugs or contributions to the github location and not here on wordpress' system: 
 
 https://github.com/parisholley/wordpress-fantastic-elasticsearch/
 
