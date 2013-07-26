@@ -33,13 +33,13 @@ class Category{
 
 		$args = $_GET;
 
-		if(!$args['category']){
+		if(!isset($args['category'])){
 			$args['category']['or'][] = $cat->slug;
 		}
 
-		$this->page = $wp_query->query_vars['paged'] > 0 ? $wp_query->query_vars['paged'] - 1 : 0;
+		$this->page = isset($wp_query->query_vars['paged']) && $wp_query->query_vars['paged'] > 0 ? $wp_query->query_vars['paged'] - 1 : 0;
 
-		if(!$wp_query->query_vars['posts_per_page']){
+		if(!isset($wp_query->query_vars['posts_per_page'])){
 			$wp_query->query_vars['posts_per_page'] = get_option('posts_per_page');
 		}
 

@@ -10,6 +10,8 @@
 	<filter>
 		<whitelist>
 			<directory suffix=".php">src/elasticsearch</directory>
+			<directory suffix=".php">wp/admin</directory>
+			<directory suffix=".php">wp/theme</directory>
 		</whitelist>
 	</filter>
 </phpunit>

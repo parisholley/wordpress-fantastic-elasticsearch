@@ -1,7 +1,11 @@
 <?php
-function includeIfExists($file)
-{
-    return file_exists($file) ? include $file : false;
+namespace elasticsearch;
+
+if(!function_exists('elasticsearch\includeIfExists')){
+	function includeIfExists($file)
+	{
+	    return file_exists($file) ? include $file : false;
+	}
 }
 
 if ((!$loader = includeIfExists(__DIR__.'/../vendor/autoload.php')) && (!$loader = includeIfExists(__DIR__.'/../../../autoload.php'))) {

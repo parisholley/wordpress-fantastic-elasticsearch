@@ -19,7 +19,7 @@ class Searcher{
 	* 
 	* @return array The results of the search
 	**/
-	public function search($search, $pageIndex = 0, $size = 10, $facets = array()){
+	public static function search($search, $pageIndex = 0, $size = 10, $facets = array()){
 		$args = self::_buildQuery($search, $facets);
 
 		if(empty($args) || (empty($args['query']) && empty($args['facets']))){
@@ -36,7 +36,7 @@ class Searcher{
 	/**
 	* @internal
 	**/
-	public function _query($args, $pageIndex, $size){
+	public static function _query($args, $pageIndex, $size){
 		$query =new \Elastica\Query($args);
 		$query->setFrom($pageIndex * $size);
 		$query->setSize($size);
@@ -68,7 +68,7 @@ class Searcher{
 	/**
 	* @internal
 	**/
-	public function _parseResults($response){
+	public static function _parseResults($response){
 		$val = array(
 			'total' => $response->getTotalHits(),
 			'facets' => array(),
@@ -102,7 +102,7 @@ class Searcher{
 	/**
 	* @internal
 	**/
-	public function _buildQuery($search, $facets = array()){
+	public static function _buildQuery($search, $facets = array()){
 		global $blog_id;
 
 		$shoulds = array();
@@ -194,7 +194,7 @@ class Searcher{
 	/**
 	* @internal
 	**/
-	public function _filterBySelectedFacets($name, $facets, $type, &$musts, &$filters, $translate = array()){
+	public static function _filterBySelectedFacets($name, $facets, $type, &$musts, &$filters, $translate = array()){
 		if(isset($facets[$name])){
 			$output = &$musts;
 
