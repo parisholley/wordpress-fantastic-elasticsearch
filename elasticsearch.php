@@ -84,24 +84,12 @@ add_action('init', function(){
 
 	$sections = array();
 
-<<<<<<< HEAD
-	require('admin/sections/wordpress-integration.php');
-	require('admin/sections/server-settings.php');
-	require('admin/sections/content-indexing.php');
-	require('admin/sections/field-mapping.php');
-	require('admin/sections/results-scoring.php');
-	require('admin/sections/manage-index.php');
-	require('admin/sections/facet-widget.php');
-	require('admin/sections/map-widget.php');
-	require('admin/sections/charts-widget.php');
-=======
 	require('wp/admin/sections/wordpress-integration.php');
 	require('wp/admin/sections/server-settings.php');
 	require('wp/admin/sections/content-indexing.php');
 	require('wp/admin/sections/field-mapping.php');
 	require('wp/admin/sections/results-scoring.php');
 	require('wp/admin/sections/manage-index.php');
->>>>>>> rice2.0.0-wip
 
 	global $NHP_Options;
 

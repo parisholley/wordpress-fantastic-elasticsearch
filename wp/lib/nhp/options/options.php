@@ -334,11 +334,8 @@ class NHP_Options{
 		wp_localize_script('nhp-opts-js', 'nhp_opts', array('reset_confirm' => __('Are you sure? Resetting will loose all custom values.', 'nhp-opts'), 'opt_name' => $this->args['opt_name']));
 		
 		do_action('nhp-opts-enqueue-'.$this->args['opt_name']);
-<<<<<<< HEAD:lib/nhp/options/options.php
-=======
 
 		wp_enqueue_script( 'charts-js', $this->url.'js/chart.js', time(), true );
->>>>>>> rice2.0.0-wip:wp/lib/nhp/options/options.php
 				
 		foreach($this->sections as $k => $section){
 			
