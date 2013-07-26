@@ -10,6 +10,229 @@ class SearcherIntegrationTest extends BaseIntegrationTestCase
 		$this->searcher = new Searcher();
 	}
 
+	/** reproduces issue #25 */
+	public function testDateScored()
+	{
+		update_option('score_field_post_date', 1);
+
+		register_post_type('post');
+
+		Indexer::addOrUpdate((object) array(
+			'post_type' => 'post',
+			'ID' => 1,
+			'post_date' => '10/24/1988 00:00:00 CST',
+			'field1' => 'value1',
+			'field2' => 'value2'
+		));
+
+		Indexer::addOrUpdate((object) array(
+			'post_type' => 'post',
+			'ID' => 2,
+			'field1' => 'value2',
+			'post_date' => '10/24/1988 00:00:00 CST',
+			'field2' => 'value1'
+		));
+
+		$this->index->refresh();
+
+		$results = $this->searcher->search('value1');
+	}
+
+	public function testScoreMultisite()
+	{
+		global $blog_id;
+
+		update_option('fields', array('field1' => 1));
+		update_option('score_field_field1', 1);
+
+		register_post_type('post');
+
+		$blog_id = 1;
+
+		Indexer::addOrUpdate((object) array(
+			'post_type' => 'post',
+			'ID' => 1,
+			'post_date' => '10/24/1988 00:00:00 CST',
+			'field1' => 'value1'
+		));
+
+		$blog_id = 2;
+
+		Indexer::addOrUpdate((object) array(
+			'post_type' => 'post',
+			'ID' => 2,
+			'field1' => 'value1',
+			'post_date' => '10/24/1988 00:00:00 CST'
+		));
+
+		$this->index->refresh();
+
+		$results = $this->searcher->search('value1');
+
+		$this->assertEquals(1, $results['total']);
+		$this->assertEquals(array(2), $results['ids']);
+
+		$blog_id = 1;
+
+		$results = $this->searcher->search('value1');
+
+		$this->assertEquals(1, $results['total']);
+		$this->assertEquals(array(1), $results['ids']);
+	}
+
+	public function testSearchTaxonomiesHyphens()
+	{
+		global $blog_id;
+		
+		update_option('score_tax_tag', 1);
+
+		register_post_type('post');
+		register_taxonomy('tag', 'post');
+
+		wp_insert_term('Tag 1', 'tag', array(
+  			'slug' => 'tag-flag-1'
+  		));
+
+  		wp_insert_term('Tag 2', 'tag', array(
+  			'slug' => 'name-game-2'
+  		));
+
+  		wp_set_object_terms(1, array(1, 2), 'tag');
+  		wp_set_object_terms(2, array(1, 2), 'tag');
+
+  		Indexer::clear();
+
+		Indexer::addOrUpdate((object) array(
+			'post_type' => 'post',
+			'post_date' => '10/24/1988 00:00:00 CST',
+			'ID' => 1
+		));
+
+		Indexer::addOrUpdate((object) array(
+			'post_type' => 'post',
+			'post_date' => '10/24/1988 00:00:00 CST',
+			'ID' => 2
+		));
+
+		$this->index->refresh();
+
+		$results = $this->searcher->search(null, 0, 10, array('tag' => 'tag-flag-1'));
+
+		$this->assertEquals(2, $results['total']);
+		$this->assertEquals(array(1, 2), $results['ids']);
+		$this->assertEquals(array('tag' => array('name-game-2' => 2, 'tag-flag-1' => 2)), $results['facets']);
+
+		$results = $this->searcher->search(null, 0, 10, array('tag' => 'name'));
+
+		$this->assertEquals(0, $results['total']);
+		$this->assertEquals(array(), $results['ids']);
+		$this->assertEquals(array(), $results['facets']);
+	}
+
+	public function testSearchTaxonomiesMultisite()
+	{
+		global $blog_id;
+		
+		update_option('score_tax_tag', 1);
+
+		register_post_type('post');
+		register_taxonomy('tag', 'post');
+
+		wp_insert_term('Tag 1', 'tag', array(
+  			'slug' => 'tag1'
+  		));
+
+  		wp_insert_term('Tag 2', 'tag', array(
+  			'slug' => 'tag2'
+  		));
+
+  		wp_set_object_terms(1, array(1), 'tag');
+		wp_set_object_terms(2, array(1), 'tag');
+
+		$blog_id = 1;
+
+		Indexer::addOrUpdate((object) array(
+			'post_type' => 'post',
+			'post_date' => '10/24/1988 00:00:00 CST',
+			'ID' => 1
+		));
+
+		$blog_id = 2;
+
+		Indexer::addOrUpdate((object) array(
+			'post_type' => 'post',
+			'post_date' => '10/24/1988 00:00:00 CST',
+			'ID' => 2
+		));
+
+		$this->index->refresh();
+
+		$results = $this->searcher->search(null, 0, 10, array('tag' => 'tag1'));
+
+		$this->assertEquals(1, $results['total']);
+		$this->assertEquals(array(2), $results['ids']);
+		$this->assertEquals(array('tag' => array('tag1' => 1)), $results['facets']);
+	}
+
+	public function testAnalyzed()
+	{
+		update_option('fields', array('field1' => 1));
+		update_option('score_field_field1', 1);
+
+		register_post_type('post');
+
+		Indexer::clear();
+
+		Indexer::addOrUpdate((object) array(
+			'post_type' => 'post',
+			'ID' => 1,
+			'post_date' => '10/24/1988 00:00:00 CST',
+			'field1' => 'foo bar'
+		));
+
+		$this->index->refresh();
+
+		$results = $this->searcher->search('foo');
+
+		$this->assertEquals(1, $results['total']);
+		$this->assertEquals(array(1), $results['ids']);
+
+		$results = $this->searcher->search('foo bar');
+
+		$this->assertEquals(1, $results['total']);
+		$this->assertEquals(array(1), $results['ids']);
+	}
+
+	public function testNotAnalyzed()
+	{
+		update_option('fields', array('field1' => 1));
+		update_option('not_analyzed', array('field1' => 1));
+		update_option('score_field_field1', 1);
+
+		register_post_type('post');
+
+		Indexer::clear();
+
+		Indexer::addOrUpdate((object) array(
+			'post_type' => 'post',
+			'ID' => 1,
+			'post_date' => '10/24/1988 00:00:00 CST',
+			'field1' => 'foo bar'
+		));
+
+		$this->index->refresh();
+
+		$results = $this->searcher->search('foo');
+
+		$this->assertEquals(0, $results['total']);
+		$this->assertEquals(array(), $results['ids']);
+
+		$results = $this->searcher->search('foo bar');
+
+		$this->assertEquals(1, $results['total']);
+		$this->assertEquals(array(1), $results['ids']);
+	}
+
 	public function testScoreSort()
 	{
 		update_option('fields', array('field1' => 1, 'field2' => 1));

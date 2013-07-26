@@ -70,7 +70,7 @@ ob_start();
 				</th>
 				<td>
 					<input type="submit" name="wipe" class="button button-primary" value="Wipe Data" />
-					<?php if($error = get_transient('es-wiped-error')): delete_transient('es-wiped-error'); ?>
+					<?php if($error = \get_transient('es-wiped-error')): \delete_transient('es-wiped-error'); ?>
 						<span class="nhp-opts-th-error">There was a problem wiping the data. (<strong><?php echo $error; ?></strong>)</span>
 					<?php endif; ?>
 				</td>

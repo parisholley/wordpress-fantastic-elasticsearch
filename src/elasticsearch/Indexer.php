@@ -121,7 +121,27 @@ class Indexer{
 	**/
 	static function _map(){
 		$numeric = Config::option('numeric');
+		$notanalyzed = Config::option('not_analyzed');
+
 		$index = self::_index(false);
+
+		foreach(Config::taxonomies() as $tax){
+			$props = array(
+				'type' => 'string',
+				'index' => 'not_analyzed'
+			);
+
+			$props = Config::apply_filters('indexer_map_taxonomy', $props, $tax);
+
+			foreach(Config::types() as $type){
+				$type = $index->getType($type);
+
+				$mapping = new \Elastica\Type\Mapping($type);
+				$mapping->setProperties(array($tax => $props));
+
+				$mapping->send();
+			}			
+		}
 
 		foreach(Config::fields() as $field){
 			$props = array(
@@ -133,7 +153,13 @@ class Indexer{
 			}elseif($field == 'post_date'){
 				$props['type'] = 'date';
 				$props['format'] = 'date_time_no_millis';
+			}elseif(isset($notanalyzed[$field])){
+				$props['index'] = 'not_analyzed';
+			}else{
+				$props['index'] = 'analyzed';
 			}
+
+			$props = Config::apply_filters('indexer_map_field', $props, $field);
 
 			foreach(Config::types() as $type){
 				$type = $index->getType($type);
@@ -154,7 +180,11 @@ class Indexer{
 	* @internal
 	**/
 	static function _build_document($post){
-		$document = array();
+		global $blog_id;
+		
+		$document = array(
+			'blog_id' => $blog_id
+		);
 
 		foreach(Config::fields() as $field){
 			if(isset($post->$field)){

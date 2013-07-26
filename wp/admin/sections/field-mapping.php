@@ -7,11 +7,20 @@ $fields = array(
 		'type' => 'multi_checkbox',
 		'title' => 'Numeric Fields',
 		'desc' => 'Any field marked as "numeric" will enabled support for range faceting.'
+	),
+	'not_analyzed' => array(
+		'id' => 'not_analyzed',
+		'type' => 'multi_checkbox',
+		'title' => 'Non Analyzed Fields',
+		'desc' => 'Any string field marked as "non analyzed" will require search terms to match the entire value instead of any words in the value.'
 	)
 );
 
 foreach(Config::fields() as $field){
-	$fields['numeric']['options'][$field] = $field;
+	if($field != 'post_date'){
+		$fields['numeric']['options'][$field] = $field;
+		$fields['not_analyzed']['options'][$field] = $field;
+	}
 }
 
 $numeric_option = Config::option('numeric');

@@ -19,10 +19,10 @@ class Searcher{
 	* 
 	* @return array The results of the search
 	**/
-	public function search($search, $pageIndex = 0, $size = 10, $facets = array()){
+	public static function search($search, $pageIndex = 0, $size = 10, $facets = array()){
 		$args = self::_buildQuery($search, $facets);
 
-		if(empty($args)){
+		if(empty($args) || (empty($args['query']) && empty($args['facets']))){
 			return array(
 				'total' => 0,
 				'ids' => array(),
@@ -36,13 +36,13 @@ class Searcher{
 	/**
 	* @internal
 	**/
-	public function _query($args, $pageIndex, $size){
+	public static function _query($args, $pageIndex, $size){
 		$query =new \Elastica\Query($args);
 		$query->setFrom($pageIndex * $size);
 		$query->setSize($size);
 		$query->setFields(array('id'));
 
-		Config::apply_filters('elastica_query', $query);
+		Config::apply_filters('searcher_query', $query);
 
 		try{
 			$index = Indexer::_index(false);
@@ -53,13 +53,11 @@ class Searcher{
 			$query->addSort(array('post_date' => array('order' => 'desc')));
 			$query->addSort('_score');
 
-			Config::apply_filters('elastica_search', $search);
+			Config::apply_filters('searcher_search', $search);
 
 			$results = $search->search($query);
 
-			$val = self::_parseResults($results);
-
-			return Config::apply_filters('query_response', $val, $results);
+			return self::_parseResults($results);
 		}catch(\Exception $ex){
 			error_log($ex);
 
@@ -70,7 +68,7 @@ class Searcher{
 	/**
 	* @internal
 	**/
-	public function _parseResults($response){
+	public static function _parseResults($response){
 		$val = array(
 			'total' => $response->getTotalHits(),
 			'facets' => array(),
@@ -94,19 +92,19 @@ class Searcher{
 			}
 		}
 
-
-
 		foreach($response->getResults() as $result){
 			$val['ids'][] = $result->getId();
 		}
 
-		return Config::apply_filters('elastica_results', $val, $response);		
+		return Config::apply_filters('searcher_results', $val, $response);		
 	}
 
 	/**
 	* @internal
 	**/
-	public function _buildQuery($search, $facets = array()){
+	public static function _buildQuery($search, $facets = array()){
+		global $blog_id;
+
 		$shoulds = array();
 		$musts = array();
 		$filters = array();
@@ -130,7 +128,13 @@ class Searcher{
 
 		$numeric = Config::option('numeric');
 
+		$exclude = Config::apply_filters('searcher_query_exclude_fields', array('post_date'));
+
 		foreach(Config::fields() as $field){
+			if(in_array($field, $exclude)){
+				continue;
+			}
+
 			if($search){
 				$score = Config::score('field', $field);
 
@@ -163,11 +167,14 @@ class Searcher{
 			$args['query']['bool']['must'] = $musts;
 		}
 
-		$args = Config::apply_filters('query_pre_facet_filter', $args);
+		$args['filter']['bool']['must'][] = array( 'term' => array( 'blog_id' => $blog_id ) );
+
+		$args = Config::apply_filters('searcher_query_pre_facet_filter', $args);
 
 		// return facets
 		foreach(Config::facets() as $facet){
 			$args['facets'][$facet]['terms']['field'] = $facet;
+			$args['facets'][$facet]['facet_filter'] = array( 'term' => array( 'blog_id' => $blog_id ) );
 		}
 
 		if(is_array($numeric)){
@@ -176,17 +183,18 @@ class Searcher{
 
 				if(count($ranges) > 0 ){
 					$args['facets'][$facet]['range'][$facet] = array_values($ranges);
+					$args['facets'][$facet]['facet_filter'] = array( 'term' => array( 'blog_id' => $blog_id ) );
 				}
 			}
 		}
 		
-		return Config::apply_filters('query_post_facet_filter', $args);
+		return Config::apply_filters('searcher_query_post_facet_filter', $args);
 	}
 
 	/**
 	* @internal
 	**/
-	public function _filterBySelectedFacets($name, $facets, $type, &$musts, &$filters, $translate = array()){
+	public static function _filterBySelectedFacets($name, $facets, $type, &$musts, &$filters, $translate = array()){
 		if(isset($facets[$name])){
 			$output = &$musts;
 

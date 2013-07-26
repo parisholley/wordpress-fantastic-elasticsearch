@@ -1,6 +1,6 @@
 (function($){
 	function done(failed){
-		$("#reindex").removeAttr('disabled');
+		$("#reindex").removeAttr('disabled').addClass('complete');
 		$('#progress').hide();
 
 		if(failed){

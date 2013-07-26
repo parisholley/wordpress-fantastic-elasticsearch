@@ -33,7 +33,8 @@ $sections['integration'] = array(
 			'id' => 'enable_post_types',
 			'type' => 'post_types_multi_select',
 			'title' => 'Post Types to Enable',
-			'sub_desc' => 'If enabled, post type listings will use ElasticSearch for filtering and faceting. To use faceting, read the <a href="https://github.com/parisholley/wordpress-fantastic-elasticsearch/wiki/Faceted-Search">facted search implementation instructions</a>'
+			'sub_desc' => 'If enabled, category listings will use ElasticSearch for filtering and faceting. To use faceting, read the <a href="https://github.com/parisholley/wordpress-fantastic-elasticsearch/wiki/Faceted-Search">facted search implementation instructions</a>',
+			'args' => array()
 		)
 	)
 );

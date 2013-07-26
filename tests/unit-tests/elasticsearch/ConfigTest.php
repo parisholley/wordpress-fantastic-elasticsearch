@@ -3,6 +3,72 @@ namespace elasticsearch;
 
 class ApiTest extends BaseTestCase
 {
+	public function testTaxonomiesFilter()
+	{
+		add_filter('elasticsearch_config_taxonomies', function($value){
+			return array('bar');
+		}, 10, 1);
+
+		$this->assertEquals(array('bar'), Config::taxonomies());
+	}
+
+	public function testTypesFilter()
+	{
+		add_filter('elasticsearch_config_types', function($value){
+			return array('bar');
+		}, 10, 1);
+
+		$this->assertEquals(array('bar'), Config::types());
+	}
+
+	public function testFacetsFilter()
+	{
+		add_filter('elasticsearch_config_facets', function($value){
+			return array('bar');
+		}, 10, 1);
+
+		$this->assertEquals(array('bar'), Config::facets());
+	}
+
+	public function testOptionFilter()
+	{
+		add_filter('elasticsearch_config_option', function($value, $name){
+			if($name != 'foo'){
+				throw new Exception('args not same');
+			}
+
+			return 'bar';
+		}, 10, 2);
+
+		$this->assertEquals('bar', Config::option('foo'));
+	}
+
+	public function testScoreFilter()
+	{
+		add_filter('elasticsearch_config_score', function($value, $type, $name){
+			if($type != 'field' || $name != 'foo'){
+				throw new Exception('args not same');
+			}
+
+			return 0;
+		}, 10, 3);
+
+		$this->assertEquals(0, Config::score('field', 'foo'));
+	}
+
+	public function testRangesFilter()
+	{
+		add_filter('elasticsearch_config_ranges', function($value, $field){
+			if($field != 'field'){
+				throw new Exception('args not same');
+			}
+
+			return array('wee');
+		}, 10, 2);
+
+		$this->assertEquals(array('wee'), Config::ranges('field'));
+	}
+
 	public function testOptionDefined()
 	{
 		update_option('foo', 'bar');
@@ -67,7 +133,7 @@ class ApiTest extends BaseTestCase
 
 	public function testFieldsFilter()
 	{
-		add_filter('es_api_fields', function(){
+		add_filter('elasticsearch_config_fields', function(){
 			return array('filtered');
 		});
 
@@ -90,15 +156,17 @@ class ApiTest extends BaseTestCase
 		$this->assertEquals(array('tax1', 'tax2'), Config::taxonomies());
 	}
 
-	public function testTypesDefined()
+	public function testTypesUndefined()
 	{
 		register_post_type('post');
-		register_post_type('review');
+		register_post_type('review', array(
+			'exclude_from_search' => true
+		));
 
-		$this->assertEquals(array('post', 'review'), Config::types());
+		$this->assertEquals(array('post'), Config::types());
 	}
 
-	public function testTypesDefault()
+	public function testTypesDefined()
 	{
 		update_option('types', array('post' => 1, 'review' => 1));
 

@@ -24,7 +24,19 @@ class Defaults{
 	* @return string[] post type names
 	**/
 	static function types(){
-		return get_post_types();
+		$types = get_post_types();
+
+		$available = array();
+
+		foreach($types as $type){
+			$tobject = get_post_type_object($type);
+
+			if(!$tobject->exclude_from_search && $type != 'attachment'){
+				$available[] = $type;
+			}
+		}
+
+		return $available;
 	}
 
 	/**

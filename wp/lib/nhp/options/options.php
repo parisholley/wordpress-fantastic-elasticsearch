@@ -3,7 +3,6 @@ if ( ! class_exists('NHP_Options') ){
 	
 	// windows-proof constants: replace backward by forward slashes - thanks to: https://github.com/peterbouwmeester
 	$fslashed_dir = trailingslashit(str_replace('\\','/',dirname(__FILE__)));
-	$fslashed_abs = trailingslashit(str_replace('\\','/',ABSPATH));
 	
 	if(!defined('NHP_OPTIONS_DIR')){
 		define('NHP_OPTIONS_DIR', $fslashed_dir);

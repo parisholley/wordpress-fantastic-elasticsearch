@@ -3,43 +3,53 @@
 Plugin Name: Fantastic ElasticSearch
 Plugin URI: http://wordpress.org/extend/plugins/fantastic-elasticsearch/
 Description: Improve wordpress search performance and accuracy by leveraging an ElasticSearch server.
-Version: 2.0.0
+Version: 2.0.1
 Author: Paris Holley
 Author URI: http://www.linkedin.com/in/parisholley
 Author Email: mail@parisholley.com
 License:
 
-  Copyright 2013 Paris Holley (mail@parisholley.com)
+	The MIT License (MIT)
 
-  This program is free software; you can redistribute it and/or modify
-  it under the terms of the GNU General Public License, version 2, as 
-  published by the Free Software Foundation.
+	Copyright (c) 2013 Paris Holley <mail@parisholley.com>
 
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
+	Permission is hereby granted, free of charge, to any person obtaining a copy
+	of this software and associated documentation files (the "Software"), to deal
+	in the Software without restriction, including without limitation the rights
+	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+	copies of the Software, and to permit persons to whom the Software is
+	furnished to do so, subject to the following conditions:
 
-  You should have received a copy of the GNU General Public License
-  along with this program; if not, write to the Free Software
-  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-  
+	The above copyright notice and this permission notice shall be included in
+	all copies or substantial portions of the Software.
+
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+	THE SOFTWARE.
 */
+
 
 namespace elasticsearch;
 
-define('ES_PLUGIN_DIR', basename(dirname(__FILE__)));
+if(!defined('NHP_OPTIONS_URL')){
+	define('NHP_OPTIONS_URL', plugins_url('/wp/lib/nhp/options/', __FILE__));
+}
 
 if(!class_exists('NHP_Options')){
 	require_once( dirname( __FILE__ ) . '/wp/lib/nhp/options/options.php' );
 }
 
 require 'src/bootstrap.php';
-require 'wp/lib/theme/search.php';
-require 'wp/lib/theme/category.php';
-require 'wp/lib/theme/taxonomy.php';
-require 'wp/lib/theme/page.php';
-require 'wp/lib/theme/post_type.php';
+
+require 'wp/theme/search.php';
+require 'wp/theme/category.php';
+require 'wp/theme/taxonomy.php';
+require 'wp/theme/page.php';
+require 'wp/theme/post_type.php';
 require 'wp/admin/hooks.php';
 
 add_action( 'admin_enqueue_scripts', function() {

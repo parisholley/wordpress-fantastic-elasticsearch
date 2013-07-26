@@ -1,15 +1,9 @@
 <?php
-class WebTest extends PHPUnit_Extensions_Selenium2TestCase
+class SearchTest extends BaseTestCase
 {
-	protected function setUp()
-	{
-		$this->setBrowser('phantomjs');
-		$this->setBrowserUrl('http://www.example.com/');
-	}
- 
 	public function testInvalidTag()
 	{
-		$this->url('http://localhost:8080/wordpress/');
+		$this->url('/');
 		$this->assertEquals('Vagrant | Just another WordPress site', $this->title());
 
 		$this->byName('s')->click();
@@ -21,9 +15,9 @@ class WebTest extends PHPUnit_Extensions_Selenium2TestCase
 		$this->assertEquals('Nothing Found', $this->byCssSelector('.entry-title')->text());
 	}
 
-	public function testPartialTag()
+    public function testPartialTag()
 	{
-		$this->url('http://localhost:8080/wordpress/');
+		$this->url('/');
 		$this->assertEquals('Vagrant | Just another WordPress site', $this->title());
 
 		$this->byName('s')->click();
@@ -37,7 +31,7 @@ class WebTest extends PHPUnit_Extensions_Selenium2TestCase
 
 	public function testValidTag()
 	{
-		$this->url('http://localhost:8080/wordpress/');
+		$this->url('/');
 		$this->assertEquals('Vagrant | Just another WordPress site', $this->title());
 
 		$this->byName('s')->click();
@@ -46,12 +40,12 @@ class WebTest extends PHPUnit_Extensions_Selenium2TestCase
 		$this->byId('searchsubmit')->click();
 		$this->assertEquals('tag2 | Search Results | Vagrant', $this->title());
 
-		$this->assertEquals('post-56', $this->byXPath('//article[1]')->attribute('id'));
-		$this->assertEquals('post-44', $this->byXPath('//article[2]')->attribute('id'));
-		$this->assertEquals('post-42', $this->byXPath('//article[3]')->attribute('id'));
-		$this->assertEquals('post-40', $this->byXPath('//article[4]')->attribute('id'));
-		$this->assertEquals('post-36', $this->byXPath('//article[5]')->attribute('id'));
-		$this->assertEquals('post-4', $this->byXPath('//article[6]')->attribute('id'));
+		$this->assertEquals('post-57', $this->byXPath('//article[1]')->attribute('id'));
+		$this->assertEquals('post-45', $this->byXPath('//article[2]')->attribute('id'));
+		$this->assertEquals('post-43', $this->byXPath('//article[3]')->attribute('id'));
+		$this->assertEquals('post-41', $this->byXPath('//article[4]')->attribute('id'));
+		$this->assertEquals('post-37', $this->byXPath('//article[5]')->attribute('id'));
+		$this->assertEquals('post-5', $this->byXPath('//article[6]')->attribute('id'));
 	}
 }
 ?>

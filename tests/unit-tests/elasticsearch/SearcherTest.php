@@ -188,7 +188,19 @@ class SearcherTest extends BaseTestCase
 
 		$query = $searcher->_buildQuery('string');
 
-		$this->assertEquals(array(), $query);
+		$this->assertEquals(array(
+			'filter' => array(
+				'bool' => array(
+					'must' => array(
+						array(
+							'term' => array(
+								'blog_id' => 1
+							)
+						)
+					)
+				)
+			)
+		), $query);
 	}
 
 	public function testBuildQueryFieldWithScore(){
@@ -211,6 +223,17 @@ class SearcherTest extends BaseTestCase
 									'query' => 'string',
 									'boost' => 1
 								)
+							)
+						)
+					)
+				)
+			),
+			'filter' => array(
+				'bool' => array(
+					'must' => array(
+						array(
+							'term' => array(
+								'blog_id' => 1
 							)
 						)
 					)
@@ -244,10 +267,26 @@ class SearcherTest extends BaseTestCase
 					)
 				)
 			),
+			'filter' => array(
+				'bool' => array(
+					'must' => array(
+						array(
+							'term' => array(
+								'blog_id' => 1
+							)
+						)		
+					)
+				)
+			),
 			'facets' => array(
 				'tax1' => array(
 					'terms' => array(
 						'field' => 'tax1'
+					),
+					'facet_filter' => array(
+						'term' => array(
+							'blog_id' => 1
+						)
 					)
 				)
 			)
@@ -264,10 +303,26 @@ class SearcherTest extends BaseTestCase
 		$query = $searcher->_buildQuery('string', $facets);
 
 		$this->assertEquals(array(
+			'filter' => array(
+				'bool' => array(
+					'must' => array(
+						array(
+							'term' => array(
+								'blog_id' => 1
+							)
+						)
+					)
+				)
+			),			
 			'facets' => array(
 				'tax1' => array(
 					'terms' => array(
 						'field' => 'tax1'
+					),
+					'facet_filter' => array(
+						'term' => array(
+							'blog_id' => 1
+						)
 					)
 				)
 			)
@@ -297,10 +352,26 @@ class SearcherTest extends BaseTestCase
 					)
 				)
 			),
+			'filter' => array(
+				'bool' => array(
+					'must' => array(
+						array(
+							'term' => array(
+								'blog_id' => 1
+							)
+						)
+					)
+				)
+			),			
 			'facets' => array(
 				'tax1' => array(
 					'terms' => array(
 						'field' => 'tax1'
+					),
+					'facet_filter' => array(
+						'term' => array(
+							'blog_id' => 1
+						)
 					)
 				)
 			)
@@ -322,7 +393,7 @@ class SearcherTest extends BaseTestCase
 
 		$query = $searcher->_buildQuery('string', $facets);
 
-		$this->assertEquals(array(
+		$this->assertEquals(array(		
 			'filter' => array(
 				'bool' => array(
 					'should' => array(
@@ -336,6 +407,13 @@ class SearcherTest extends BaseTestCase
 								'tax1' => 'value2'
 							)
 						)
+					),
+					'must' => array(
+						array(
+							'term' => array(
+								'blog_id' => 1
+							)
+						)
 					)
 				)
 			),
@@ -343,6 +421,11 @@ class SearcherTest extends BaseTestCase
 				'tax1' => array(
 					'terms' => array(
 						'field' => 'tax1'
+					),
+					'facet_filter' => array(
+						'term' => array(
+							'blog_id' => 1
+						)
 					)
 				)
 			)
@@ -368,7 +451,7 @@ class SearcherTest extends BaseTestCase
 		$this->assertEquals(array(
 			'query' => array(
 				'bool' => array(
-					'must' => array(
+					'must' => array(		
 						array(
 							'term' => array(
 								'tax2' => 'value3'
@@ -390,6 +473,13 @@ class SearcherTest extends BaseTestCase
 								'tax1' => 'value2'
 							)
 						)
+					),
+					'must' => array(
+						array(
+							'term' => array(
+								'blog_id' => 1
+							)
+						)
 					)
 				)
 			),
@@ -397,11 +487,21 @@ class SearcherTest extends BaseTestCase
 				'tax1' => array(
 					'terms' => array(
 						'field' => 'tax1'
+					),
+					'facet_filter' => array(
+						'term' => array(
+							'blog_id' => 1
+						)
 					)
 				),
 				'tax2' => array(
 					'terms' => array(
 						'field' => 'tax2'
+					),
+					'facet_filter' => array(
+						'term' => array(
+							'blog_id' => 1
+						)
 					)
 				)
 			)
@@ -418,7 +518,19 @@ class SearcherTest extends BaseTestCase
 
 		$query = $searcher->_buildQuery('string', $facets);
 
-		$this->assertEquals(array(), $query);
+		$this->assertEquals(array(
+			'filter' => array(
+				'bool' => array(
+					'must' => array(
+						array(
+							'term' => array(
+								'blog_id' => 1
+							)
+						)
+					)
+				)
+			)
+		), $query);
 	}
 
 	public function testBuildQueryNumericWithRange(){
@@ -433,6 +545,17 @@ class SearcherTest extends BaseTestCase
 		$query = $searcher->_buildQuery('string', $facets);
 
 		$this->assertEquals(array(
+			'filter' => array(
+				'bool' => array(
+					'must' => array(
+						array(
+							'term' => array(
+								'blog_id' => 1
+							)
+						)
+					)
+				)
+			),
 			'facets' => array(
 				'field1' => array(
 					'range' => array(
@@ -447,6 +570,11 @@ class SearcherTest extends BaseTestCase
 							array(
 								'from' => 20
 							),
+						)
+					),
+					'facet_filter' => array(
+						'term' => array(
+							'blog_id' => 1
 						)
 					)
 				)
@@ -485,6 +613,17 @@ class SearcherTest extends BaseTestCase
 					)
 				)
 			),
+			'filter' => array(
+				'bool' => array(
+					'must' => array(
+						array(
+							'term' => array(
+								'blog_id' => 1
+							)
+						)
+					)
+				)
+			),
 			'facets' => array(
 				'field1' => array(
 					'range' => array(
@@ -499,6 +638,11 @@ class SearcherTest extends BaseTestCase
 							array(
 								'from' => 20
 							),
+						)
+					),
+					'facet_filter' => array(
+						'term' => array(
+							'blog_id' => 1
 						)
 					)
 				)
@@ -556,6 +700,13 @@ class SearcherTest extends BaseTestCase
 								'tax1' => 'value2'
 							)
 						)
+					),
+					'must' => array(
+						array(
+							'term' => array(
+								'blog_id' => 1
+							)
+						)
 					)
 				)
 			),
@@ -574,11 +725,21 @@ class SearcherTest extends BaseTestCase
 								'from' => 20
 							),
 						)
+					),
+					'facet_filter' => array(
+						'term' => array(
+							'blog_id' => 1
+						)
 					)
 				),
 				'tax1' => array(
 					'terms' => array(
 						'field' => 'tax1'
+					),
+					'facet_filter' => array(
+						'term' => array(
+							'blog_id' => 1
+						)
 					)
 				)
 			)
