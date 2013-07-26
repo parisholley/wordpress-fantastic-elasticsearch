@@ -3,65 +3,57 @@
 Plugin Name: Fantastic ElasticSearch
 Plugin URI: http://wordpress.org/extend/plugins/fantastic-elasticsearch/
 Description: Improve wordpress search performance and accuracy by leveraging an ElasticSearch server.
-Version: 1.2.4
+Version: 2.0.1
 Author: Paris Holley
 Author URI: http://www.linkedin.com/in/parisholley
 Author Email: mail@parisholley.com
 License:
 
-  Copyright 2013 Paris Holley (mail@parisholley.com)
+	The MIT License (MIT)
 
-  This program is free software; you can redistribute it and/or modify
-  it under the terms of the GNU General Public License, version 2, as 
-  published by the Free Software Foundation.
+	Copyright (c) 2013 Paris Holley <mail@parisholley.com>
 
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
+	Permission is hereby granted, free of charge, to any person obtaining a copy
+	of this software and associated documentation files (the "Software"), to deal
+	in the Software without restriction, including without limitation the rights
+	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+	copies of the Software, and to permit persons to whom the Software is
+	furnished to do so, subject to the following conditions:
 
-  You should have received a copy of the GNU General Public License
-  along with this program; if not, write to the Free Software
-  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-  
+	The above copyright notice and this permission notice shall be included in
+	all copies or substantial portions of the Software.
+
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+	THE SOFTWARE.
 */
+
 
 namespace elasticsearch;
 
-define('ES_PLUGIN_DIR', basename(dirname(__FILE__)));
-
-if(!class_exists('NHP_Options')){
-	require_once( dirname( __FILE__ ) . '/lib/nhp/options/options.php' );
+if(!defined('NHP_OPTIONS_URL')){
+	define('NHP_OPTIONS_URL', plugins_url('/wp/lib/nhp/options/', __FILE__));
 }
 
-spl_autoload_register(function($class){
-	$path = str_replace('elasticsearch', '', $class);
-	$path = str_replace(array('_', "\\"), DIRECTORY_SEPARATOR, $path);
+if(!class_exists('NHP_Options')){
+	require_once( dirname( __FILE__ ) . '/wp/lib/nhp/options/options.php' );
+}
 
-	if (file_exists(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . $path . '.php')) {
-		require_once(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . $path . '.php');
-	}
+require 'src/bootstrap.php';
 
-	if (file_exists(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'api' . DIRECTORY_SEPARATOR . $path . '.php')) {
-		require_once(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'api' . DIRECTORY_SEPARATOR . $path . '.php');
-	}
-
-	
-});
-
-require 'theme/search.php';
-require 'theme/category.php';
-require 'theme/taxonomy.php';
-require 'theme/page.php';
-require 'theme/post_type.php';
-require 'admin/hooks.php';
-require 'lib/facet-widget/plugin.php';
-require 'lib/facet-widget/facet-widget.php';
-require 'lib/map-widget/map-widget.php';
-require 'lib/charts-widget/charts-widget.php';
+require 'wp/theme/search.php';
+require 'wp/theme/category.php';
+require 'wp/theme/taxonomy.php';
+require 'wp/theme/page.php';
+require 'wp/theme/post_type.php';
+require 'wp/admin/hooks.php';
 
 add_action( 'admin_enqueue_scripts', function() {
-	wp_register_style( 'custom_wp_admin_css', plugins_url('/css/admin.css', __FILE__) );
+	wp_register_style( 'custom_wp_admin_css', plugins_url('wp/css/admin.css', __FILE__) );
 	wp_enqueue_style( 'custom_wp_admin_css' );
 });
 
@@ -70,7 +62,7 @@ add_action('init', function(){
 
 	$args['share_icons']['twitter'] = array(
 		'link' => 'http://twitter.com/parisholley',
-		'title' => 'Follow me on Twitter', 
+		'title' => 'Folow me on Twitter', 
 		'img' => NHP_OPTIONS_URL.'img/glyphicons/glyphicons_322_twitter.png'
 	);
 
@@ -87,11 +79,12 @@ add_action('init', function(){
 	$args['show_import_export'] = false;
 	$args['page_position'] = 10241988;
 	$args['dev_mode'] = false;
-	$args['menu_icon'] = plugins_url('/images/menu.png', __FILE__);
+	$args['menu_icon'] = plugins_url('/wp/images/menu.png', __FILE__);
 	$args['page_icon'] = 'elasticsearch-icon';
 
 	$sections = array();
 
+<<<<<<< HEAD
 	require('admin/sections/wordpress-integration.php');
 	require('admin/sections/server-settings.php');
 	require('admin/sections/content-indexing.php');
@@ -101,10 +94,19 @@ add_action('init', function(){
 	require('admin/sections/facet-widget.php');
 	require('admin/sections/map-widget.php');
 	require('admin/sections/charts-widget.php');
+=======
+	require('wp/admin/sections/wordpress-integration.php');
+	require('wp/admin/sections/server-settings.php');
+	require('wp/admin/sections/content-indexing.php');
+	require('wp/admin/sections/field-mapping.php');
+	require('wp/admin/sections/results-scoring.php');
+	require('wp/admin/sections/manage-index.php');
+>>>>>>> rice2.0.0-wip
 
 	global $NHP_Options;
 
+    $tabs = array();
+
 	$NHP_Options = new \NHP_Options($sections, $args, $tabs);
 }, 10241988);
-
 ?>

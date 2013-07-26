@@ -2,3 +2,11 @@ language: php
 php:
   - 5.5
   - 5.4
+  - 5.3
+services:
+  - elasticsearch
+<<<<<<< HEAD
+=======
+before_script:
+  - sleep 3 # wait to make sure ES is up
+>>>>>>> upstream/2.0.0-wip

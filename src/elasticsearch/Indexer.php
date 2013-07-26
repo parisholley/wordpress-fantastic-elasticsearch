@@ -1,0 +1,266 @@
+<?php
+namespace elasticsearch;
+
+/**
+* This class handles the magic of building documents and sending them to ElasticSearch for indexing.
+*
+* @license http://opensource.org/licenses/MIT
+* @author Paris Holley <mail@parisholley.com>
+* @version 2.0.0
+**/
+class Indexer{
+	/**
+	* The number of posts to index per page when re-indexing
+	*
+	* @return integer posts per page
+	**/
+	static function per_page(){
+		return Config::apply_filters('indexer_per_page', 10);
+	}
+
+	/**
+	* Retrieve the posts for the page provided
+	*
+	* @param integer $page The page of results to retrieve for indexing
+	*
+	* @return WP_Post[] posts
+	**/
+	static function get_posts($page = 1){
+		$args = Config::apply_filters('indexer_get_posts', array(
+			'posts_per_page' => self::per_page(),
+			'post_type' => Config::types(),
+			'paged' => $page,
+			'post_status' => 'publish'
+		));
+
+		return get_posts($args);
+	}
+
+	/**
+	* Retrieve count of the number of posts available for indexing
+	*
+	* @return integer number of posts
+	**/
+	static function get_count(){
+		$query = new \WP_Query(array(
+			'post_type' => Config::types(),
+			'post_status' => 'publish'
+		));
+
+		return $query->found_posts; //performance risk?
+	}
+
+	/**
+	* Removes all data in the ElasticSearch index
+	**/
+	static function clear(){
+		foreach(Config::types() as $type){
+			$index = self::_index(true);
+			$mapping = $index->getMapping();
+
+			if(isset($mapping[Config::option('server_index')])){
+				foreach($mapping[Config::option('server_index')] as $type => $props){
+					$index->getType($type)->delete();
+				}
+			}
+		}
+
+		self::_map();
+	}
+
+	/**
+	* Re-index the posts on the given page in the ElasticSearch index
+	*
+	* @param integer $page The page to re-index
+	**/
+	static function reindex($page = 1){
+		$index = self::_index(true);
+
+		$posts = self::get_posts($page);
+
+		foreach($posts as $post){
+			self::addOrUpdate($post);
+		}
+
+		return count($posts);
+	}
+
+	/**
+	* Removes a post from the ElasticSearch index
+	*
+	* @param WP_Post $post The wordpress post to remove
+	**/
+	static function delete($post){
+		$index = self::_index(true);
+
+		$type = $index->getType($post->post_type);
+
+		try{
+			$type->deleteById($post->ID);
+		}catch(\Elastica\Exception\NotFoundException $ex){
+			// ignore
+		}
+	}
+
+	/**
+	* Updates an existing document in the ElasticSearch index (or creates it if it doesn't exist)
+	*
+	* @param WP_Post $post The wordpress post to remove
+	**/
+	static function addOrUpdate($post){
+		$type = self::_index(true)->getType($post->post_type);
+
+		$data = self::_build_document($post);
+
+		$type->addDocument(new \Elastica\Document($post->ID, $data));		
+	}
+
+	/**
+	* Reads F.E.S configuration and updates ElasticSearch field mapping information (this can corrupt existing data).
+	* @internal
+	**/
+	static function _map(){
+		$numeric = Config::option('numeric');
+		$notanalyzed = Config::option('not_analyzed');
+
+		$index = self::_index(false);
+
+		foreach(Config::taxonomies() as $tax){
+			$props = array(
+				'type' => 'string',
+				'index' => 'not_analyzed'
+			);
+
+			$props = Config::apply_filters('indexer_map_taxonomy', $props, $tax);
+
+			foreach(Config::types() as $type){
+				$type = $index->getType($type);
+
+				$mapping = new \Elastica\Type\Mapping($type);
+				$mapping->setProperties(array($tax => $props));
+
+				$mapping->send();
+			}			
+		}
+
+		foreach(Config::fields() as $field){
+			$props = array(
+				'type' => 'string'
+			);
+
+			if(isset($numeric[$field])){
+				$props['type'] = 'float';
+			}elseif($field == 'post_date'){
+				$props['type'] = 'date';
+				$props['format'] = 'date_time_no_millis';
+			}elseif(isset($notanalyzed[$field])){
+				$props['index'] = 'not_analyzed';
+			}else{
+				$props['index'] = 'analyzed';
+			}
+
+			$props = Config::apply_filters('indexer_map_field', $props, $field);
+
+			foreach(Config::types() as $type){
+				$type = $index->getType($type);
+
+				$mapping = new \Elastica\Type\Mapping($type);
+				$mapping->setProperties(array($field => $props));
+
+				$mapping->send();
+			}
+		}
+	}
+
+	/**
+	* Takes a wordpress post object and converts it into an associative array that can be sent to ElasticSearch
+	*
+	* @param WP_Post $post wordpress post object
+	* @return array document data
+	* @internal
+	**/
+	static function _build_document($post){
+		global $blog_id;
+		
+		$document = array(
+			'blog_id' => $blog_id
+		);
+
+		foreach(Config::fields() as $field){
+			if(isset($post->$field)){
+				if($field == 'post_date'){
+					$document[$field] = date('c',strtotime($post->$field));
+				}else{
+					$document[$field] = $post->$field;
+				}
+			}
+		}
+
+		if(isset($post->post_type)){
+			$taxes = array_intersect(Config::taxonomies(), get_object_taxonomies($post->post_type));
+
+			foreach($taxes as $tax){
+				$document[$tax] = array();
+
+				foreach(wp_get_object_terms($post->ID, $tax) as $term){
+					if(!in_array($term->slug, $document[$tax])){
+						$document[$tax][] = $term->slug;
+					}
+
+					if(isset($term->parent) && $term->parent){
+						$parent = get_term($term->parent, $tax);
+						
+						while($parent != null){
+							if(!in_array($parent->slug, $document[$tax])){
+								$document[$tax][] = $parent->slug;
+							}
+
+							if(isset($parent->parent) && $parent->parent){
+								$parent = get_term($parent->parent, $tax);
+							}else{
+								$parent = null;
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		return Config::apply_filters('indexer_build_document', $document, $post);
+	}
+
+	/**
+	* The Elastica\Client object used by F.E.S
+	*
+	* @param boolean $write Specifiy whether you are making read-only or write transactions (currently just adjusts timeout values)
+	*
+	* @return Elastica\Client
+	* @internal
+	**/
+	static function _client($write = false){
+		$settings = array(
+			'url' => Config::option('server_url')
+		);
+		
+		if($write){
+			$settings['timeout'] = Config::option('server_timeout_write') ?: 300;
+		}else{
+			$settings['timeout'] = Config::option('server_timeout_read') ?: 1;
+		}
+
+		return new \Elastica\Client($settings);
+	}
+
+	/**
+	* The Elastica\Index object used by F.E.S
+	*
+	* @param boolean $write Specifiy whether you are making read-only or write transactions (currently just adjusts timeout values)
+	*
+	* @return Elastica\Index
+	* @internal
+	**/
+	static function _index($write = false){
+		return self::_client($write)->getIndex(Config::option('server_index'));
+	}
+}
+?>

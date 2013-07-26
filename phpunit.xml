@@ -1,7 +1,25 @@
-<phpunit>
+<<<<<<< HEAD
+<phpunit bootstrap="unit-tests/bootstrap.php">
+=======
+<phpunit bootstrap="tests/unit-tests/bootstrap.php">
+>>>>>>> upstream/2.0.0-wip
 	<testsuites>
-		<testsuite name="Tests">
-			<directory>tests</directory>
+		<testsuite name="Unit Tests">
+			<directory>tests/unit-tests</directory>
+		</testsuite>
+		<testsuite name="Integration Tests">
+			<directory>tests/integration-tests</directory>
 		</testsuite>
 	</testsuites>
+	<filter>
+		<whitelist>
+			<directory suffix=".php">src/elasticsearch</directory>
+			<directory suffix=".php">wp/admin</directory>
+			<directory suffix=".php">wp/theme</directory>
+		</whitelist>
+	</filter>
+<<<<<<< HEAD
 </phpunit>
+=======
+</phpunit>
+>>>>>>> upstream/2.0.0-wip
