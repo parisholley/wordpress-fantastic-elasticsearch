@@ -24,7 +24,6 @@ foreach(Defaults::fields() as $field){
 	$fields[0]['std'][$field] = 1;
 }
 
-
 foreach(Defaults::types() as $type){
 	$fields[1]['options'][$type] = $type;
 	$fields[1]['std'][$type] = 1;

@@ -9,7 +9,7 @@ class Indexer{
 	}
 
 	static function get_posts($page = 1){
-		$args = apply_filters('ex_indexer_get_posts', array(
+		$args = apply_filters('es_indexer_get_posts', array(
 			'posts_per_page' => self::per_page(),
 			'post_type' => Api::types(),
 			'paged' => $page,
@@ -95,6 +95,46 @@ class Indexer{
 					$mapping = new \Elastica_Type_Mapping($type);
 					$mapping->setProperties(array($field => array(
 						'type' => 'date'
+					)));
+
+					$mapping->send();
+				}			
+			}
+
+			if($field == 'lat'){
+				foreach(Api::types() as $type){
+					$type = $index->getType($type);
+
+					$mapping = new \Elastica_Type_Mapping($type);
+					$mapping->setProperties(array($field => array(
+						'type' => 'float'
+					)));
+
+					$mapping->send();
+				}			
+			}
+
+			if($field == 'lon'){
+				foreach(Api::types() as $type){
+					$type = $index->getType($type);
+
+					$mapping = new \Elastica_Type_Mapping($type);
+					$mapping->setProperties(array($field => array(
+						'type' => 'float'
+					)));
+
+					$mapping->send();
+				}			
+			}
+
+
+			if($field == 'location'){
+				foreach(Api::types() as $type){
+					$type = $index->getType($type);
+
+					$mapping = new \Elastica_Type_Mapping($type);
+					$mapping->setProperties(array($field => array(
+						'type' => 'geo_point'
 					)));
 
 					$mapping->send();

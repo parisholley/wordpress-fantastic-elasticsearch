@@ -105,5 +105,26 @@ class Api{
 
 		return Defaults::taxonomies(self::types());
 	}
+
+	static function parse_query($str) {
+	global $NHP_Options;
+	$relation = $NHP_Options->get('multiple_relation');
+	  # result array
+	  $arr = array();
+
+	  # split on outer delimiter
+	  $pairs = explode('&', $str);
+
+	  # loop through each pair
+	  foreach ($pairs as $i) {
+	    # split into name and value
+	    list($elasticsearch,$value) = explode('=', $i, 2);
+	    list($name,$key) = explode(urlencode($relation), $elasticsearch, 2);
+	    $arr[$name][] = $value;
+	  }
+
+	  # return result array
+	  return $arr;
+	}
 }
 ?>

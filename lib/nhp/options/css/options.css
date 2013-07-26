@@ -388,6 +388,15 @@ border: 1px solid #e5e5e5;
 	display:block;
 }
 
+/*
+ *
+ * Charts Widget text
+ *
+ */
+.info_field_text {
+		padding: 0 0 0 20px!important;
+	}
+
 
 
 

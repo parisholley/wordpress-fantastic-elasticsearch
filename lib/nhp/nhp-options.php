@@ -52,14 +52,6 @@ function change_framework_args($args){
 }//function
 //add_filter('nhp-opts-args-twenty_eleven', 'change_framework_args');
 
-
-
-
-
-
-
-
-
 /*
  * This is the meat of creating the optons page
  *
@@ -513,6 +505,14 @@ $sections[] = array(
 						'args' => array('number' => '10')//uses get_categories
 						),
 					array(
+						'id' => 'taxes_multi_select',
+						'type' => 'taxes_multi_select',
+						'title' => __('Taxes Multiple Select Option', 'nhp-opts'), 
+						'sub_desc' => __('No validation can be done on this field type', 'nhp-opts'),
+						'desc' => __('This field creates a Multi Select menu of all the sites taxes.', 'nhp-opts'),
+						'args' => array('number' => '10')//uses get_categories
+						),
+					array(
 						'id' => 'menu_select',
 						'type' => 'menu_select',
 						'title' => __('Menu Select Option', 'nhp-opts'), 
@@ -547,12 +547,20 @@ $sections[] = array(
 						'sub_desc' => __('No validation can be done on this field type', 'nhp-opts'),
 						'desc' => __('This field creates a checkbox which will allow the user to use the next setting.', 'nhp-opts'),
 						),
-						array(
+					array(
 						'id' => 'post_type_select',
 						'type' => 'post_type_select',
 						'title' => __('Post Type Select Option', 'nhp-opts'), 
 						'sub_desc' => __('No validation can be done on this field type', 'nhp-opts'),
 						'desc' => __('This field creates a drop down menu of all registered post types.', 'nhp-opts'),
+						//'args' => array()//uses get_post_types
+						),
+					array(
+						'id' => 'post_types_multi_select',
+						'type' => 'post_types_multi_select',
+						'title' => __('Post Type Select Option', 'nhp-opts'), 
+						'sub_desc' => __('No validation can be done on this field type', 'nhp-opts'),
+						'desc' => __('This field creates a Multi Select menu of all registered post types.', 'nhp-opts'),
 						//'args' => array()//uses get_post_types
 						),
 					array(
