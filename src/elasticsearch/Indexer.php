@@ -125,6 +125,22 @@ class Indexer{
 
 		$index = self::_index(false);
 
+		foreach(Config::taxonomies() as $tax){
+			$props = array(
+				'type' => 'string',
+				'index' => 'not_analyzed'
+			);
+
+			foreach(Config::types() as $type){
+				$type = $index->getType($type);
+
+				$mapping = new \Elastica\Type\Mapping($type);
+				$mapping->setProperties(array($tax => $props));
+
+				$mapping->send();
+			}			
+		}
+
 		foreach(Config::fields() as $field){
 			$props = array(
 				'type' => 'string'

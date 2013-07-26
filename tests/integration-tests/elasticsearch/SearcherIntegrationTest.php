@@ -80,6 +80,55 @@ class SearcherIntegrationTest extends BaseIntegrationTestCase
 		$this->assertEquals(array(1), $results['ids']);
 	}
 
+	public function testSearchTaxonomiesHyphens()
+	{
+		global $blog_id;
+		
+		update_option('score_tax_tag', 1);
+
+		register_post_type('post');
+		register_taxonomy('tag', 'post');
+
+		wp_insert_term('Tag 1', 'tag', array(
+  			'slug' => 'tag-flag-1'
+  		));
+
+  		wp_insert_term('Tag 2', 'tag', array(
+  			'slug' => 'name-game-2'
+  		));
+
+  		wp_set_object_terms(1, array(1, 2), 'tag');
+  		wp_set_object_terms(2, array(1, 2), 'tag');
+
+  		Indexer::clear();
+
+		Indexer::addOrUpdate((object) array(
+			'post_type' => 'post',
+			'post_date' => '10/24/1988 00:00:00 CST',
+			'ID' => 1
+		));
+
+		Indexer::addOrUpdate((object) array(
+			'post_type' => 'post',
+			'post_date' => '10/24/1988 00:00:00 CST',
+			'ID' => 2
+		));
+
+		$this->index->refresh();
+
+		$results = $this->searcher->search(null, 0, 10, array('tag' => 'tag-flag-1'));
+
+		$this->assertEquals(2, $results['total']);
+		$this->assertEquals(array(1, 2), $results['ids']);
+		$this->assertEquals(array('tag' => array('name-game-2' => 2, 'tag-flag-1' => 2)), $results['facets']);
+
+		$results = $this->searcher->search(null, 0, 10, array('tag' => 'name'));
+
+		$this->assertEquals(0, $results['total']);
+		$this->assertEquals(array(), $results['ids']);
+		$this->assertEquals(array(), $results['facets']);
+	}
+
 	public function testSearchTaxonomiesMultisite()
 	{
 		global $blog_id;
