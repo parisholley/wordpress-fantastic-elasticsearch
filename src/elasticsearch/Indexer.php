@@ -131,6 +131,8 @@ class Indexer{
 				'index' => 'not_analyzed'
 			);
 
+			$props = Config::apply_filters('indexer_map_taxonomy', $props, $tax);
+
 			foreach(Config::types() as $type){
 				$type = $index->getType($type);
 
@@ -156,6 +158,8 @@ class Indexer{
 			}else{
 				$props['index'] = 'analyzed';
 			}
+
+			$props = Config::apply_filters('indexer_map_field', $props, $field);
 
 			foreach(Config::types() as $type){
 				$type = $index->getType($type);

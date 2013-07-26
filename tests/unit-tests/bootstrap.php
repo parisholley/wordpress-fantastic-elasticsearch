@@ -145,17 +145,21 @@ namespace {
 		elasticsearch\TestContext::$options[$name] = $value;
 	}
 
-	function add_filter($name, $function){
+	function add_filter($name, $function, $order = 1, $args = 1){
 		elasticsearch\TestContext::$filters[$name] = $function;
 	}
 
-	function apply_filters($name, $val){
+	function apply_filters($name){
 		if(isset(elasticsearch\TestContext::$filters[$name])){
 			$func = elasticsearch\TestContext::$filters[$name];
-			return $func($val);
+
+			$args = func_get_args();
+			array_shift($args); // remove $name
+
+			return call_user_func_array($func, $args);
 		}
 
-		return $val;
+		return func_get_arg(1);
 	}
 }
 ?>

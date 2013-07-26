@@ -42,7 +42,7 @@ class Searcher{
 		$query->setSize($size);
 		$query->setFields(array('id'));
 
-		Config::apply_filters('elastica_query', $query);
+		Config::apply_filters('searcher_query', $query);
 
 		try{
 			$index = Indexer::_index(false);
@@ -53,13 +53,11 @@ class Searcher{
 			$query->addSort(array('post_date' => array('order' => 'desc')));
 			$query->addSort('_score');
 
-			Config::apply_filters('elastica_search', $search);
+			Config::apply_filters('searcher_search', $search);
 
 			$results = $search->search($query);
 
-			$val = self::_parseResults($results);
-
-			return Config::apply_filters('query_response', $val, $results);
+			return self::_parseResults($results);
 		}catch(\Exception $ex){
 			error_log($ex);
 
@@ -94,13 +92,11 @@ class Searcher{
 			}
 		}
 
-
-
 		foreach($response->getResults() as $result){
 			$val['ids'][] = $result->getId();
 		}
 
-		return Config::apply_filters('elastica_results', $val, $response);		
+		return Config::apply_filters('searcher_results', $val, $response);		
 	}
 
 	/**
@@ -173,7 +169,7 @@ class Searcher{
 
 		$args['filter']['bool']['must'][] = array( 'term' => array( 'blog_id' => $blog_id ) );
 
-		$args = Config::apply_filters('query_pre_facet_filter', $args);
+		$args = Config::apply_filters('searcher_query_pre_facet_filter', $args);
 
 		// return facets
 		foreach(Config::facets() as $facet){
@@ -192,7 +188,7 @@ class Searcher{
 			}
 		}
 		
-		return Config::apply_filters('query_post_facet_filter', $args);
+		return Config::apply_filters('searcher_query_post_facet_filter', $args);
 	}
 
 	/**

@@ -3,6 +3,72 @@ namespace elasticsearch;
 
 class ApiTest extends BaseTestCase
 {
+	public function testTaxonomiesFilter()
+	{
+		add_filter('elasticsearch_config_taxonomies', function($value){
+			return array('bar');
+		}, 10, 1);
+
+		$this->assertEquals(array('bar'), Config::taxonomies());
+	}
+
+	public function testTypesFilter()
+	{
+		add_filter('elasticsearch_config_types', function($value){
+			return array('bar');
+		}, 10, 1);
+
+		$this->assertEquals(array('bar'), Config::types());
+	}
+
+	public function testFacetsFilter()
+	{
+		add_filter('elasticsearch_config_facets', function($value){
+			return array('bar');
+		}, 10, 1);
+
+		$this->assertEquals(array('bar'), Config::facets());
+	}
+
+	public function testOptionFilter()
+	{
+		add_filter('elasticsearch_config_option', function($value, $name){
+			if($name != 'foo'){
+				throw new Exception('args not same');
+			}
+
+			return 'bar';
+		}, 10, 2);
+
+		$this->assertEquals('bar', Config::option('foo'));
+	}
+
+	public function testScoreFilter()
+	{
+		add_filter('elasticsearch_config_score', function($value, $type, $name){
+			if($type != 'field' || $name != 'foo'){
+				throw new Exception('args not same');
+			}
+
+			return 0;
+		}, 10, 3);
+
+		$this->assertEquals(0, Config::score('field', 'foo'));
+	}
+
+	public function testRangesFilter()
+	{
+		add_filter('elasticsearch_config_ranges', function($value, $field){
+			if($field != 'field'){
+				throw new Exception('args not same');
+			}
+
+			return array('wee');
+		}, 10, 2);
+
+		$this->assertEquals(array('wee'), Config::ranges('field'));
+	}
+
 	public function testOptionDefined()
 	{
 		update_option('foo', 'bar');
@@ -67,7 +133,7 @@ class ApiTest extends BaseTestCase
 
 	public function testFieldsFilter()
 	{
-		add_filter('es_api_fields', function(){
+		add_filter('elasticsearch_config_fields', function(){
 			return array('filtered');
 		});
 

@@ -23,7 +23,7 @@ class Config{
 			self::$options = &get_option('elasticsearch');
 		}
 
-		return isset(self::$options[$name]) ? self::$options[$name] : null;
+		return self::apply_filters('config_option', isset(self::$options[$name]) ? self::$options[$name] : null, $name);
 	}
 
 	/**
@@ -35,7 +35,7 @@ class Config{
 	* @return integer
 	**/
 	static function score($type, $name){
-		return self::option("score_{$type}_{$name}");
+		return self::apply_filters('config_score', self::option("score_{$type}_{$name}"), $type, $name);
 	}
 
 	/**
@@ -59,6 +59,8 @@ class Config{
 	static function ranges($field){
 		$config = self::option($field . '_range');
 
+		$val = null;
+
 		if($config){
 			$ranges = array();
 
@@ -78,10 +80,10 @@ class Config{
 				$ranges[$ends[0] . '-' . $ends[1]] = $tmp;
 			}
 
-			return $ranges;
+			$val = $ranges;
 		}
 
-		return null;
+		return self::apply_filters('config_ranges', $val, $field);
 	}
 
 	/**
@@ -109,7 +111,7 @@ class Config{
 		// this should always exist so we have a default to sort on
 		$fieldnames[] = 'post_date';
 
-		return apply_filters('es_api_fields', $fieldnames);
+		return self::apply_filters('config_fields', $fieldnames);
 	}
 
 	/**
@@ -118,7 +120,7 @@ class Config{
 	* @return string[] field and/or association names
 	**/
 	static function facets(){
-		return self::taxonomies();
+		return self::apply_filters('config_facets', self::taxonomies());
 	}
 
 	/**
@@ -129,11 +131,13 @@ class Config{
 	static function types(){
 		$types = self::option('types');
 
+		$val = Defaults::types();
+
 		if($types){
-			return array_keys($types);
+			$val = array_keys($types);
 		}
 
-		return Defaults::types();
+		return self::apply_filters('config_types', $val);
 	}
 
 	/**
@@ -144,11 +148,17 @@ class Config{
 	static function taxonomies(){
 		$taxes = self::option('taxonomies');
 
+		$val = null;
+
 		if($taxes){
-			return array_keys($taxes);
+			$val = array_keys($taxes);
 		}
 
-		return Defaults::taxonomies(self::types());
+		if($val == null){
+			$val = Defaults::taxonomies(self::types());
+		}
+
+		return self::apply_filters('config_taxonomies', $val);
 	}
 }
 ?>
