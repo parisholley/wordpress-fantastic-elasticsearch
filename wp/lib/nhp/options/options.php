@@ -320,6 +320,8 @@ class NHP_Options{
 		if(false === $this->args['stylesheet_override']){
 			wp_enqueue_style('nhp-opts-css');
 		}
+
+		wp_enqueue_script( 'charts-js', $this->url.'js/chart.js', false, true );
 		
 		
 		wp_enqueue_script(
