@@ -1,3 +1,9 @@
+SUSPEND=1
+
+if [ -f "$HOME/.fes.sh" ]; then
+	source $HOME/.fes.sh
+fi
+
 cd `dirname $0`
 
 echo "Detecting if phantomjs is installed."
@@ -162,7 +168,7 @@ if [ -f "selenium.log" ]; then
 	rm selenium.log
 fi
 
-if [ $? -eq 0 ]; then
+if [ $? -eq 0 ] && [ $SUSPEND -eq 1 ]; then
 	echo "Suspending VM."
 
 	cd vagrantpress-wordpress-fantastic-elasticsearch;

@@ -15,20 +15,26 @@ class Category{
 	function do_search($wp_query){
 		$this->searched = false;
 
-		$slug = $wp_query->query_vars['category_name'];
+		$cat = null;
 
-		$cat = get_category_by_slug($slug);
+		if(isset($wp_query->query_vars['category_name'])){
+			$cat = get_category_by_slug($wp_query->query_vars['category_name']);
+		}
+
+		if(isset($wp_query->query_vars['cat'])){
+			$cat = get_category($wp_query->query_vars['cat']);
+		}
 
 		$enabled = Config::option('enable_categories');
 		
-		if(!$wp_query->is_main_query() || !(is_tax() || $slug) || is_admin() || !$enabled || !in_array($cat->term_id, $enabled)){
+		if(!$wp_query->is_main_query() || !(is_tax() || $cat) || is_admin() || !$enabled || !in_array($cat->term_id, $enabled)){
 			return;
 		}
 
 		$args = $_GET;
 
 		if(!$args['category']){
-			$args['category']['or'][] = $slug;
+			$args['category']['or'][] = $cat->slug;
 		}
 
 		$this->page = $wp_query->query_vars['paged'] > 0 ? $wp_query->query_vars['paged'] - 1 : 0;
@@ -44,9 +50,11 @@ class Category{
 		}
 
 		$this->total = $results['total'];
-		$this->scores = $results['scores'];
+		$this->ids = $results['ids'];
 		
-		$wp_query->query_vars['post__in'] = $results['ids'];
+		$wp_query->query_vars['s'] = '';	
+		# do not show results if none were returned
+		$wp_query->query_vars['post__in'] = empty($results['ids']) ? array(-1) : $results['ids'];
 		$wp_query->query_vars['paged'] = 1;
 		$wp_query->facets = $results['facets'];
 
@@ -70,7 +78,7 @@ class Category{
 	}
 
 	function sort_posts($a, $b){
-		return $this->scores[$a->ID] > $this->scores[$b->ID] ? -1 : 1;
+		return array_search($b->ID, $this->ids) > array_search($a->ID, $this->ids) ? -1 : 1;
 	}
 }
 
