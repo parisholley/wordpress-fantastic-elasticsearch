@@ -93,7 +93,10 @@ class WpNoticeTest extends BaseTestCase
 		do_action('init');
 		do_action('admin_menu');
 		do_action('admin_print_styles-');
+
+		ob_start();
 		do_action('admin_init');
+		ob_end_clean();
 	}
 }
 ?>

@@ -272,6 +272,14 @@ namespace {
 
 	}
 
+	function get_categories(){
+		return array();
+	}
+
+	function esc_attr($attr){
+		return $attr;
+	}
+
 	function do_action($name){
 		if(isset(elasticsearch\TestContext::$actions[$name])){
 			foreach(elasticsearch\TestContext::$actions[$name] as $action){
@@ -295,6 +303,6 @@ namespace {
 		return isset(elasticsearch\TestContext::$is['is_tax']) ? elasticsearch\TestContext::$is['is_tax'] : false;
 	}
 
-	require 'elasticsearch.php';
+	require __DIR__ . '/../../elasticsearch.php';
 }
 ?>
