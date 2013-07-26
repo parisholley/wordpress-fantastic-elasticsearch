@@ -42,6 +42,9 @@ https://github.com/parisholley/wordpress-fantastic-elasticsearch/wiki
 
 == Changelog ==
 
+= 2.0.1 =
+* Preventing more notices (thanks michaelsauter)
+
 = 2.0.0 =
 * WARNING: This is a major release, any custom work (API, faceting) may not work. If you have not customized, you should have a flawless upgrade. Please test in a development environment first and report any problems.
 * Large cleanup effort

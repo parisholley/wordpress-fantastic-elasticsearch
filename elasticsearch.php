@@ -3,7 +3,7 @@
 Plugin Name: Fantastic ElasticSearch
 Plugin URI: http://wordpress.org/extend/plugins/fantastic-elasticsearch/
 Description: Improve wordpress search performance and accuracy by leveraging an ElasticSearch server.
-Version: 2.0.0
+Version: 2.0.1
 Author: Paris Holley
 Author URI: http://www.linkedin.com/in/parisholley
 Author Email: mail@parisholley.com
