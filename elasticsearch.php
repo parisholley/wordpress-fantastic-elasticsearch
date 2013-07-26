@@ -41,8 +41,6 @@ require 'wp/lib/theme/taxonomy.php';
 require 'wp/lib/theme/page.php';
 require 'wp/lib/theme/post_type.php';
 require 'wp/admin/hooks.php';
-require 'wp/lib/facet-widget/facet-widget.php';
-require 'wp/lib/charts-widget/charts-widget.php';
 
 add_action( 'admin_enqueue_scripts', function() {
 	wp_register_style( 'custom_wp_admin_css', plugins_url('wp/css/admin.css', __FILE__) );
@@ -82,8 +80,6 @@ add_action('init', function(){
 	require('wp/admin/sections/field-mapping.php');
 	require('wp/admin/sections/results-scoring.php');
 	require('wp/admin/sections/manage-index.php');
-	require('wp/admin/sections/facet-widget.php');
-	require('wp/admin/sections/charts-widget.php');
 
 	global $NHP_Options;
 
