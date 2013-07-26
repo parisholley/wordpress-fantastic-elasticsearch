@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="generator" content="ApiGen 2.8.0" />
+
+	<title>Class elasticsearch\Faceting</title>
+
+	<script type="text/javascript" src="resources/combined.js?2259263873"></script>
+	<script type="text/javascript" src="elementlist.js?3958747566"></script>
+	<link rel="stylesheet" type="text/css" media="all" href="resources/style.css?3505392360" />
+
+</head>
+
+<body>
+<div id="left">
+	<div id="menu">
+		<a href="index.html" title="Overview"><span>Overview</span></a>
+
+
+		<div id="groups">
+			<h3>Namespaces</h3>
+			<ul>
+				<li class="active"><a href="namespace-elasticsearch.html">elasticsearch</a>
+						</li>
+			</ul>
+		</div>
+
+		<hr />
+
+
+		<div id="elements">
+			<h3>Classes</h3>
+			<ul>
+				<li><a href="class-elasticsearch.Config.html">Config</a></li>
+				<li><a href="class-elasticsearch.Defaults.html">Defaults</a></li>
+				<li class="active"><a href="class-elasticsearch.Faceting.html">Faceting</a></li>
+				<li><a href="class-elasticsearch.Indexer.html">Indexer</a></li>
+				<li><a href="class-elasticsearch.Searcher.html">Searcher</a></li>
+			</ul>
+
+
+
+
+
+		</div>
+	</div>
+</div>
+
+<div id="splitter"></div>
+
+<div id="right">
+<div id="rightInner">
+	<form id="search">
+		<input type="hidden" name="cx" value="" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text" name="q" class="text" />
+		<input type="submit" value="Search" />
+	</form>
+
+	<div id="navigation">
+		<ul>
+			<li>
+				<a href="index.html" title="Overview"><span>Overview</span></a>
+			</li>
+			<li>
+				<a href="namespace-elasticsearch.html" title="Summary of elasticsearch"><span>Namespace</span></a>
+			</li>
+			<li class="active">
+<span>Class</span>			</li>
+		</ul>
+		<ul>
+			<li>
+				<a href="tree.html" title="Tree view of classes, interfaces, traits and exceptions"><span>Tree</span></a>
+			</li>
+		</ul>
+		<ul>
+		</ul>
+	</div>
+
+<div id="content" class="class">
+	<h1>Class Faceting</h1>
+
+
+	<div class="description">
+	
+<p>This class provides numerous helper methods for working with facet
+information returned from elastic search results.</p>
+
+	</div>
+
+
+
+
+
+
+
+
+
+	<div class="info">
+		
+		
+		<b>Namespace:</b> <a href="namespace-elasticsearch.html">elasticsearch</a><br />
+		
+
+				<b>License:</b>
+				<a href="http://opensource.org/licenses/MIT">http://opensource.org/licenses/MIT</a><br />
+				<b>Author:</b>
+				Paris Holley &lt;<a
+href="mailto:mail&#64;parisholley.com">mail&#64;<!-- -->parisholley.com</a>&gt;<br />
+				<b>Version:</b>
+				2.0.0<br />
+		<b>Located at</b> <a href="source-class-elasticsearch.Faceting.html#4-307" title="Go to source code">Faceting.php</a><br />
+	</div>
+
+
+
+	<table class="summary" id="methods">
+	<caption>Methods summary</caption>
+	<tr data-order="all" id="_all">
+
+		<td class="attributes"><code>
+			 public static
+			array
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_all">#</a>
+		<code><a href="source-class-elasticsearch.Faceting.html#12-76" title="Go to source code">all</a>( <span>string <var>$minFont</var> = <span class="php-num">12</span></span>, <span>string <var>$maxFont</var> = <span class="php-num">24</span></span> )</code>
+
+		<div class="description short">
+			
+<p>A convenient method that aggregates the results of all the other methods in
+the class. Example of output:</p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			
+<p>A convenient method that aggregates the results of all the other methods in
+the class. Example of output:</p>
+
+<pre>
+<span class="php-keyword1">array</span>(
+<span
+class="php-comment">// the keys are names of fields and/or taxonomies</span>
+        <span
+class="php-quote">'taxonomy'</span> =&gt; <span
+class="php-keyword1">array</span>(
+                <span
+class="php-quote">'available'</span> =&gt; <span
+class="php-keyword1">array</span>(
+                        <span
+class="php-quote">'taxonomy1'</span>     =&gt; <span
+class="php-keyword1">array</span>(
+                                <span
+class="php-quote">'count'</span> =&gt; <span
+class="php-num">10</span>,
+                                <span
+class="php-quote">'slug'</span>  =&gt; <span
+class="php-quote">'taxonomy1'</span>,
+                                <span
+class="php-quote">'name'</span>  =&gt; <span
+class="php-quote">'Taxonomy One'</span>,
+                                <span
+class="php-quote">'font'</span>  =&gt; <span
+class="php-num">24</span>
+                        )
+                ),
+                <span
+class="php-quote">'selected'</span> =&gt; <span
+class="php-keyword1">array</span>(
+                        <span
+class="php-quote">'taxonomy2'</span>     =&gt; <span
+class="php-keyword1">array</span>(
+                                <span
+class="php-quote">'slug'</span>  =&gt; <span
+class="php-quote">'taxonomy2'</span>,
+                                <span
+class="php-quote">'name'</span>  =&gt; <span
+class="php-quote">'Taxonomy Two'</span>
+                        )
+                ),
+                <span
+class="php-quote">'total'</span> =&gt; <span
+class="php-num">10</span>
+        ),
+        <span
+class="php-quote">'rating'</span> =&gt; <span
+class="php-keyword1">array</span>(
+                <span
+class="php-quote">'available'</span> =&gt; <span
+class="php-keyword1">array</span>(
+                        <span
+class="php-quote">'10-20'</span> =&gt; <span
+class="php-keyword1">array</span>(
+                                <span
+class="php-quote">'count'</span> =&gt; <span
+class="php-num">4</span>,
+                                <span
+class="php-quote">'slug'</span>  =&gt; <span
+class="php-quote">'10-20'</span>,
+                                <span
+class="php-quote">'to'</span>    =&gt; <span
+class="php-num">20</span>,
+                                <span
+class="php-quote">'from'</span>  =&gt; <span
+class="php-num">10</span>
+                        )
+                ),
+                <span
+class="php-quote">'total'</span> =&gt; <span
+class="php-num">4</span>
+        )
+)
+</pre>
+
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$minFont</var></dt>
+					<dd><code>string</code><br>$minFont The minimum font size to use for display in a tag cloud (defaults to :
+12)</dd>
+					<dt><var>$maxFont</var></dt>
+					<dd><code>string</code><br>$maxFont The maximum font size to use for display in a tag cloud (defaults to :
+24)</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code>array</code><br>An associative array where the keys represent the data point with a list of
+selected and/or available options.<br />
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="range" id="_range">
+
+		<td class="attributes"><code>
+			 public static
+			array
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_range">#</a>
+		<code><a href="source-class-elasticsearch.Faceting.html#78-139" title="Go to source code">range</a>( <span>string <var>$field</var></span> )</code>
+
+		<div class="description short">
+			
+<p>Analyse query parameters for range slugs and determine which facets are
+selected vs. which are available for the given field. Example of output:</p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			
+<p>Analyse query parameters for range slugs and determine which facets are
+selected vs. which are available for the given field. Example of output:</p>
+
+<pre>
+<span class="php-keyword1">array</span>(
+        <span
+class="php-quote">'available'</span> =&gt; <span
+class="php-keyword1">array</span>(
+                <span
+class="php-quote">'10-20'</span> =&gt; <span
+class="php-keyword1">array</span>(
+                        <span
+class="php-quote">'count'</span> =&gt; <span
+class="php-num">4</span>,
+                        <span
+class="php-quote">'slug'</span>  =&gt; <span
+class="php-quote">'10-20'</span>,
+                        <span
+class="php-quote">'to'</span>    =&gt; <span
+class="php-num">20</span>,
+                        <span
+class="php-quote">'from'</span>  =&gt; <span
+class="php-num">10</span>
+                )
+        ),
+        <span
+class="php-quote">'selected'</span> =&gt; <span
+class="php-keyword1">array</span>(
+                <span
+class="php-quote">'-20'</span> =&gt; <span
+class="php-keyword1">array</span>(
+                        <span
+class="php-quote">'slug'</span>  =&gt; <span
+class="php-quote">'-20'</span>,
+                        <span
+class="php-quote">'to'</span>    =&gt; <span
+class="php-num">20</span>
+                )
+        ),
+        <span
+class="php-quote">'total'</span> =&gt; <span class="php-num">4</span>
+)
+</pre>
+
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$field</var></dt>
+					<dd><code>string</code><br>$field The field to determine range facet information about</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code>array</code><br>An associative array based on example provided<br />
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="taxonomy" id="_taxonomy">
+
+		<td class="attributes"><code>
+			 public static
+			array
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_taxonomy">#</a>
+		<code><a href="source-class-elasticsearch.Faceting.html#141-200" title="Go to source code">taxonomy</a>( <span>string <var>$tax</var></span> )</code>
+
+		<div class="description short">
+			
+<p>Analyse query parameters for taxonomoy slugs and determine which facets are
+selected vs. which are available for the given field. Example of output:</p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			
+<p>Analyse query parameters for taxonomoy slugs and determine which facets are
+selected vs. which are available for the given field. Example of output:</p>
+
+<pre>
+<span class="php-keyword1">array</span>(
+        <span
+class="php-quote">'available'</span> =&gt; <span
+class="php-keyword1">array</span>(
+                <span
+class="php-quote">'taxonomy1'</span> =&gt; <span
+class="php-keyword1">array</span>(
+                        <span
+class="php-quote">'count'</span> =&gt; <span
+class="php-num">10</span>,
+                        <span
+class="php-quote">'slug'</span>  =&gt; <span
+class="php-quote">'taxonomy1'</span>,
+                        <span
+class="php-quote">'name'</span>  =&gt; <span
+class="php-quote">'Taxonomy One'</span>,
+                        <span
+class="php-quote">'font'</span>  =&gt; <span
+class="php-num">24</span>
+                )
+        ),
+        <span
+class="php-quote">'selected'</span> =&gt; <span
+class="php-keyword1">array</span>(
+                <span
+class="php-quote">'taxonomy2'</span>     =&gt; <span
+class="php-keyword1">array</span>(
+                        <span
+class="php-quote">'slug'</span>  =&gt; <span
+class="php-quote">'taxonomy2'</span>,
+                        <span
+class="php-quote">'name'</span>  =&gt; <span
+class="php-quote">'Taxonomy Two'</span>
+                )
+        ),
+        <span
+class="php-quote">'total'</span> =&gt; <span class="php-num">10</span>
+)
+</pre>
+
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$tax</var></dt>
+					<dd><code>string</code><br>$field The taxonomy type to retrieve facet information about</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code>array</code><br>An associative array based on example provided<br />
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="cloud" id="_cloud">
+
+		<td class="attributes"><code>
+			 public static
+			integer
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_cloud">#</a>
+		<code><a href="source-class-elasticsearch.Faceting.html#202-242" title="Go to source code">cloud</a>( <span>array <var>$items</var></span>, <span>array <var>$item</var></span>, <span>string <var>$min</var> = <span class="php-num">12</span></span>, <span>string <var>$max</var> = <span class="php-num">24</span></span> )</code>
+
+		<div class="description short">
+			
+<p>Will calculate a font size based on the total number of results for the given
+item in a collection of items. Example of output:</p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			
+<p>Will calculate a font size based on the total number of results for the given
+item in a collection of items. Example of output:</p>
+
+<pre>
+<span class="php-keyword1">array</span>(
+        <span
+class="php-quote">'available'</span> =&gt; <span
+class="php-keyword1">array</span>(
+                <span
+class="php-quote">'taxonomy1'</span> =&gt; <span
+class="php-keyword1">array</span>(
+                        <span
+class="php-quote">'count'</span> =&gt; <span
+class="php-num">10</span>,
+                        <span
+class="php-quote">'slug'</span>  =&gt; <span
+class="php-quote">'taxonomy1'</span>,
+                        <span
+class="php-quote">'name'</span>  =&gt; <span
+class="php-quote">'Taxonomy One'</span>,
+                        <span
+class="php-quote">'font'</span>  =&gt; <span
+class="php-num">24</span>
+                )
+        ),
+        <span
+class="php-quote">'selected'</span> =&gt; <span
+class="php-keyword1">array</span>(
+                <span
+class="php-quote">'taxonomy2'</span> =&gt; <span
+class="php-keyword1">array</span>(
+                        <span
+class="php-quote">'slug'</span>  =&gt; <span
+class="php-quote">'taxonomy2'</span>,
+                        <span
+class="php-quote">'name'</span>  =&gt; <span
+class="php-quote">'Taxonomy Two'</span>
+                )
+        ),
+        <span
+class="php-quote">'total'</span> =&gt; <span class="php-num">10</span>
+)
+</pre>
+
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$items</var></dt>
+					<dd><code>array</code><br>$items An array of arrays that contain a key called 'count'</dd>
+					<dt><var>$item</var></dt>
+					<dd><code>array</code><br>$item An item out of the array that you wish to calculate a font size</dd>
+					<dt><var>$min</var></dt>
+					<dd><code>string</code><br>$minFont The minimum font size to use for display in a tag cloud (defaults to :
+12)</dd>
+					<dt><var>$max</var></dt>
+					<dd><code>string</code><br>$maxFont The maximum font size to use for display in a tag cloud (defaults to :
+24)</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code>integer</code><br>The calculated font size<br />
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="urlAdd" id="_urlAdd">
+
+		<td class="attributes"><code>
+			 public static
+			string
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_urlAdd">#</a>
+		<code><a href="source-class-elasticsearch.Faceting.html#244-270" title="Go to source code">urlAdd</a>( <span>string <var>$url</var></span>, <span>string <var>$type</var></span>, <span>string <var>$value</var></span>, <span>string <var>$operation</var> = <span class="php-quote">'and'</span></span> )</code>
+
+		<div class="description short">
+			
+<p>Modifies the provided URL by appending query parameters for faceted
+searching.</p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			
+<p>Modifies the provided URL by appending query parameters for faceted
+searching.</p>
+
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$url</var></dt>
+					<dd><code>string</code><br>$url The URL of the page that supports F.E.S</dd>
+					<dt><var>$type</var></dt>
+					<dd><code>string</code><br>$type The data point you wish to enable faceting for (ie: a field name or
+taxonomy name)</dd>
+					<dt><var>$value</var></dt>
+					<dd><code>string</code><br>$value The value/slug that was provided by another method call in this class</dd>
+					<dt><var>$operation</var></dt>
+					<dd><code>string</code><br>$operation Whether the facet should query using 'and' or 'or' (defaults to and)</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code>string</code><br>The URL modified to support faceting<br />
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="urlRemove" id="_urlRemove">
+
+		<td class="attributes"><code>
+			 public static
+			string
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_urlRemove">#</a>
+		<code><a href="source-class-elasticsearch.Faceting.html#272-306" title="Go to source code">urlRemove</a>( <span>string <var>$url</var></span>, <span>string <var>$type</var></span>, <span>string <var>$value</var></span> )</code>
+
+		<div class="description short">
+			
+<p>Modifies the provided URL by removing query parameters that control
+faceting.</p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			
+<p>Modifies the provided URL by removing query parameters that control
+faceting.</p>
+
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$url</var></dt>
+					<dd><code>string</code><br>$url The URL of the page that supports F.E.S</dd>
+					<dt><var>$type</var></dt>
+					<dd><code>string</code><br>$type The data point you wish to remove faceting for (ie: a field name or
+taxonomy name)</dd>
+					<dt><var>$value</var></dt>
+					<dd><code>string</code><br>$value The value/slug that was provided in the URL (query parameters)</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code>string</code><br>The URL modified to remove faceting for the provided data point<br />
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+
+	<div id="footer">
+		 API documentation generated by <a href="http://apigen.org">ApiGen 2.8.0</a>
+	</div>
+</div>
+</div>
+</body>
+</html>
