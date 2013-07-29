@@ -1,7 +1,7 @@
 <?php
 abstract class BaseTestCase extends PHPUnit_Extensions_Selenium2TestCase
 {
-	protected static $indexed;
+	protected static $indexed = false;
 
 	protected function setUp()
 	{
@@ -36,6 +36,9 @@ abstract class BaseTestCase extends PHPUnit_Extensions_Selenium2TestCase
 			$this->byCssSelector(".complete");
 
 			self::$indexed = true;
+
+			// give index time to refresh, would rather call refresh on index directly, too lazy :)
+			sleep(5);
 		}
 	}
 
