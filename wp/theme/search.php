@@ -40,7 +40,7 @@ class Search{
 		
 		$wp_query->query_vars['s'] = '';	
 		# do not show results if none were returned
-		$wp_query->query_vars['post__in'] = empty($results['ids']) ? array(-1) : $results['ids'];
+		$wp_query->query_vars['post__in'] = empty($results['ids']) ? array(0) : $results['ids'];
 		$wp_query->query_vars['paged'] = 1;
 		$wp_query->facets = $results['facets'];
 
