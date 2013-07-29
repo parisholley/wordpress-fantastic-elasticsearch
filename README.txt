@@ -42,6 +42,9 @@ https://github.com/parisholley/wordpress-fantastic-elasticsearch/wiki
 
 == Changelog ==
 
+= 2.0.2 =
+* Fixed bug where post with an id = 1 would show when no results were returned from ElasticSearch (thanks michaelsauter)
+
 = 2.0.1 =
 * Preventing more notices (thanks michaelsauter)
 
