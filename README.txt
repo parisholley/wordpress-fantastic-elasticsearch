@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=paris
 Tags: search,performance,elastic search,elastic,elasticsearch,facet,faceting,faceted search
 Requires at least: 3.5
 Tested up to: 3.5
-Stable tag: trunk
+Stable tag: 2.0.2
 
 Improve wordpress search performance/accuracy and enable faceted search by leveraging an ElasticSearch server.
 
