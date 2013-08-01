@@ -49,7 +49,7 @@ add_action('nhp-opts-options-validate-elasticsearch', function(){
 	if($_POST['elasticsearch']['last_tab'] == 'field'){
 		try{
 			foreach(Config::fields() as $field){
-				if($_POST['elasticsearch']['numeric'][$field]){
+				if(isset($_POST['elasticsearch']['numeric'][$field])){
 					$index = Indexer::_index(false);
 
 					foreach(Config::types() as $type){
