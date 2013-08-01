@@ -49,7 +49,7 @@ class IndexerTest extends BaseTestCase
 
 	public function testPerPage()
 	{
-		$this->assertEquals(10, Indexer::per_page());
+		$this->assertEquals(100, Indexer::per_page());
 	}
 
 	public function testPerPageFiltered()
@@ -66,7 +66,7 @@ class IndexerTest extends BaseTestCase
 		register_post_type('post');
 
 		$this->assertEquals(array(
-			'posts_per_page' => 10,
+			'posts_per_page' => 100,
 			'post_type' => Config::types(),
 			'paged' => 2,
 			'post_status' => 'publish'
