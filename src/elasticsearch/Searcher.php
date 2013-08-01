@@ -201,7 +201,7 @@ class Searcher{
 			$facets = $facets[$name];
 
 			if(!is_array($facets)){
-				$facets = array($facets);
+				$facets = explode( ',', $facets );
 			}
 
 			foreach($facets as $operation => $facet){
