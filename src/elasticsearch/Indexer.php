@@ -190,6 +190,8 @@ class Indexer{
 			if(isset($post->$field)){
 				if($field == 'post_date'){
 					$document[$field] = date('c',strtotime($post->$field));
+				}else if($field == 'post_content'){
+					$document[$field] = strip_tags($post->$field);
 				}else{
 					$document[$field] = $post->$field;
 				}
