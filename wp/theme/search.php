@@ -62,8 +62,10 @@ class Search{
 			usort($posts, array(&$this, 'sort_posts'));
 
 			// Overwrite post excerpt with search highlight
-			for ($i = 0; $i < count($posts); $i++) {
-				$posts[$i]->post_excerpt = $this->highlights[$i];
+			for ($i = 0; $i < count($posts); $i++){
+				if(!empty($this->highlights[$i])){
+					$posts[$i]->post_excerpt = $this->highlights[$i];
+				}
 			}
 		}
 

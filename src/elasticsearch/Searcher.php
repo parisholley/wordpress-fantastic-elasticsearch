@@ -106,8 +106,11 @@ class Searcher{
 		foreach($response->getResults() as $result){
 			$val['ids'][] = $result->getId();
 			$highlights = $result->getHighlights();
-			$highlight = trim(preg_replace('/\s+/', ' ', $highlights['post_content'][0]));
-			$val['highlights'][] = $highlight;
+			if(isset($highlights['post_content'])){
+				$val['highlights'][] = trim(preg_replace('/\s+/', ' ', $highlights['post_content'][0]));
+			}else{
+				$val['highlights'][] = '';
+			}
 		}
 
 		return Config::apply_filters('searcher_results', $val, $response);		
