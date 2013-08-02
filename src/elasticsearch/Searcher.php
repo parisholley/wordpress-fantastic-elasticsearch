@@ -26,7 +26,8 @@ class Searcher{
 			return array(
 				'total' => 0,
 				'ids' => array(),
-				'facets' => array()
+				'facets' => array(),
+				'highlights' => array()
 			);
 		}
 
