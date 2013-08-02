@@ -37,6 +37,7 @@ class Search{
 
 		$this->total = $results['total'];
 		$this->ids = $results['ids'];
+		$this->highlights = $results['highlights'];
 		
 		$wp_query->query_vars['s'] = '';	
 		# do not show results if none were returned
@@ -59,6 +60,11 @@ class Search{
 			$wp_query->query_vars['s'] = isset($_GET['s']) ? $_GET['s'] : '';
 
 			usort($posts, array(&$this, 'sort_posts'));
+
+			// Overwrite post excerpt with search highlight
+			for ($i = 0; $i < count($posts); $i++) {
+				$posts[$i]->post_excerpt = $this->highlights[$i];
+			}
 		}
 
 		return $posts;

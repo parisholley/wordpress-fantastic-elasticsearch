@@ -41,6 +41,16 @@ class Searcher{
 		$query->setFrom($pageIndex * $size);
 		$query->setSize($size);
 		$query->setFields(array('id'));
+		$query->setHighlight(array(
+			'pre_tags' => array('<span class="highlight">'),
+			'post_tags' => array('</span>'),
+			'fields' => array(
+				'post_content' => array(
+					'fragment_size' => 300,
+					'number_of_fragments' => 1
+				)
+			)
+		));
 
 		Config::apply_filters('searcher_query', $query);
 
@@ -72,7 +82,8 @@ class Searcher{
 		$val = array(
 			'total' => $response->getTotalHits(),
 			'facets' => array(),
-			'ids' => array()
+			'ids' => array(),
+			'highlights' => array()
 		);
 
 		foreach($response->getFacets() as $name => $facet){
@@ -94,6 +105,9 @@ class Searcher{
 
 		foreach($response->getResults() as $result){
 			$val['ids'][] = $result->getId();
+			$highlights = $result->getHighlights();
+			$highlight = trim(preg_replace('/\s+/', ' ', $highlights['post_content'][0]));
+			$val['highlights'][] = $highlight;
 		}
 
 		return Config::apply_filters('searcher_results', $val, $response);		
