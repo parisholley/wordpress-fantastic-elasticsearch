@@ -53,5 +53,27 @@ class Defaults{
 
 		return array_unique($taxes); 
 	}
+
+  /**
+	* Returns any customfields registered for any post types.
+	* Copied method meta_form() from admin/includes/templates.php as inline method ... damn those dirty wordpress suckers!!!
+	* @return string[] meta keys
+	**/
+	static function meta_fields(){
+//    $keys = meta_form();
+
+    global $wpdb;
+    $keys = $wpdb->get_col("SELECT meta_key
+                            FROM $wpdb->postmeta
+                            GROUP BY meta_key
+                            HAVING meta_key NOT LIKE '\_%'
+                            ORDER BY meta_key" );
+    if ( $keys ){
+      natcasesort($keys);
+    } else{
+      $keys = array();
+    }
+		return $keys;
+	}
 }
 ?>

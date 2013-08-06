@@ -25,6 +25,17 @@ foreach(Config::taxonomies() as $tax){
 	);
 }
 
+foreach(Config::meta_fields() as $field){
+	$fields[] = array(
+		'id' => 'score_meta_' . $field,
+		'type' => 'text',
+		'validation' => 'numeric',
+		'desc' => 'A numeric value (if 0, it will have no influence)',
+		'title' => "Meta: $field",
+		'std' => 3
+	);
+}
+
 $sections['scoring'] = array(
 	'icon' => NHP_OPTIONS_URL.'img/glyphicons/glyphicons_079_signal.png',
 	'title' => 'Result Scoring',

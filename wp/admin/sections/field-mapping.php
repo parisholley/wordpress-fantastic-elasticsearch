@@ -23,6 +23,11 @@ foreach(Config::fields() as $field){
 	}
 }
 
+foreach(Config::meta_fields() as $field){
+		$fields['numeric']['options'][$field] = $field;
+		$fields['not_analyzed']['options'][$field] = $field;
+}
+
 $numeric_option = Config::option('numeric');
 
 if ($numeric_option) {

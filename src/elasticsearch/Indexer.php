@@ -170,6 +170,7 @@ class Indexer{
 				$mapping->send();
 			}
 		}
+    self::_map_meta_values($index);
 	}
 
 	/**
@@ -195,6 +196,8 @@ class Indexer{
 				}
 			}
 		}
+
+    $document = self::_build_meta_values($post, $document);
 
 		if(isset($post->post_type)){
 			$taxes = array_intersect(Config::taxonomies(), get_object_taxonomies($post->post_type));
@@ -228,6 +231,62 @@ class Indexer{
 		
 		return Config::apply_filters('indexer_build_document', $document, $post);
 	}
+
+  /**
+   * Add post meta values to elasticsearch object.
+   *
+   * @param WP_Post $post
+   * @param Array $document to write to es
+   * @return Array $document
+   * @internal
+   **/
+  static function _build_meta_values($post, $document){
+
+    $meta_fields = array_intersect(Config::meta_fields(), get_post_custom_keys($post->ID));
+    foreach($meta_fields as $field){
+      $val = get_post_meta($post->ID, $field, true);
+      if(isset($val)){
+        $document[$field] = $post->$field;
+      }
+    }
+    return $document;
+  }
+
+  /**
+   * Add post meta values type definitions to elasticsearch.
+   * @param Elastica\Index $index to
+   * @internal
+   **/
+  static function _map_meta_values(&$index){
+
+    $numeric = Config::option('numeric');
+    $notanalyzed = Config::option('not_analyzed');
+
+    foreach(Config::meta_fields() as $field){
+      $props = array(
+        'type' => 'string'
+      );
+
+      if(isset($numeric[$field])){
+        $props['type'] = 'float';
+      }elseif(isset($notanalyzed[$field])){
+        $props['index'] = 'not_analyzed';
+      }else{
+        $props['index'] = 'analyzed';
+      }
+
+      $props = Config::apply_filters('indexer_map_meta_field', $props, $field);
+
+      foreach(Config::types() as $type){
+        $type = $index->getType($type);
+
+        $mapping = new \Elastica\Type\Mapping($type);
+        $mapping->setProperties(array($field => $props));
+
+        $mapping->send();
+      }
+    }
+  }
 
 	/**
 	* The Elastica\Client object used by F.E.S
