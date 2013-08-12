@@ -55,9 +55,12 @@ https://github.com/parisholley/wordpress-fantastic-elasticsearch/wiki
 * Integeration tests to ensure intended behavior with ElasticSearch 0.20.6 and 0.90.2
 * Continuous integration setup with travis-ci
 * Developer documentation for faceting and extending
+<<<<<<< HEAD
+=======
 
 = 1.2.4 =
 * Allow plugin to work if downloaded from github or wordpress (images weren't showing up in admin)
+>>>>>>> upstream/2.0.0-wip
 
 = 1.2.3 = 
 * Bug fixes as result of merge

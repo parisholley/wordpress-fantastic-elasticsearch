@@ -32,6 +32,7 @@ License:
 	THE SOFTWARE.
 */
 
+
 namespace elasticsearch;
 
 if(!defined('NHP_OPTIONS_URL')){
@@ -46,6 +47,9 @@ require 'src/bootstrap.php';
 
 require 'wp/theme/search.php';
 require 'wp/theme/category.php';
+require 'wp/theme/taxonomy.php';
+require 'wp/theme/page.php';
+require 'wp/theme/post_type.php';
 require 'wp/admin/hooks.php';
 
 add_action( 'admin_enqueue_scripts', function() {
