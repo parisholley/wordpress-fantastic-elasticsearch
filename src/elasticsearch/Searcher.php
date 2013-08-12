@@ -105,7 +105,7 @@ class Searcher{
 	public static function _buildQuery($search, $facets = array()){
 		global $blog_id;
 
-		$shoulds = array();
+		$fields = array();
 		$musts = array();
 		$filters = array();
 
@@ -114,10 +114,9 @@ class Searcher{
 				$score = Config::score('tax', $tax);
 
 				if($score > 0){
-					$shoulds[] = array('text' => array( $tax => array(
-						'query' => $search,
-						'boost' => $score
-					)));
+					$fields[] = "$tax^$score";
+				}else{
+					$fields[] = "$tax";
 				}
 			}
 
@@ -139,10 +138,9 @@ class Searcher{
 				$score = Config::score('field', $field);
 
 				if($score > 0){
-					$shoulds[] = array('text' => array($field => array(
-						'query' => $search,
-						'boost' => $score
-					)));
+					$fields[] = "$field^$score";
+				}else{
+					$fields[] = "$field";
 				}
 			}
 
@@ -155,8 +153,11 @@ class Searcher{
 			}
 		}
 
-		if(count($shoulds) > 0){
-			$args['query']['bool']['should'] = $shoulds;
+		if(count($fields) > 0){
+			$args['query']['query_string'] = array(
+				'fields' => $fields,
+				'query' => $search
+			);
 		}
 
 		if(count($filters) > 0){
