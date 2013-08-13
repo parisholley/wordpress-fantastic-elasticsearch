@@ -114,7 +114,7 @@ class Searcher{
 				$score = Config::score('tax', $tax);
 
 				if($score > 0){
-					$shoulds[] = array('text' => array( $tax => array(
+					$shoulds[] = array('match' => array( $tax => array(
 						'query' => $search,
 						'boost' => $score
 					)));
@@ -139,7 +139,7 @@ class Searcher{
 				$score = Config::score('field', $field);
 
 				if($score > 0){
-					$shoulds[] = array('text' => array($field => array(
+					$shoulds[] = array('match' => array($field => array(
 						'query' => $search,
 						'boost' => $score
 					)));
