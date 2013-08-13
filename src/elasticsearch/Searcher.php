@@ -19,8 +19,8 @@ class Searcher{
 	* 
 	* @return array The results of the search
 	**/
-	public static function search($search, $pageIndex = 0, $size = 10, $facets = array()){
-		$args = self::_buildQuery($search, $facets);
+	public static function search($search, $pageIndex = 0, $size = 10, $facets = array(), $zero_result = false){
+		$args = self::_buildQuery($search, $facets, $zero_result);
 
 		if(empty($args) || (empty($args['query']) && empty($args['facets']))){
 			return array(
@@ -102,7 +102,7 @@ class Searcher{
 	/**
 	* @internal
 	**/
-	public static function _buildQuery($search, $facets = array()){
+	public static function _buildQuery($search, $facets = array(), $zero_result = false){
 		global $blog_id;
 
 		$shoulds = array();
@@ -139,10 +139,18 @@ class Searcher{
 				$score = Config::score('field', $field);
 
 				if($score > 0){
-					$shoulds[] = array('match' => array($field => array(
-						'query' => $search,
-						'boost' => $score
-					)));
+					if ($zero_result && $field == 'post_content') {
+						$shoulds[] = array('fuzzy' => array($field => array(
+							'value' => $search,
+							'boost' => $score
+						)));
+					}
+					else {
+						$shoulds[] = array('match' => array($field => array(
+							'query' => $search,
+							'boost' => $score
+						)));
+					}					
 				}
 			}
 
