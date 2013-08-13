@@ -174,6 +174,42 @@ class SearcherIntegrationTest extends BaseIntegrationTestCase
 		$this->assertEquals(array('tag' => array('tag1' => 1)), $results['facets']);
 	}
 
+	/* reproduces #36 */
+	public function testIgnoreHtml()
+	{
+		update_option('fields', array('post_content' => 1));
+		update_option('score_field_post_content', 1);
+
+		register_post_type('post');
+
+		Indexer::clear();
+
+		Indexer::addOrUpdate((object) array(
+			'post_type' => 'post',
+			'ID' => 1,
+			'post_date' => '10/24/1988 00:00:00 CST',
+			'post_content' => '<html>yayzer is my <span class="foo">text</span></html>'
+		));
+
+		$this->index->refresh();
+
+		$results = $this->searcher->search('html');
+
+		$this->assertEquals(0, $results['total']);
+
+		$results = $this->searcher->search('foo');
+
+		$this->assertEquals(0, $results['total']);
+
+		$results = $this->searcher->search('span');
+
+		$this->assertEquals(0, $results['total']);
+
+		$results = $this->searcher->search('yayzer');
+
+		$this->assertEquals(1, $results['total']);
+	}
+
 	public function testAnalyzed()
 	{
 		update_option('fields', array('field1' => 1));
