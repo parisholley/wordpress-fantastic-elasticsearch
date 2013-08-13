@@ -1,6 +1,19 @@
 <?php
 class CategoryTest extends BaseTestCase
 {
+	public function testMultipleCategories()
+	{
+		$this->url('/?cat=2,3');
+		$this->assertEquals('Parent Category I | Vagrant', $this->title());
+
+		$this->byXPath('(//article[1])[@id="post-57"]');
+		$this->byXPath('(//article[2])[@id="post-45"]');
+		$this->byXPath('(//article[3])[@id="post-41"]');
+		$this->byXPath('(//article[4])[@id="post-39"]');
+		$this->byXPath('(//article[5])[@id="post-32"]');
+		$this->byXPath('(//article[6])[@id="post-5"]');
+	}
+
 	public function testDefaultCategory()
 	{
 		$this->url('/?cat=2');
