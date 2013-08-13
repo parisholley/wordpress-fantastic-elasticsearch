@@ -43,9 +43,11 @@ https://github.com/parisholley/wordpress-fantastic-elasticsearch/wiki
 == Changelog ==
 
 = 2.1.0 =
+* Support multiple category syntax on wordpress (?cat=2,3) (thanks markoheijnen)
 * Remove HTML from post_content so tags and metadata don't influence search results (thanks michaelsauter)
 * Created simple widgets for showing faceting options on search/category
 * Fixed bug where facets weren't filtering based on currently viewed category
+* Searching now will search taxonomy names instead of slugs (faceting still uses slugs)
 
 = 2.0.2 =
 * Fixed bug where post with an id = 1 would show when no results were returned from ElasticSearch (thanks michaelsauter)
