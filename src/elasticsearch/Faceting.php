@@ -230,7 +230,7 @@ class Faceting{
 	* @return integer The calculated font size
 	**/
 	static function cloud($items, $item, $min = 12, $max = 24){
-		$maxTotal = 0;
+		$maxTotal = 1;
 
 		foreach($items as $itm){
 			if(log($itm['count']) > $maxTotal){

@@ -46,6 +46,7 @@ require 'src/bootstrap.php';
 
 require 'wp/theme/search.php';
 require 'wp/theme/category.php';
+require 'wp/theme/widget.php';
 require 'wp/admin/hooks.php';
 
 add_action( 'admin_enqueue_scripts', function() {

@@ -34,7 +34,7 @@ class Category{
 		$args = $_GET;
 
 		if(!isset($args['category'])){
-			$args['category']['or'][] = $cat->slug;
+			$args['category']['and'][] = $cat->slug;
 		}
 
 		$this->page = isset($wp_query->query_vars['paged']) && $wp_query->query_vars['paged'] > 0 ? $wp_query->query_vars['paged'] - 1 : 0;
