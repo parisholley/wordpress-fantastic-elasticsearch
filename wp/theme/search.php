@@ -31,8 +31,15 @@ class Search{
 
 		$results = Searcher::search($search, $this->page, $wp_query->query_vars['posts_per_page'], $wp_query->query_vars);
 
+		/**
+		* If the search didn't return any result, 
+		* try a 'fuzzy' query, better than showing "Nothing found!"
+		**/
 		if($results == null){
-			return null;
+			return null;			
+		}
+		if (empty($results['ids'])) {
+			$results = Searcher::search($search, $this->page, $wp_query->query_vars['posts_per_page'], $wp_query->query_vars, true);
 		}
 
 		$this->total = $results['total'];
