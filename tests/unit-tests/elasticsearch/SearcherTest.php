@@ -258,7 +258,7 @@ class SearcherTest extends BaseTestCase
 					'should' => array(
 						array(
 							'text' => array(
-								'tax1' => array(
+								'tax1_name' => array(
 									'query' => 'string',
 									'boost' => 1
 								)

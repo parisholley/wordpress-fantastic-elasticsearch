@@ -133,12 +133,21 @@ class Indexer{
 
 			$props = Config::apply_filters('indexer_map_taxonomy', $props, $tax);
 
+			$propsname = array(
+				'type' => 'string'
+			);
+
+			$propsname = Config::apply_filters('indexer_map_taxonomy_name', $propsname, $tax);
+
 			foreach(Config::types() as $type){
 				$type = $index->getType($type);
 
 				$mapping = new \Elastica\Type\Mapping($type);
 				$mapping->setProperties(array($tax => $props));
+				$mapping->send();
 
+				$mapping = new \Elastica\Type\Mapping($type);
+				$mapping->setProperties(array($tax . '_name' => $propsname));
 				$mapping->send();
 			}			
 		}
@@ -207,6 +216,7 @@ class Indexer{
 				foreach(wp_get_object_terms($post->ID, $tax) as $term){
 					if(!in_array($term->slug, $document[$tax])){
 						$document[$tax][] = $term->slug;
+						$document[$tax . '_name'][] = $term->name;
 					}
 
 					if(isset($term->parent) && $term->parent){
@@ -215,6 +225,7 @@ class Indexer{
 						while($parent != null){
 							if(!in_array($parent->slug, $document[$tax])){
 								$document[$tax][] = $parent->slug;
+								$document[$tax . '_name'][] = $parent->name;
 							}
 
 							if(isset($parent->parent) && $parent->parent){
