@@ -42,6 +42,11 @@ https://github.com/parisholley/wordpress-fantastic-elasticsearch/wiki
 
 == Changelog ==
 
+= 2.1.0 =
+* Remove HTML from post_content so tags and metadata don't influence search results (thanks michaelsauter)
+* Created simple widgets for showing faceting options on search/category
+* Fixed bug where facets weren't filtering based on currently viewed category
+
 = 2.0.2 =
 * Fixed bug where post with an id = 1 would show when no results were returned from ElasticSearch (thanks michaelsauter)
 
