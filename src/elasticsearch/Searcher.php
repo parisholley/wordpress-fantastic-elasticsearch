@@ -50,7 +50,6 @@ class Searcher{
 			$search = new \Elastica\Search($index->getClient());
 			$search->addIndex($index);
 			
-			$query->addSort(array('post_date' => array('order' => 'desc')));
 			$query->addSort('_score');
 
 			Config::apply_filters('searcher_search', $search);
@@ -130,6 +129,8 @@ class Searcher{
 
 		$exclude = Config::apply_filters('searcher_query_exclude_fields', array('post_date'));
 
+		$fuzzy = Config::option('fuzzy');
+
 		foreach(Config::fields() as $field){
 			if(in_array($field, $exclude)){
 				continue;
@@ -139,10 +140,20 @@ class Searcher{
 				$score = Config::score('field', $field);
 
 				if($score > 0){
-					$shoulds[] = array('text' => array($field => array(
+					$props = array($field => array(
 						'query' => $search,
 						'boost' => $score
-					)));
+					));
+
+					if($fuzzy != null){
+						$props[$field]['fuzziness'] = $fuzzy;
+					}
+
+					$props = Config::apply_filters('searcher_query_field_props', $props);
+
+					$type = Config::apply_filters('searcher_query_field_type', 'match');
+
+					$shoulds[] = array($type => $props);
 				}
 			}
 

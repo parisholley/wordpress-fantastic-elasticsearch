@@ -263,6 +263,50 @@ class SearcherIntegrationTest extends BaseIntegrationTestCase
 		$this->assertEquals(1, $results['total']);
 	}
 
+	public function testFuzzy()
+	{
+		if($this->isVersion('0.90.2')){
+			update_option('fields', array('field1' => 1));
+			update_option('score_field_field1', 2);
+
+			register_post_type('post');
+
+			Indexer::clear();
+
+			Indexer::addOrUpdate((object) array(
+				'post_type' => 'post',
+				'ID' => 1,
+				'post_date' => '10/24/1988 00:00:00 CST',
+				'field1' => 'Another Post with Everything In It'
+			));
+		
+			Indexer::addOrUpdate((object) array(
+				'post_type' => 'post',
+				'ID' => 2,
+				'post_date' => '10/24/1988 00:00:00 CST',
+				'field1' => 'some other thang'
+			));
+
+			$this->index->refresh();
+
+			update_option('fuzzy', 1);
+			$results = $this->searcher->search('anothar');
+			$this->assertEquals(1, $results['total']);
+
+			update_option('fuzzy', 1);
+			$results = $this->searcher->search('bnothar');
+			$this->assertEquals(0, $results['total']);
+
+			update_option('fuzzy', 2);
+			$results = $this->searcher->search('bnothar');
+			$this->assertEquals(1, $results['total']);
+
+			update_option('fuzzy', 2);
+			$results = $this->searcher->search('baothar');
+			$this->assertEquals(0, $results['total']);
+		}
+	}
+
 	public function testAnalyzed()
 	{
 		update_option('fields', array('field1' => 1));
