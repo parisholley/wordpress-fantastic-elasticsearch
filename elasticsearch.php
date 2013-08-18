@@ -67,6 +67,24 @@ add_action('admin_init', function(){
 		}
 	}
 
+	$update = false;
+
+	add_action('edit_term', function($term_id, $tt_id, $type){
+		update_user_meta( get_current_user_id(), 'es_tax_notice', true );
+	}, 10, 3);
+
+	add_action( 'admin_notices', function(){
+		if(get_user_meta( get_current_user_id(), 'es_tax_notice', true )){
+		    ?>
+		    <div class="updated">
+		        <p>Warning: If you changed the category/taxonomy name, you will need to re-index your data. <a href="<?php echo admin_url('/admin.php?page=elastic_search&tab=index'); ?>">Click here to re-index.</a></p>
+		    </div>
+			<?php
+		}
+
+		update_user_meta( get_current_user_id(), 'es_tax_notice', false);
+	});
+
 	if(!$hasScore){
 		add_action( 'admin_notices', function(){
 		    ?>
