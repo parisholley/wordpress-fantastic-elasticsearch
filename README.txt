@@ -43,6 +43,7 @@ https://github.com/parisholley/wordpress-fantastic-elasticsearch/wiki
 == Changelog ==
 
 = 2.1.0 =
+* Added some error messages if user has bad config or changed taxonomy
 * Category pages now sort by date whereas search is by relevance
 * Support for exact phrases in search, ie: "search these words exactly"
 * Support for boolean and fuzzy search syntax "term1 AND term2", "howdoyaspellthis~ words i can spell"
