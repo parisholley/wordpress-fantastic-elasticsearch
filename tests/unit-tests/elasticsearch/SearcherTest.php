@@ -215,17 +215,9 @@ class SearcherTest extends BaseTestCase
 
 		$this->assertEquals(array(
 			'query' => array(
-				'bool' => array(
-					'should' => array(
-						array(
-							'text' => array(
-								'field1' => array(
-									'query' => 'string',
-									'boost' => 1
-								)
-							)
-						)
-					)
+				'query_string' => array(
+					'fields' => array('field1^1'),
+					'query' => 'string'
 				)
 			),
 			'filter' => array(
@@ -254,17 +246,9 @@ class SearcherTest extends BaseTestCase
 
 		$this->assertEquals(array(
 			'query' => array(
-				'bool' => array(
-					'should' => array(
-						array(
-							'text' => array(
-								'tax1' => array(
-									'query' => 'string',
-									'boost' => 1
-								)
-							)
-						)
-					)
+				'query_string' => array(
+					'fields' => array('tax1_name^1'),
+					'query' => 'string'
 				)
 			),
 			'filter' => array(

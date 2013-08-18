@@ -116,9 +116,7 @@ class Searcher{
 				$score = Config::score('tax', $tax);
 
 				if($score > 0){
-					$fields[] = "$tax^$score";
-				}else{
-					$fields[] = "$tax";
+					$fields[] = "{$tax}_name^$score";
 				}
 			}
 
