@@ -158,7 +158,7 @@ class Searcher{
 
 			$fuzzy = Config::option('fuzzy');
 
-			if($fuzzy){
+			if($fuzzy && strpos($search, "~") > -1){
 				$qs['fuzzy_min_sim'] = $fuzzy;
 			}
 

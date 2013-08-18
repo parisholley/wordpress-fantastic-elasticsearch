@@ -379,19 +379,19 @@ class SearcherIntegrationTest extends BaseIntegrationTestCase
 			$this->index->refresh();
 
 			update_option('fuzzy', 1);
-			$results = $this->searcher->search('anothar');
+			$results = $this->searcher->search('anothar~');
 			$this->assertEquals(1, $results['total']);
 
 			update_option('fuzzy', 1);
-			$results = $this->searcher->search('bnothar');
+			$results = $this->searcher->search('bnothar~');
 			$this->assertEquals(0, $results['total']);
 
 			update_option('fuzzy', 2);
-			$results = $this->searcher->search('bnothar');
+			$results = $this->searcher->search('bnothar~');
 			$this->assertEquals(1, $results['total']);
 
 			update_option('fuzzy', 2);
-			$results = $this->searcher->search('baothar');
+			$results = $this->searcher->search('baothar~');
 			$this->assertEquals(0, $results['total']);
 		}
 	}
