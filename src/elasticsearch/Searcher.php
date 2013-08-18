@@ -15,11 +15,12 @@ class Searcher{
 	* @param integer $pageIndex The index that represents the current page
 	* @param integer $size The number of results to return per page
 	* @param array $facets An object that contains selected facets (typically the query string, ie: $_GET)
+	* @param boolean $sortByDate If false, results will be sorted by score (relevancy)
 	* @see Faceting
 	* 
 	* @return array The results of the search
 	**/
-	public static function search($search, $pageIndex = 0, $size = 10, $facets = array()){
+	public static function search($search, $pageIndex = 0, $size = 10, $facets = array(), $sortByDate = false){
 		$args = self::_buildQuery($search, $facets);
 
 		if(empty($args) || (empty($args['query']) && empty($args['facets']))){
@@ -30,13 +31,13 @@ class Searcher{
 			);
 		}
 
-		return self::_query($args, $pageIndex, $size);
+		return self::_query($args, $pageIndex, $size, $sortByDate);
 	}
 
 	/**
 	* @internal
 	**/
-	public static function _query($args, $pageIndex, $size){
+	public static function _query($args, $pageIndex, $size, $sortByDate = false){
 		$query =new \Elastica\Query($args);
 		$query->setFrom($pageIndex * $size);
 		$query->setSize($size);
@@ -50,7 +51,11 @@ class Searcher{
 			$search = new \Elastica\Search($index->getClient());
 			$search->addIndex($index);
 			
-			$query->addSort('_score');
+			if($sortByDate){
+				$query->addSort(array('post_date' => 'desc'));
+			}else{
+				$query->addSort('_score');
+			}
 
 			Config::apply_filters('searcher_search', $search);
 

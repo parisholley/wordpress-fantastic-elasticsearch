@@ -43,6 +43,9 @@ https://github.com/parisholley/wordpress-fantastic-elasticsearch/wiki
 == Changelog ==
 
 = 2.1.0 =
+* Category pages now sort by date whereas search is by relevance
+* Support for exact phrases in search, ie: "search these words exactly"
+* Support for boolean and fuzzy search syntax "term1 AND term2", "howdoyaspellthis~ words i can spell"
 * Support multiple category syntax on wordpress (?cat=2,3) (thanks markoheijnen)
 * Remove HTML from post_content so tags and metadata don't influence search results (thanks michaelsauter)
 * Created simple widgets for showing faceting options on search/category

@@ -63,7 +63,7 @@ class Category{
 			$wp_query->query_vars['posts_per_page'] = get_option('posts_per_page');
 		}
 
-		$results = Searcher::search(null, $this->page, $wp_query->query_vars['posts_per_page'], $args);
+		$results = Searcher::search(null, $this->page, $wp_query->query_vars['posts_per_page'], $args, true);
 
 		if($results == null){
 			return null;
