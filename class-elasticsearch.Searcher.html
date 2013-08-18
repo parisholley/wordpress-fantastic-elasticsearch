@@ -110,7 +110,7 @@ server.</p>
 href="mailto:mail&#64;parisholley.com">mail&#64;<!-- -->parisholley.com</a>&gt;<br />
 				<b>Version:</b>
 				2.0.0<br />
-		<b>Located at</b> <a href="source-class-elasticsearch.Searcher.html#4-229" title="Go to source code">Searcher.php</a><br />
+		<b>Located at</b> <a href="source-class-elasticsearch.Searcher.html#4-238" title="Go to source code">Searcher.php</a><br />
 	</div>
 
 
@@ -120,7 +120,7 @@ href="mailto:mail&#64;parisholley.com">mail&#64;<!-- -->parisholley.com</a>&gt;<
 	<tr data-order="search" id="_search">
 
 		<td class="attributes"><code>
-			 public 
+			 public static
 			array
 			
 			</code>
@@ -128,7 +128,7 @@ href="mailto:mail&#64;parisholley.com">mail&#64;<!-- -->parisholley.com</a>&gt;<
 
 		<td class="name"><div>
 		<a class="anchor" href="#_search">#</a>
-		<code><a href="source-class-elasticsearch.Searcher.html#12-34" title="Go to source code">search</a>( <span>string <var>$search</var></span>, <span>integer <var>$pageIndex</var> = <span class="php-num">0</span></span>, <span>integer <var>$size</var> = <span class="php-num">10</span></span>, <span>array <var>$facets</var> = <span class="php-keyword1">array</span>()</span> )</code>
+		<code><a href="source-class-elasticsearch.Searcher.html#12-35" title="Go to source code">search</a>( <span>string <var>$search</var></span>, <span>integer <var>$pageIndex</var> = <span class="php-num">0</span></span>, <span>integer <var>$size</var> = <span class="php-num">10</span></span>, <span>array <var>$facets</var> = <span class="php-keyword1">array</span>()</span>, <span>boolean <var>$sortByDate</var> = <span class="php-keyword1">false</span></span> )</code>
 
 		<div class="description short">
 			
@@ -155,6 +155,8 @@ Faceting to manipulate URLs.</p>
 					<dt><var>$facets</var></dt>
 					<dd><code>array</code><br>$facets An object that contains selected facets (typically the query string, ie:
 $_GET)</dd>
+					<dt><var>$sortByDate</var></dt>
+					<dd><code>boolean</code><br>$sortByDate If false, results will be sorted by score (relevancy)</dd>
 				</dl></div>
 
 				<h4>Returns</h4>
