@@ -54,6 +54,30 @@ add_action( 'admin_enqueue_scripts', function() {
 	wp_enqueue_style( 'custom_wp_admin_css' );
 });
 
+add_action('admin_init', function(){
+	$options = get_option('elasticsearch');
+
+	$keys = array_keys($options);
+
+	$hasScore = false;
+
+	foreach ($keys as $key) {
+		if(strpos($key, 'score_') > -1 && $options[$key]){
+			$hasScore = true;
+		}
+	}
+
+	if(!$hasScore){
+		add_action( 'admin_notices', function(){
+		    ?>
+		    <div class="error">
+		        <p>The ElasticSearch plugin will not work unless you specify scoring for atleast one field. <a href="<?php echo admin_url('/admin.php?page=elastic_search&tab=scoring'); ?>">Click here to update</a></p>
+		    </div>
+			<?php
+		});
+	}
+});
+
 add_action('init', function(){
 	$args = array();
 
