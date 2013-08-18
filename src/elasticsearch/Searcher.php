@@ -21,6 +21,8 @@ class Searcher{
 	* @return array The results of the search
 	**/
 	public static function search($search, $pageIndex = 0, $size = 10, $facets = array(), $sortByDate = false){
+		$search = str_replace('\"', '"', $search);
+
 		$args = self::_buildQuery($search, $facets);
 
 		if(empty($args) || (empty($args['query']) && empty($args['facets']))){
