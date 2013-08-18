@@ -18,5 +18,11 @@ class BaseIntegrationTestCase extends BaseTestCase
 
 		$this->assertEquals(0, $this->index->count());
 	}
+
+	public function isVersion($version){
+		$info = Indexer::_client(true)->request('/')->getData();
+		
+		return $info['version']['number'] == $version;
+	}
 }
 ?>

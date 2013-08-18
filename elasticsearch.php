@@ -3,7 +3,7 @@
 Plugin Name: Fantastic ElasticSearch
 Plugin URI: http://wordpress.org/extend/plugins/fantastic-elasticsearch/
 Description: Improve wordpress search performance and accuracy by leveraging an ElasticSearch server.
-Version: 2.0.2
+Version: 2.0.3
 Author: Paris Holley
 Author URI: http://www.linkedin.com/in/parisholley
 Author Email: mail@parisholley.com
@@ -46,11 +46,54 @@ require 'src/bootstrap.php';
 
 require 'wp/theme/search.php';
 require 'wp/theme/category.php';
+require 'wp/theme/widget.php';
 require 'wp/admin/hooks.php';
 
 add_action( 'admin_enqueue_scripts', function() {
 	wp_register_style( 'custom_wp_admin_css', plugins_url('wp/css/admin.css', __FILE__) );
 	wp_enqueue_style( 'custom_wp_admin_css' );
+});
+
+add_action('admin_init', function(){
+	$options = get_option('elasticsearch');
+
+	$keys = array_keys($options);
+
+	$hasScore = false;
+
+	foreach ($keys as $key) {
+		if(strpos($key, 'score_') > -1 && $options[$key]){
+			$hasScore = true;
+		}
+	}
+
+	$update = false;
+
+	add_action('edit_term', function($term_id, $tt_id, $type){
+		update_user_meta( get_current_user_id(), 'es_tax_notice', true );
+	}, 10, 3);
+
+	add_action( 'admin_notices', function(){
+		if(get_user_meta( get_current_user_id(), 'es_tax_notice', true )){
+		    ?>
+		    <div class="updated">
+		        <p>Warning: If you changed the category/taxonomy name, you will need to re-index your data. <a href="<?php echo admin_url('/admin.php?page=elastic_search&tab=index'); ?>">Click here to re-index.</a></p>
+		    </div>
+			<?php
+		}
+
+		update_user_meta( get_current_user_id(), 'es_tax_notice', false);
+	});
+
+	if(!$hasScore){
+		add_action( 'admin_notices', function(){
+		    ?>
+		    <div class="error">
+		        <p>The ElasticSearch plugin will not work unless you specify scoring for atleast one field. <a href="<?php echo admin_url('/admin.php?page=elastic_search&tab=scoring'); ?>">Click here to update</a></p>
+		    </div>
+			<?php
+		});
+	}
 });
 
 add_action('init', function(){

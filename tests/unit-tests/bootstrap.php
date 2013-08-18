@@ -21,6 +21,10 @@ namespace elasticsearch{
 }
 
 namespace {
+	class WP_Widget{
+
+	}
+	
 	class WP_Query{
 		public $is_main_query;
 		public $query_vars = array();

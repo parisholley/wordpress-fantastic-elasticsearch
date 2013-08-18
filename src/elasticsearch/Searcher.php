@@ -50,7 +50,6 @@ class Searcher{
 			$search = new \Elastica\Search($index->getClient());
 			$search->addIndex($index);
 			
-			$query->addSort(array('post_date' => array('order' => 'desc')));
 			$query->addSort('_score');
 
 			Config::apply_filters('searcher_search', $search);
@@ -152,10 +151,20 @@ class Searcher{
 		}
 
 		if(count($fields) > 0){
-			$args['query']['query_string'] = array(
+			$qs = array(
 				'fields' => $fields,
 				'query' => $search
 			);
+
+			$fuzzy = Config::option('fuzzy');
+
+			if($fuzzy){
+				$qs['fuzzy_min_sim'] = $fuzzy;
+			}
+
+			$qs = Config::apply_filters('searcher_query_string', $qs);
+
+			$args['query']['query_string'] = $qs;
 		}
 
 		if(count($filters) > 0){
