@@ -19,7 +19,7 @@ class Search{
 			return;
 		}
 
-		$search = $wp_query->query_vars['s'];
+		$search = str_replace('\"', '"', $wp_query->query_vars['s']);
 
 		$this->page = isset($wp_query->query_vars['paged']) && $wp_query->query_vars['paged'] > 0 ? $wp_query->query_vars['paged'] - 1 : 0;
 
@@ -56,7 +56,7 @@ class Search{
 			$wp_query->max_num_pages = ceil( $this->total / $wp_query->query_vars['posts_per_page'] );
 			$wp_query->found_posts = $this->total;
 			$wp_query->query_vars['paged'] = $this->page + 1;
-			$wp_query->query_vars['s'] = isset($_GET['s']) ? $_GET['s'] : '';
+			$wp_query->query_vars['s'] = isset($_GET['s']) ? str_replace('\"', '"', $_GET['s']): '';
 
 			usort($posts, array(&$this, 'sort_posts'));
 		}
