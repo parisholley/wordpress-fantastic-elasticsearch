@@ -132,7 +132,10 @@ add_action('init', function(){
 
 	global $NHP_Options;
 
-    $tabs = array();
+    	$tabs = array();
+
+	$sections = Config::apply_filters("nhp_options_section_setup", $sections);
+	$args = Config::apply_filters("nhp_options_args_setup", $args);
 
 	$NHP_Options = new \NHP_Options($sections, $args, $tabs);
 }, 10241988);
