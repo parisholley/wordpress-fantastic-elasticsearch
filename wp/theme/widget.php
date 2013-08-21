@@ -67,15 +67,11 @@ class FacetingOptionsWidget extends \WP_Widget {
 				}
 			}
 		}
-
+		
 		if(count($prep) > 0){
 			echo '<form action="' . $url . '" method="GET" id="esajaxform">';
 
 			foreach($prep as $type => $settings){
-				if(is_category() && $type == 'category'){
-					continue;
-				}
-
 				$style = $settings['show'] ? '' : 'style="display:none"';
 
 				echo '<aside id="facet-' . $type . '-available" class="widget facets facets-available" ' . $style . '>';
