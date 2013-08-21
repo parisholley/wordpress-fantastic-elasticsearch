@@ -263,10 +263,7 @@ class Faceting{
 
 		$filter[$type][$op][] = $value;
 
-		$url = new \Purl\Url($url);
-		$url->query->setData($filter);
-
-		return $url->getUrl();
+		return self::_buildUrl($url, $filter);
 	}
 
 	/**
@@ -299,10 +296,21 @@ class Faceting{
 			}
 		}
 
-		$url = new \Purl\Url($url);
-		$url->query->setData($filter);
+		return self::_buildUrl($url, $filter);
+	}
 
-		return $url->getUrl();
+	static function _buildUrl($url, $query){
+		$parts = parse_url($url);
+
+		$url = sprintf("%s://%s%s", $parts['scheme'], $parts['host'], $parts['path']);
+
+		if(count($query) > 0){
+			$url .= "?";
+
+			$url .= http_build_query($query);
+		}
+
+		return $url;		
 	}
 }
 
