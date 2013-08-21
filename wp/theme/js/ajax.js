@@ -4,7 +4,7 @@
 		$form.find('input[type=checkbox]').change(function(){
 			var url = $form.attr('action');
 
-			$.getJSON(url, $form.serialize() + '&ajax=true', function(data){
+			$.getJSON(url, $form.serialize() + '&esasync=1', function(data){
 				$.each(data.faceting, function(type){
 					var container = $("#facet-" + type + '-available');
 
@@ -31,7 +31,7 @@
 					}
 				});
 
-				$('[role=main]').replaceWith(data.content);
+				$(window.esfaceting.replace).replaceWith(data.content);
 			});
 		});
 	});

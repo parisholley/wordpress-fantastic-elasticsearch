@@ -9,11 +9,18 @@ class FacetingOptionsWidget extends \WP_Widget {
 	function widget( $args, $instance ) {
 		global $wp_query;
 
-		$async = isset($instance['async']) && $instance['async'];
+		$async = isset($instance['async']) && $instance['async'] && isset($instance['asyncStart']) && isset($instance['asyncStop']) && isset($instance['asyncReplace']);
 
 		if($async){
 			wp_enqueue_script("jquery");
 			wp_enqueue_script('elasticsearch', plugins_url('/js/ajax.js', __FILE__), array( 'jquery' ));
+
+			elasticsearch\Theme::setAjaxStart($instance['asyncStart']);
+			elasticsearch\Theme::setAjaxStop($instance['asyncStop']);
+
+			wp_localize_script( 'elasticsearch', 'esfaceting', array(
+				'replace' => $instance['asyncReplace']
+			));
 		}
 		
 		$facets = elasticsearch\Faceting::all();
@@ -112,10 +119,25 @@ class FacetingOptionsWidget extends \WP_Widget {
 	function form( $instance ) {
 		?>
 			<p>  
-			    <input class="checkbox" type="checkbox" <?php checked( $instance['async'], true ); ?>
-			    	id="<?php echo $this->get_field_id( 'async' ); ?>" name="<?php echo $this->get_field_name( 'async' ); ?>" value="1" />   
-			    <label for="<?php echo $this->get_field_id( 'async' ); ?>">Update page content asynchronously</label>  
+				<input class="checkbox" type="checkbox" <?php checked( $instance['async'], true ); ?>
+					id="<?php echo $this->get_field_id( 'async' ); ?>" name="<?php echo $this->get_field_name( 'async' ); ?>" value="1" />   
+				<label for="<?php echo $this->get_field_id( 'async' ); ?>">Update page content asynchronously</label>  
 			</p>  
+			<p>  
+				<label for="<?php echo $this->get_field_id( 'asyncStart' ); ?>">Async Start Trigger</label>  
+				<input id="<?php echo $this->get_field_id( 'asyncStart' ); ?>" name="<?php echo $this->get_field_name( 'asyncStart' ); ?>"
+					value="<?php echo htmlspecialchars($instance['asyncStart']); ?>" style="width:100%;" />  
+			</p>  
+			<p>  
+				<label for="<?php echo $this->get_field_id( 'asyncStop' ); ?>">Async Stop Trigger</label>  
+				<input id="<?php echo $this->get_field_id( 'asyncStop' ); ?>" name="<?php echo $this->get_field_name( 'asyncStop' ); ?>"
+					value="<?php echo htmlspecialchars($instance['asyncStop']); ?>" style="width:100%;" />  
+			</p> 
+			<p>  
+				<label for="<?php echo $this->get_field_id( 'asyncReplace' ); ?>">Async Replace Selector</label>  
+				<input id="<?php echo $this->get_field_id( 'asyncReplace' ); ?>" name="<?php echo $this->get_field_name( 'asyncReplace' ); ?>"
+					value="<?php echo htmlspecialchars($instance['asyncReplace']); ?>" style="width:100%;" />  
+			</p> 
 		<?
 	}
 }

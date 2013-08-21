@@ -97,6 +97,8 @@ add_action('admin_init', function(){
 });
 
 add_action('init', function(){
+	Theme::enableAjaxHooks();
+
 	$args = array();
 
 	$args['share_icons']['twitter'] = array(
