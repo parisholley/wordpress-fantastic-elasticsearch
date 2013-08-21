@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=paris
 Tags: search,performance,elastic search,elastic,elasticsearch,facet,faceting,faceted search
 Requires at least: 3.5
 Tested up to: 3.5
-Stable tag: 2.1.0
+Stable tag: 2.2.0
 
 Improve wordpress search performance/accuracy and enable faceted search by leveraging an ElasticSearch server.
 
@@ -41,6 +41,12 @@ https://github.com/parisholley/wordpress-fantastic-elasticsearch/wiki
 4. Wipe and re-index data is available if needed
 
 == Changelog ==
+
+= 2.2.0 =
+* Expanded widget options to allow for AJAX based faceting
+* Fixed bug where hooks weren't working on category pages when permalinks are on
+* Removed dependency on purl due to memory leak
+* Added filters so devs can hook into NHP options (thanks to nielo)
 
 = 2.1.0 =
 * Added some error messages if user has bad config or changed taxonomy
