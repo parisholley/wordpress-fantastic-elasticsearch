@@ -27,9 +27,7 @@ class Category{
 			}
 
 			$cats[] = $cat;
-		}
-
-		if(isset($wp_query->query_vars['cat'])){
+		}else if(isset($wp_query->query_vars['cat'])){
 			$catids = explode(',', $wp_query->query_vars['cat']);
 
 			foreach($catids as $id){

@@ -302,7 +302,11 @@ class Faceting{
 	static function _buildUrl($url, $query){
 		$parts = parse_url($url);
 
-		$url = sprintf("%s://%s%s", $parts['scheme'], $parts['host'], $parts['path']);
+		if(isset($parts['port'])){
+			$url = sprintf("%s://%s:%d%s", $parts['scheme'], $parts['host'], $parts['port'], $parts['path']);
+		}else{
+			$url = sprintf("%s://%s%s", $parts['scheme'], $parts['host'], $parts['path']);
+		}
 
 		if(count($query) > 0){
 			$url .= "?";

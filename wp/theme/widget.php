@@ -8,13 +8,29 @@ class FacetingOptionsWidget extends \WP_Widget {
 
 	function widget( $args, $instance ) {
 		global $wp_query;
+
+		$async = isset($instance['async']) && $instance['async'];
+
+		if($async){
+			wp_enqueue_script("jquery");
+			wp_enqueue_script('elasticsearch', plugins_url('/js/ajax.js', __FILE__), array( 'jquery' ));
+		}
 		
 		$facets = elasticsearch\Faceting::all();
 
 		$prep = array();
 
+		$url = get_permalink();
+		$selected = null;
+
+		if(is_category()){
+			$term =	$wp_query->queried_object;
+
+			$url = get_term_link($term);
+		}
+
 		foreach($facets as $type => $facet){
-			if($facet['total'] > 0){
+			if($facet['total'] > 0 || $async){
 				foreach($facet['available'] as $option){
 					if($option['count'] != $wp_query->post_count){
 						if(!isset($prep[$type])){
@@ -27,12 +43,17 @@ class FacetingOptionsWidget extends \WP_Widget {
 							$prep[$type] = array(
 								'type' => $type,
 								'name' => $name,
-								'avail' => array()
+								'avail' => array(),
+								'show' => false
 							);
 						}
 
+						if($option['count'] > 1){
+							$prep[$type]['show'] = true;
+						}
+
 						$prep[$type]['avail'][] = array(
-							'url' => elasticsearch\Faceting::urlAdd(get_permalink(), $type, $option['slug']),
+							'url' => elasticsearch\Faceting::urlAdd($url, $type, $option['slug']),
 							'option' => $option
 						);
 					}
@@ -41,16 +62,37 @@ class FacetingOptionsWidget extends \WP_Widget {
 		}
 
 		if(count($prep) > 0){
+			echo '<form action="' . $url . '" method="GET" id="esajaxform">';
+
 			foreach($prep as $type => $settings){
-				echo '<aside id="facet-' . $type . '-available" class="widget facets facets-available">';
+				if(is_category() && $type == 'category'){
+					continue;
+				}
+
+				$style = $settings['show'] ? '' : 'style="display:none"';
+
+				echo '<aside id="facet-' . $type . '-available" class="widget facets facets-available" ' . $style . '>';
 
 				echo '<h3 class="widget-title">' . $settings['name'] . '</h3>';
+
+				if($async){
+					echo '<p class="facet-empty" style="display:none">You can filter the results anymore</p>';
+				}
 
 				echo '<ul>';
 
 				foreach($settings['avail'] as $avail){
-					echo '<li id="facet-' . $type . '-' . $avail['option']['slug'] . '" class="facet-item">';
-					echo '<a href="' . $avail['url'] . '">' . $avail['option']['name'] . ' (' . $avail['option']['count'] . ')</a>';
+					$style = $avail['option']['count'] > 1 ? '' : 'style="display:none"';
+
+					echo '<li id="facet-' . $type . '-' . $avail['option']['slug'] . '" class="facet-item" ' . $style . '>';
+
+					if($async){
+						printf('<input type="checkbox" name="%s[and][]" value="%s" />%s <span class="count">(%d)</span>', $type, $avail['option']['slug'],
+							$avail['option']['name'], $avail['option']['count']);
+					}else{
+						echo '<a href="' . $avail['url'] . '">' . $avail['option']['name'] . ' (' . $avail['option']['count'] . ')</a>';
+					}
+
 					echo '</li>';
 				}
 
@@ -58,15 +100,23 @@ class FacetingOptionsWidget extends \WP_Widget {
 
 				echo '</aside>';
 			}
+
+			echo '</form>';
 		}
 	}
 
 	function update( $new_instance, $old_instance ) {
-		// Save widget options
+		return $new_instance;
 	}
 
 	function form( $instance ) {
-		// Output admin widget options form
+		?>
+			<p>  
+			    <input class="checkbox" type="checkbox" <?php checked( $instance['async'], true ); ?>
+			    	id="<?php echo $this->get_field_id( 'async' ); ?>" name="<?php echo $this->get_field_name( 'async' ); ?>" value="1" />   
+			    <label for="<?php echo $this->get_field_id( 'async' ); ?>">Update page content asynchronously</label>  
+			</p>  
+		<?
 	}
 }
 
@@ -78,7 +128,17 @@ class FactingSelectedWidget extends \WP_Widget {
 	}
 
 	function widget( $args, $instance ) {
+		global $wp_query;
+
 		$facets = elasticsearch\Faceting::all();
+
+		$url = get_permalink();
+
+		if(is_category()){
+			$term =	$wp_query->queried_object;
+
+			$url = get_term_link($term);
+		}
 
 		foreach($facets as $type => $facet){
 			if(count($facet['selected']) > 0){
@@ -95,7 +155,7 @@ class FactingSelectedWidget extends \WP_Widget {
 				echo '<ul>';
 
 				foreach($facet['selected'] as $option){
-					$url = elasticsearch\Faceting::urlRemove(get_permalink(), $type, $option['slug']);
+					$url = elasticsearch\Faceting::urlRemove($url, $type, $option['slug']);
 
 					echo '<li id="facet-' . $type . '-' . $option['slug'] . '" class="facet-item">';
 					echo '<a href="' . $url . '">' . $option['name'] . '</a>';

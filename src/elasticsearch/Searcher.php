@@ -186,7 +186,11 @@ class Searcher{
 
 		// return facets
 		foreach(Config::facets() as $facet){
-			$args['facets'][$facet]['terms']['field'] = $facet;
+			$args['facets'][$facet]['terms'] = array(
+				'field' => $facet,
+				'size' => Config::apply_filters('searcher_query_facet_size', 100)  // see https://github.com/elasticsearch/elasticsearch/issues/1832
+			);
+
 			$args['facets'][$facet]['facet_filter'] = array( 'term' => array( 'blog_id' => $blog_id ) );
 		}
 

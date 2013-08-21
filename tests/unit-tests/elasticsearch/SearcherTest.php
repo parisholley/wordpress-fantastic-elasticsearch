@@ -265,7 +265,8 @@ class SearcherTest extends BaseTestCase
 			'facets' => array(
 				'tax1' => array(
 					'terms' => array(
-						'field' => 'tax1'
+						'field' => 'tax1',
+						'size' => 100
 					),
 					'facet_filter' => array(
 						'term' => array(
@@ -301,7 +302,8 @@ class SearcherTest extends BaseTestCase
 			'facets' => array(
 				'tax1' => array(
 					'terms' => array(
-						'field' => 'tax1'
+						'field' => 'tax1',
+						'size' => 100
 					),
 					'facet_filter' => array(
 						'term' => array(
@@ -350,7 +352,8 @@ class SearcherTest extends BaseTestCase
 			'facets' => array(
 				'tax1' => array(
 					'terms' => array(
-						'field' => 'tax1'
+						'field' => 'tax1',
+						'size' => 100
 					),
 					'facet_filter' => array(
 						'term' => array(
@@ -404,7 +407,8 @@ class SearcherTest extends BaseTestCase
 			'facets' => array(
 				'tax1' => array(
 					'terms' => array(
-						'field' => 'tax1'
+						'field' => 'tax1',
+						'size' => 100
 					),
 					'facet_filter' => array(
 						'term' => array(
@@ -470,7 +474,8 @@ class SearcherTest extends BaseTestCase
 			'facets' => array(
 				'tax1' => array(
 					'terms' => array(
-						'field' => 'tax1'
+						'field' => 'tax1',
+						'size' => 100
 					),
 					'facet_filter' => array(
 						'term' => array(
@@ -480,7 +485,8 @@ class SearcherTest extends BaseTestCase
 				),
 				'tax2' => array(
 					'terms' => array(
-						'field' => 'tax2'
+						'field' => 'tax2',
+						'size' => 100
 					),
 					'facet_filter' => array(
 						'term' => array(
@@ -718,7 +724,8 @@ class SearcherTest extends BaseTestCase
 				),
 				'tax1' => array(
 					'terms' => array(
-						'field' => 'tax1'
+						'field' => 'tax1',
+						'size' => 100
 					),
 					'facet_filter' => array(
 						'term' => array(
