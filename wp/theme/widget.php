@@ -83,7 +83,7 @@ class FacetingOptionsWidget extends \WP_Widget {
 				echo '<h3 class="widget-title">' . $settings['name'] . '</h3>';
 
 				if($async){
-					echo '<p class="facet-empty" style="display:none">You can filter the results anymore</p>';
+					echo '<p class="facet-empty" style="display:none">You can not filter the results anymore.</p>';
 				}
 
 				echo '<ul>';
@@ -154,6 +154,17 @@ class FactingSelectedWidget extends \WP_Widget {
 
 		$facets = elasticsearch\Faceting::all();
 
+		$async = isset($instance['async']) && $instance['async'];
+
+		if($async){
+			wp_enqueue_script("jquery");
+			wp_enqueue_script('elasticsearch', plugins_url('/js/ajax.js', __FILE__), array( 'jquery' ));
+
+			wp_localize_script( 'elasticsearch', 'esselected', array(
+				'showEmpty' => isset($instance['showEmpty']) ? 1 : 0
+			));
+		}
+
 		$url = get_permalink();
 
 		if(is_category()){
@@ -162,41 +173,78 @@ class FactingSelectedWidget extends \WP_Widget {
 			$url = get_term_link($term);
 		}
 
-		foreach($facets as $type => $facet){
-			if(count($facet['selected']) > 0){
+		if($async){
+			echo '<aside id="facet-selected" class="widget facets facets-selected" style="display:none">';
+
+			echo '<h3 class="widget-title">Your Selections</h3>';
+
+			echo '<ul>';
+
+			foreach($facets as $type => $facet){
 				$name = $type;
 
 				if(taxonomy_exists($type)){
 					$name = get_taxonomy($type)->label;
 				}
 
-				echo '<aside id="facet-' . $type . '-selected" class="widget facets facets-selected">';
-
-				echo '<h3 class="widget-title">' . $name . '</h3>';
-
-				echo '<ul>';
-
-				foreach($facet['selected'] as $option){
-					$url = elasticsearch\Faceting::urlRemove($url, $type, $option['slug']);
-
-					echo '<li id="facet-' . $type . '-' . $option['slug'] . '" class="facet-item">';
-					echo '<a href="' . $url . '">' . $option['name'] . '</a>';
+				foreach($facet['available'] as $option){
+					echo '<li id="facet-' . $type . '-' . $option['slug'] . '-selected" class="facet-item" style="display:none">';
+						echo '<a href="#facet-' . $type . '-' . $option['slug'] . '">' . $option['name'] . '</a>';
 					echo '</li>';
 				}
+			}
 
-				echo '</ul>';
+			echo '</ul>';
 
-				echo '</aside>';
+			echo '</aside>';
+		}else{
+			foreach($facets as $type => $facet){
+				if(count($facet['selected']) > 0){
+					$name = $type;
+
+					if(taxonomy_exists($type)){
+						$name = get_taxonomy($type)->label;
+					}
+
+					echo '<aside id="facet-' . $type . '-selected" class="widget facets facets-selected">';
+
+					echo '<h3 class="widget-title">' . $name . '</h3>';
+
+					echo '<ul>';
+
+					foreach($facet['selected'] as $option){
+						$url = elasticsearch\Faceting::urlRemove($url, $type, $option['slug']);
+
+						echo '<li id="facet-' . $type . '-' . $option['slug'] . '" class="facet-item">';
+						echo '<a href="' . $url . '">' . $option['name'] . '</a>';
+						echo '</li>';
+					}
+
+					echo '</ul>';
+
+					echo '</aside>';
+				}
 			}
 		}
 	}
 
 	function update( $new_instance, $old_instance ) {
-		// Save widget options
+		return $new_instance;
 	}
 
 	function form( $instance ) {
-		// Output admin widget options form
+		?>
+			<p>  
+				<input class="checkbox" type="checkbox" <?php checked( $instance['async'], true ); ?>
+					id="<?php echo $this->get_field_id( 'async' ); ?>" name="<?php echo $this->get_field_name( 'async' ); ?>" value="1" />   
+				<label for="<?php echo $this->get_field_id( 'async' ); ?>">Update selected items asynchronously (requires faceting options widget)</label>  
+			</p>  
+			<p>  
+				<input class="checkbox" type="checkbox" <?php checked( $instance['showEmpty'], true ); ?>
+					id="<?php echo $this->get_field_id( 'showEmpty' ); ?>" name="<?php echo $this->get_field_name( 'showEmpty' ); ?>" value="1" />   
+				<label for="<?php echo $this->get_field_id( 'showEmpty' ); ?>">Show empty message and hide available options when all facets are selected.</label>  
+			</p>
+		<?
 	}
 }
 
