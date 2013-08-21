@@ -67,7 +67,7 @@ class FacetingOptionsWidget extends \WP_Widget {
 				}
 			}
 		}
-		
+
 		if(count($prep) > 0){
 			echo '<form action="' . $url . '" method="GET" id="esajaxform">';
 
@@ -240,7 +240,7 @@ class FactingSelectedWidget extends \WP_Widget {
 					id="<?php echo $this->get_field_id( 'showEmpty' ); ?>" name="<?php echo $this->get_field_name( 'showEmpty' ); ?>" value="1" />   
 				<label for="<?php echo $this->get_field_id( 'showEmpty' ); ?>">Show empty message and hide available options when all facets are selected.</label>  
 			</p>
-		<?
+		<?php
 	}
 }
 
