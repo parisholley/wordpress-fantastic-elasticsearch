@@ -48,40 +48,4 @@ $sections['field'] = array(
 	'fields' => $fields
 );
 
-add_action('nhp-opts-options-validate-elasticsearch', function(){
-	global $NHP_Options;
-
-	if($_POST['elasticsearch']['last_tab'] == 'field'){
-		try{
-			foreach(Config::fields() as $field){
-				if($_POST['elasticsearch']['numeric'][$field]){
-					$index = Indexer::_index(false);
-
-					foreach(Config::types() as $type){
-						$type = $index->getType($type);
-
-						$mapping = new \Elastica\Type\Mapping($type);
-						$mapping->setProperties(array($field => array(
-							'type' => 'float',
-							'store' => 'yes',
-
-						)));
-
-						$mapping->send();
-					}
-				}
-			}
-		}catch(\Exception $ex){
-			error_log($ex);
-			
-			$field = $NHP_Options->sections['field']['fields']['numeric'];
-			$field['msg'] = 'There was a problem configuring field mapping.';
-
-			$NHP_Options->errors[] = $field;
-
-			set_transient('nhp-opts-errors-elasticsearch', $NHP_Options->errors, 1000 );
-		}
-	}
-});
-
 ?>

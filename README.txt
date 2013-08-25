@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=paris
 Tags: search,performance,elastic search,elastic,elasticsearch,facet,faceting,faceted search
 Requires at least: 3.5
 Tested up to: 3.5
-Stable tag: 2.0.2
+Stable tag: 2.1.0
 
 Improve wordpress search performance/accuracy and enable faceted search by leveraging an ElasticSearch server.
 
@@ -41,6 +41,17 @@ https://github.com/parisholley/wordpress-fantastic-elasticsearch/wiki
 4. Wipe and re-index data is available if needed
 
 == Changelog ==
+
+= 2.1.0 =
+* Added some error messages if user has bad config or changed taxonomy
+* Category pages now sort by date whereas search is by relevance
+* Support for exact phrases in search, ie: "search these words exactly"
+* Support for boolean and fuzzy search syntax "term1 AND term2", "howdoyaspellthis~ words i can spell"
+* Support multiple category syntax on wordpress (?cat=2,3) (thanks markoheijnen)
+* Remove HTML from post_content so tags and metadata don't influence search results (thanks michaelsauter)
+* Created simple widgets for showing faceting options on search/category
+* Fixed bug where facets weren't filtering based on currently viewed category
+* Searching now will search taxonomy names instead of slugs (faceting still uses slugs)
 
 = 2.0.2 =
 * Fixed bug where post with an id = 1 would show when no results were returned from ElasticSearch (thanks michaelsauter)

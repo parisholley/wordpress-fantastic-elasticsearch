@@ -41,7 +41,7 @@ abstract class BaseTestCase extends PHPUnit_Extensions_Selenium2TestCase
 			sleep(5);
 		}
 	}
-
+	
 	protected function waitForTitle($title){
 		for($i = 0; $i < 5; $i++){
 			if($this->title() == $title){

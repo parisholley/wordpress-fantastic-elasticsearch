@@ -15,26 +15,46 @@ class Category{
 	function do_search($wp_query){
 		$this->searched = false;
 
-		$cat = null;
+		$cats = array();
 
-		if(isset($wp_query->query_vars['category_name'])){
+		$enabled = Config::option('enable_categories');
+
+		if(isset($wp_query->query_vars['category_name']) && !empty($wp_query->query_vars['category_name'])){
 			$cat = get_category_by_slug($wp_query->query_vars['category_name']);
+
+			if(!in_array($cat->term_id, $enabled)){
+				return;
+			}
+
+			$cats[] = $cat;
 		}
 
 		if(isset($wp_query->query_vars['cat'])){
-			$cat = get_category($wp_query->query_vars['cat']);
-		}
+			$catids = explode(',', $wp_query->query_vars['cat']);
 
-		$enabled = Config::option('enable_categories');
+			foreach($catids as $id){
+				if(!in_array($id, $enabled)){
+					return;
+				}
+
+				$cats[] = get_category($id);
+			}
+		}
 		
-		if(!$wp_query->is_main_query() || !(is_tax() || $cat) || is_admin() || !$enabled || !in_array($cat->term_id, $enabled)){
+		if(!$wp_query->is_main_query() || !(is_tax() || !empty($cats)) || is_admin() || !$enabled){
 			return;
 		}
 
 		$args = $_GET;
 
 		if(!isset($args['category'])){
-			$args['category']['or'][] = $cat->slug;
+			if(count($cats) > 1){
+				foreach($cats as $cat){
+					$args['category']['or'][] = $cat->slug;
+				}
+			}else{
+				$args['category']['and'][] = $cats[0]->slug;
+			}
 		}
 
 		$this->page = isset($wp_query->query_vars['paged']) && $wp_query->query_vars['paged'] > 0 ? $wp_query->query_vars['paged'] - 1 : 0;
@@ -43,7 +63,7 @@ class Category{
 			$wp_query->query_vars['posts_per_page'] = get_option('posts_per_page');
 		}
 
-		$results = Searcher::search(null, $this->page, $wp_query->query_vars['posts_per_page'], $args);
+		$results = Searcher::search(null, $this->page, $wp_query->query_vars['posts_per_page'], $args, true);
 
 		if($results == null){
 			return null;

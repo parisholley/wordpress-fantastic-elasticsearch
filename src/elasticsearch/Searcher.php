@@ -15,11 +15,12 @@ class Searcher{
 	* @param integer $pageIndex The index that represents the current page
 	* @param integer $size The number of results to return per page
 	* @param array $facets An object that contains selected facets (typically the query string, ie: $_GET)
+	* @param boolean $sortByDate If false, results will be sorted by score (relevancy)
 	* @see Faceting
 	* 
 	* @return array The results of the search
 	**/
-	public static function search($search, $pageIndex = 0, $size = 10, $facets = array()){
+	public static function search($search, $pageIndex = 0, $size = 10, $facets = array(), $sortByDate = false){
 		$args = self::_buildQuery($search, $facets);
 
 		if(empty($args) || (empty($args['query']) && empty($args['facets']))){
@@ -30,13 +31,13 @@ class Searcher{
 			);
 		}
 
-		return self::_query($args, $pageIndex, $size);
+		return self::_query($args, $pageIndex, $size, $sortByDate);
 	}
 
 	/**
 	* @internal
 	**/
-	public static function _query($args, $pageIndex, $size){
+	public static function _query($args, $pageIndex, $size, $sortByDate = false){
 		$query =new \Elastica\Query($args);
 		$query->setFrom($pageIndex * $size);
 		$query->setSize($size);
@@ -50,8 +51,11 @@ class Searcher{
 			$search = new \Elastica\Search($index->getClient());
 			$search->addIndex($index);
 			
-			$query->addSort(array('post_date' => array('order' => 'desc')));
-			$query->addSort('_score');
+			if($sortByDate){
+				$query->addSort(array('post_date' => 'desc'));
+			}else{
+				$query->addSort('_score');
+			}
 
 			Config::apply_filters('searcher_search', $search);
 
@@ -105,7 +109,9 @@ class Searcher{
 	public static function _buildQuery($search, $facets = array()){
 		global $blog_id;
 
-		$shoulds = array();
+		$search = str_ireplace(array(' and ', ' or '), array(' AND ', ' OR '), $search);
+
+		$fields = array();
 		$musts = array();
 		$filters = array();
 
@@ -114,10 +120,7 @@ class Searcher{
 				$score = Config::score('tax', $tax);
 
 				if($score > 0){
-					$shoulds[] = array('text' => array( $tax => array(
-						'query' => $search,
-						'boost' => $score
-					)));
+					$fields[] = "{$tax}_name^$score";
 				}
 			}
 
@@ -139,10 +142,7 @@ class Searcher{
 				$score = Config::score('field', $field);
 
 				if($score > 0){
-					$shoulds[] = array('text' => array($field => array(
-						'query' => $search,
-						'boost' => $score
-					)));
+					$fields[] = "$field^$score";
 				}
 			}
 
@@ -155,8 +155,21 @@ class Searcher{
 			}
 		}
 
-		if(count($shoulds) > 0){
-			$args['query']['bool']['should'] = $shoulds;
+		if(count($fields) > 0){
+			$qs = array(
+				'fields' => $fields,
+				'query' => $search
+			);
+
+			$fuzzy = Config::option('fuzzy');
+
+			if($fuzzy && strpos($search, "~") > -1){
+				$qs['fuzzy_min_sim'] = $fuzzy;
+			}
+
+			$qs = Config::apply_filters('searcher_query_string', $qs);
+
+			$args['query']['query_string'] = $qs;
 		}
 
 		if(count($filters) > 0){
