@@ -233,7 +233,7 @@ class Indexer{
 	}
 
   /**
-   * Add post meta values to elasticsearch object.
+   * Add post meta values to elasticsearch object, only if they are present.
    *
    * @param WP_Post $post
    * @param Array $document to write to es
@@ -241,13 +241,11 @@ class Indexer{
    * @internal
    **/
   static function _build_meta_values($post, $document){
-
     $meta_fields = array_intersect(Config::meta_fields(), get_post_custom_keys($post->ID));
     foreach($meta_fields as $field){
       $val = get_post_meta($post->ID, $field, true);
-      if(isset($val)){
-        $document[$field] = $post->$field;
-      }
+      if(isset($val))
+        $document[$field] = $val;
     }
     return $document;
   }
