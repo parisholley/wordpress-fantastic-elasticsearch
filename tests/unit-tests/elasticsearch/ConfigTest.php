@@ -156,9 +156,15 @@ class ApiTest extends BaseTestCase
 		$this->assertEquals(array('tax1', 'tax2'), Config::taxonomies());
 	}
 
+  public function testMetaKeysDefined()
+  {
+    add_meta_keys(array('price', 'date'));
+    $this->assertEquals(array('price', 'date'), Config::meta_fields());
+  }
+
   public function testMetaKeysUndefined()
 	{
-		$this->assertEquals(array(), Config::meta_keys());
+		$this->assertEquals(array(), Config::meta_fields());
 	}
 
 	public function testTypesUndefined()

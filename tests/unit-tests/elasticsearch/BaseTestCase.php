@@ -4,7 +4,7 @@ namespace elasticsearch;
 abstract class BaseTestCase extends \PHPUnit_Framework_TestCase{
 	protected function setUp()
 	{
-		global $wp_query, $blog_id;
+		global $wp_query, $blog_id, $wpdb;
 
 		$this->reset(TestContext::$options);
 		$this->reset(TestContext::$filters);
@@ -13,8 +13,10 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase{
 		$this->reset(TestContext::$posts);
 		$this->reset(TestContext::$terms);
 		$this->reset(TestContext::$termrel);
+		$this->reset(TestContext::$all_meta_keys);
 
 		$wp_query = new \stdClass();
+    $wpdb = new \wpdb();
 		$blog_id = 1;
 
 		$_GET = array();

@@ -98,8 +98,13 @@ class IndexerTest extends BaseTestCase
 		add_filter('elasticsearch_indexer_build_document', function(){
 			return array('wee');
 		});
-		
-		$document = Indexer::_build_document(array());
+
+    $post = (object) array(
+      'ID' => 22,
+      'post_type' => 'post',
+      'field1' => 'value1'
+    );
+		$document = Indexer::_build_document($post);
 		$this->assertEquals(array('wee'), $document);
 	}
 

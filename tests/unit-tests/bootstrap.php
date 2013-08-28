@@ -17,6 +17,7 @@ namespace elasticsearch{
 		static $posts = array();
 		static $actions = array();
 		static $is = array();
+		static $all_meta_keys = array();
 	}
 }
 
@@ -42,6 +43,17 @@ namespace {
 			return $this->is_main_query;
 		}
 	}
+
+  // ock for cstom field tests
+  class wpdb {
+    // name of the post meta db table
+    public $postmeta = 'wp_postmeta';
+
+    public function get_col($query){
+      return isset(elasticsearch\TestContext::$all_meta_keys) ? elasticsearch\TestContext::$all_meta_keys : null;
+    }
+  }
+
 
 	function __($val){
 		return $val;
@@ -248,11 +260,20 @@ namespace {
 		return isset(elasticsearch\TestContext::$posts[$id]) ? elasticsearch\TestContext::$posts[$id] : null;
 	}
 
+  // todo: maybe add keys nested by post in TestContext
+  function get_post_custom_keys( $post_id = 0 ) {
+    return isset(elasticsearch\TestContext::$all_meta_keys) ? elasticsearch\TestContext::$all_meta_keys : null;
+  }
+
 	function trailingslashit($arg){
 
 	}
 
-	function add_menu_page(){
+	function add_meta_keys($keys){
+    elasticsearch\TestContext::$all_meta_keys = $keys;
+	}
+
+  function add_menu_page(){
 
 	}
 
