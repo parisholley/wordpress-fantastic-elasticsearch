@@ -10,6 +10,42 @@ class SearcherIntegrationTest extends BaseIntegrationTestCase
 		$this->searcher = new Searcher();
 	}
 
+	public function testDateSort()
+	{
+		update_option('fields', array('field1' => 1));
+		update_option('score_field_field1', 1);
+
+		register_post_type('post');
+
+		Indexer::addOrUpdate((object) array(
+			'post_type' => 'post',
+			'ID' => 1,
+			'post_date' => '10/24/1988 00:00:00 CST',
+			'field1' => 'value1'
+		));
+
+		Indexer::addOrUpdate((object) array(
+			'post_type' => 'post',
+			'ID' => 2,
+			'field1' => 'value1',
+			'post_date' => '10/25/1988 00:00:00 CST'
+		));
+
+		Indexer::addOrUpdate((object) array(
+			'post_type' => 'post',
+			'ID' => 3,
+			'field1' => 'value1',
+			'post_date' => '10/23/1988 00:00:00 CST'
+		));
+
+		$this->index->refresh();
+
+		$results = $this->searcher->search('value1', 0, 10, array(), true);
+
+		$this->assertEquals(3, $results['total']);
+		$this->assertEquals(array(2,1,3), $results['ids']);
+	}
+
 	/** reproduces issue #25 */
 	public function testDateScored()
 	{

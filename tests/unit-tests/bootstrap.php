@@ -300,6 +300,8 @@ namespace {
 
 				if(is_array($action)){
 					call_user_func_array($action, $args);
+				}elseif(is_callable($action)){
+					$action($args);
 				}
 			}
 		}

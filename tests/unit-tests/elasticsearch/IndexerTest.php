@@ -93,6 +93,20 @@ class IndexerTest extends BaseTestCase
 		$this->assertEquals('publish', $wp_query->args['post_status']);
 	}
 
+	public function testBuildDocumentHtml()
+	{	
+		update_option('fields', array('post_content' => 1));
+
+		$document = Indexer::_build_document((object) array(
+			'post_content' => '<span class="foobar">wee</span>'
+		));
+
+		$this->assertEquals(array(
+			'post_content' => 'wee',
+			'blog_id' => 1
+		), $document);
+	}
+
 	public function testBuildDocumentFiltered()
 	{
 		add_filter('elasticsearch_indexer_build_document', function(){

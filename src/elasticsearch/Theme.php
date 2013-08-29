@@ -45,7 +45,10 @@ class Theme{
 
 		echo json_encode($result);
 
-		die();	
+		if(!empty($_REQUEST)){
+			// only fail on webserver, not tests
+			die();
+		}
 	}
 }
 ?>
