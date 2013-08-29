@@ -3,6 +3,12 @@ namespace elasticsearch;
 
 class FacetingTest extends BaseTestCase
 {
+	public function testPort()
+	{
+		$url = Faceting::urlAdd('http://site.com:8080/my/sub/page/', 'facet', 'facet1');
+		$this->assertEquals('http://site.com:8080/my/sub/page/?es%5Bfacet%5D%5Band%5D%5B0%5D=facet1', $url);
+	}
+
 	public function testUrlAddEmpty()
 	{
 		$url = Faceting::urlAdd('http://site.com/my/sub/page/', 'facet', 'facet1');
