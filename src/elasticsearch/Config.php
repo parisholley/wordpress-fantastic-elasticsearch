@@ -9,7 +9,7 @@ namespace elasticsearch;
 * @version 2.0.0
 **/
 class Config{
-	private static $options = null;
+	static $options = null;
 
 	/**
 	* Retrieve a specific option from the wordpress database for this plugin. Note: This is cached once per request.
@@ -18,12 +18,12 @@ class Config{
 	*
 	* @return object
 	**/
-	static function option($name){
+	static function option($name, $default = null){
 		if(self::$options == null){
-			self::$options = &get_option('elasticsearch');
+			self::$options = get_option('elasticsearch');
 		}
 
-		return self::apply_filters('config_option', isset(self::$options[$name]) ? self::$options[$name] : null, $name);
+		return self::apply_filters('config_option', isset(self::$options[$name]) ? self::$options[$name] : $default, $name);
 	}
 
 	/**

@@ -7,7 +7,7 @@ class Category extends AbstractArchive{
 			return;
 		}
 
-		$enabled = Config::option('enable_categories');
+		$enabled = Config::option('enable_categories', array());
 
 		$cats = array();
 

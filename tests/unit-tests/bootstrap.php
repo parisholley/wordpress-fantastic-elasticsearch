@@ -118,10 +118,6 @@ namespace {
 	}
 
 	function &get_option($name){
-		if($name == 'elasticsearch'){
-			return elasticsearch\TestContext::$options;
-		}
-
 		return elasticsearch\TestContext::$option[$name];
 	}
 
@@ -228,7 +224,7 @@ namespace {
 	}
 
 	function update_option($name, $value){
-		elasticsearch\TestContext::$options[$name] = $value;
+		elasticsearch\Config::$options[$name] = $value;
 	}
 
 	function add_filter($name, $function, $order = 1, $args = 1){
@@ -302,7 +298,9 @@ namespace {
 				$args = func_get_args();
 				array_shift($args); // remove $name
 
-				call_user_func_array($action, $args);
+				if(is_array($action)){
+					call_user_func_array($action, $args);
+				}
 			}
 		}
 	}
