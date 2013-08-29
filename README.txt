@@ -47,6 +47,7 @@ https://github.com/parisholley/wordpress-fantastic-elasticsearch/wiki
 * Fixed bug where hooks weren't working on category pages when permalinks are on
 * Removed dependency on purl due to memory leak
 * Added filters so devs can hook into NHP options (thanks to nielo)
+* Expanded ES integration to taxonomy, tag, and custom post archives
 
 = 2.1.0 =
 * Added some error messages if user has bad config or changed taxonomy

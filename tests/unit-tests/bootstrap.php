@@ -55,6 +55,18 @@ namespace {
 
 	}
 
+	function is_tag(){
+		return true;
+	}
+
+	function is_archive(){
+		return true;
+	}
+
+	function is_category(){
+		return true;
+	}
+
 	function checked(){
 		return false;
 	}

@@ -17,7 +17,7 @@ $fields = array(
 );
 
 foreach(Config::fields() as $field){
-	if($field != 'post_date'){
+	if($field != 'post_date' && $field != 'post_type'){
 		$fields['numeric']['options'][$field] = $field;
 		$fields['not_analyzed']['options'][$field] = $field;
 	}

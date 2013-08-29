@@ -9,7 +9,7 @@ class FacetingOptionsWidget extends \WP_Widget {
 	function widget( $args, $instance ) {
 		global $wp_query;
 
-		$async = isset($instance['async']) && $instance['async'] && isset($instance['asyncStart']) && isset($instance['asyncStop']) && isset($instance['asyncReplace']);
+		$async = isset($instance['async']) && $instance['async'] && isset($instance['asyncReplace']);
 
 		if($async){
 			wp_enqueue_script("jquery");
@@ -52,10 +52,6 @@ class FacetingOptionsWidget extends \WP_Widget {
 								$name = $type;
 
 								if(taxonomy_exists($type)){
-									if(is_category() && $type == 'category'){
-										continue;
-									}
-
 									$name = get_taxonomy($type)->label;
 								}
 

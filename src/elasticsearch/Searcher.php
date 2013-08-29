@@ -115,13 +115,14 @@ class Searcher{
 		$fields = array();
 		$musts = array();
 		$filters = array();
+		$scored = array();
 
 		foreach(Config::taxonomies() as $tax){
 			if($search){
 				$score = Config::score('tax', $tax);
 
 				if($score > 0){
-					$fields[] = "{$tax}_name^$score";
+					$scored[] = "{$tax}_name^$score";
 				}
 			}
 
@@ -133,8 +134,9 @@ class Searcher{
 		$numeric = Config::option('numeric');
 
 		$exclude = Config::apply_filters('searcher_query_exclude_fields', array('post_date'));
+		$fields = Config::fields();
 
-		foreach(Config::fields() as $field){
+		foreach($fields as $field){
 			if(in_array($field, $exclude)){
 				continue;
 			}
@@ -143,7 +145,7 @@ class Searcher{
 				$score = Config::score('field', $field);
 
 				if($score > 0){
-					$fields[] = "$field^$score";
+					$scored[] = "$field^$score";
 				}
 			}
 
@@ -156,9 +158,9 @@ class Searcher{
 			}
 		}
 
-		if(count($fields) > 0){
+		if(count($scored) > 0 && $search){
 			$qs = array(
-				'fields' => $fields,
+				'fields' => $scored,
 				'query' => $search
 			);
 
@@ -173,7 +175,9 @@ class Searcher{
 			$musts[] = array( 'query_string' => $qs );
 		}
 
-		self::_filterBySelectedFacets('post_type', $facets, 'term', $musts, $filters);
+		if(in_array('post_type', $fields)){
+			self::_filterBySelectedFacets('post_type', $facets, 'term', $musts, $filters);
+		}
 
 		if(count($filters) > 0){
 			$args['filter']['bool']['should'] = $filters;
@@ -187,10 +191,12 @@ class Searcher{
 
 		$args = Config::apply_filters('searcher_query_pre_facet_filter', $args);
 
-		$args['facets']['post_type']['terms'] = array(
-			'field' => 'post_type',
-			'size' => Config::apply_filters('searcher_query_facet_size', 100)  // see https://github.com/elasticsearch/elasticsearch/issues/1832
-		);
+		if(in_array('post_type', $fields)){
+			$args['facets']['post_type']['terms'] = array(
+				'field' => 'post_type',
+				'size' => Config::apply_filters('searcher_query_facet_size', 100)  // see https://github.com/elasticsearch/elasticsearch/issues/1832
+			);
+		}
 
 		// return facets
 		foreach(Config::facets() as $facet){

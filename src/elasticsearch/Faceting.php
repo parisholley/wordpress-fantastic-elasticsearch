@@ -54,8 +54,6 @@ class Faceting{
 	static function all($minFont = 12, $maxFont = 24){
 		$options = array();
 
-		$options['post_type'] = self::types(Config::types());
-
 		foreach(Config::taxonomies() as $tax){
 			$options[$tax] = self::taxonomy($tax);
 		}
@@ -65,6 +63,10 @@ class Faceting{
 		foreach(Config::fields() as $field){
 			if(isset($numeric[$field])){
 				$options[$field] = self::range($field);
+			}
+
+			if($field == 'post_type'){
+				$options['post_type'] = self::types(Config::types());
 			}
 		}
 
@@ -323,12 +325,17 @@ class Faceting{
 	**/
 	static function urlAdd($url, $type, $value, $operation = 'and'){
 		$filter = $_GET;
-		$es = $filter['es'];
+		
+		if(!isset($filter['es'])){
+			$filter['es'] = array();
+		}
+
+		$es = &$filter['es'];
 
 		$op = $operation;
 
-		if(isset($filter[$type])){
-			$op = array_keys($$es[$type]);
+		if(isset($es[$type])){
+			$op = array_keys($es[$type]);
 			$op = $op[0];
 		}
 
@@ -348,23 +355,30 @@ class Faceting{
 	**/
 	static function urlRemove($url, $type, $value){
 		$filter = $_GET;
-		$es = $filter['es'];
 
-		$operation = isset($es[$type]['and']) ? 'and' : 'or';
+		if(isset($filter['es'])){
+			$es = &$filter['es'];
 
-		if(isset($es[$type][$operation])){
-			$index = array_search($value, $es[$type][$operation]);
+			$operation = isset($es[$type]['and']) ? 'and' : 'or';
 
-			if($index !== false){
-				unset($es[$type][$operation][$index]);
+			if(isset($es[$type][$operation])){
+				$index = array_search($value, $es[$type][$operation]);
 
-				if(count($es[$type][$operation]) == 0){
-					unset($es[$type][$operation]);
+				if($index !== false){
+					unset($es[$type][$operation][$index]);
+
+					if(count($es[$type][$operation]) == 0){
+						unset($es[$type][$operation]);
+					}
+
+					if(count($es[$type]) == 0){
+						unset($es[$type]);
+					}
 				}
+			}
 
-				if(count($es[$type]) == 0){
-					unset($es[$type]);
-				}
+			if(count($es) == 0){
+				unset($filter['es']);
 			}
 		}
 

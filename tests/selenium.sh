@@ -130,6 +130,9 @@ if [ ! -d "vagrantpress-wordpress-fantastic-elasticsearch" ]; then
 fi
 
 cd vagrantpress-wordpress-fantastic-elasticsearch
+
+echo "Waiting for VM to launch."
+
 vagrant up &>/dev/null
 
 echo "Restoring database incase it was modified."

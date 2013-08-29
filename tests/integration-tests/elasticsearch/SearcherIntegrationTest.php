@@ -85,6 +85,7 @@ class SearcherIntegrationTest extends BaseIntegrationTestCase
 		global $blog_id;
 		
 		update_option('score_tax_tag', 1);
+		update_option('fields', array());
 
 		register_post_type('post');
 		register_taxonomy('tag', 'post');
@@ -138,6 +139,7 @@ class SearcherIntegrationTest extends BaseIntegrationTestCase
 		global $blog_id;
 		
 		update_option('score_tax_tag', 1);
+		update_option('fields', array());
 
 		register_post_type('post');
 		register_taxonomy('tag', 'post');
@@ -187,6 +189,7 @@ class SearcherIntegrationTest extends BaseIntegrationTestCase
 		global $blog_id;
 		
 		update_option('score_tax_tag', 1);
+		update_option('fields', array());
 
 		register_post_type('post');
 		register_taxonomy('tag', 'post');
@@ -638,6 +641,7 @@ class SearcherIntegrationTest extends BaseIntegrationTestCase
 	public function testSearchTaxonomies()
 	{
 		update_option('score_tax_tag', 1);
+		update_option('fields', array());
 
 		register_post_type('post');
 		register_taxonomy('tag', 'post');

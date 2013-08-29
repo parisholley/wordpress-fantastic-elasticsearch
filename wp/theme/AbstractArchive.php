@@ -33,9 +33,9 @@ abstract class AbstractArchive{
 			$wp_query->query_vars['posts_per_page'] = get_option('posts_per_page');
 		}
 
-		$search = str_replace('\"', '"', $wp_query->query_vars['s']);
+		$search = isset($wp_query->query_vars['s']) ? str_replace('\"', '"', $wp_query->query_vars['s']) : '';
 
-		$results = Searcher::search($search, $this->page, $wp_query->query_vars['posts_per_page'], $args, true);
+		$results = Searcher::search($search, $this->page, $wp_query->query_vars['posts_per_page'], $args, $search ? false : true);
 
 		if($results == null){
 			return null;
@@ -63,7 +63,7 @@ abstract class AbstractArchive{
 			$wp_query->max_num_pages = ceil( $this->total / $wp_query->query_vars['posts_per_page'] );
 			$wp_query->found_posts = $this->total;
 			$wp_query->query_vars['paged'] = $this->page + 1;
-			$wp_query->query_vars['s'] = $_GET['s'];
+			$wp_query->query_vars['s'] = isset($_GET['s']) ? str_replace('\"', '"', $_GET['s']) : '';
 
 			usort($posts, array(&$this, 'sort_posts'));
 		}
