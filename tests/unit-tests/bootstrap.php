@@ -18,6 +18,7 @@ namespace elasticsearch{
 		static $actions = array();
 		static $is = array();
 		static $all_meta_keys = array();
+		static $post_meta = array();
 	}
 }
 
@@ -265,12 +266,27 @@ namespace {
     return isset(elasticsearch\TestContext::$all_meta_keys) ? elasticsearch\TestContext::$all_meta_keys : null;
   }
 
-	function trailingslashit($arg){
+  function add_post_meta($postid, $key, $value){
+    if(!isset(elasticsearch\TestContext::$post_meta[$postid])){
+      elasticsearch\TestContext::$post_meta[$postid] = array();
+    }
 
+    elasticsearch\TestContext::$post_meta[$postid][$key] = $value;
+	}
+
+  function get_post_meta($postid, $key, $args){
+    if( isset(elasticsearch\TestContext::$post_meta[$postid]) &&
+        isset(elasticsearch\TestContext::$post_meta[$postid][$key])) {
+      return elasticsearch\TestContext::$post_meta[$postid][$key];
+    }
 	}
 
 	function add_meta_keys($keys){
     elasticsearch\TestContext::$all_meta_keys = $keys;
+	}
+
+	function trailingslashit($arg){
+
 	}
 
   function add_menu_page(){

@@ -55,12 +55,11 @@ class Defaults{
 	}
 
   /**
-	* Returns any customfields registered for any post types.
+	* Returns all customfields registered for any post type.
 	* Copied method meta_form() from admin/includes/templates.php as inline method ... damn those dirty wordpress suckers!!!
-	* @return string[] meta keys
+	* @return string[] meta keys sorted
 	**/
 	static function meta_fields(){
-//    $keys = meta_form();
 
     global $wpdb;
     $keys = $wpdb->get_col("SELECT meta_key

@@ -14,10 +14,12 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase{
 		$this->reset(TestContext::$terms);
 		$this->reset(TestContext::$termrel);
 		$this->reset(TestContext::$all_meta_keys);
+		$this->reset(TestContext::$post_meta);
 
 		$wp_query = new \stdClass();
-    $wpdb = new \wpdb();
 		$blog_id = 1;
+    // used for mocking meta field db calls
+    $wpdb = new \wpdb();
 
 		$_GET = array();
 	}
