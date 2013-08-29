@@ -32,6 +32,7 @@ svn status | grep -v "^.[ \t]*\..*" | grep "^?" >/dev/null 2>&1
 
 if [ $? -eq 0 ]; then
 	echo "ERROR: There are new files in the SVN repository. Resolve then try again."
+	exit
 fi
 
 cd trunk

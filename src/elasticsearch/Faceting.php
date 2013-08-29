@@ -64,11 +64,17 @@ class Faceting{
 			if(isset($numeric[$field])){
 				$options[$field] = self::range($field);
 			}
+
+			if($field == 'post_type'){
+				$options['post_type'] = self::types(Config::types());
+			}
 		}
 
 		foreach($options as $name => &$field){
-			foreach($field['available'] as &$available){
-				$available['font'] = self::cloud($field['available'], $available, $minFont, $maxFont);
+			if(isset($field['available'])){
+				foreach($field['available'] as &$available){
+					$available['font'] = self::cloud($field['available'], $available, $minFont, $maxFont);
+				}
 			}
 		}
 
@@ -110,7 +116,9 @@ class Faceting{
 		$result = array(
 			'selected' => array(),
 			'available' => array(),
-			'total' => 0
+			'total' => 0,
+			'max' => 0,
+			'min' => null
 		);
 
 		$ranges = Config::ranges($field);
@@ -126,11 +134,19 @@ class Faceting{
 					'from' => $split[0]
 				);
 
-				if(isset($_GET[$field]) && in_array($slug, $_GET[$field]['and'])){
+				if(isset($_GET['es'][$field]) && in_array($slug, $_GET['es'][$field]['and'])){
 					$result['selected'][$slug] = $item;
 				}else if($item['count'] > 0){
 					$result['available'][$slug] = $item;
 					$result['total'] += $item['count'];
+
+					if($item['count'] > $result['max']){
+						$result['max'] = $item['count'];
+					}
+
+					if($result['min'] == null || $item['count'] < $result['min']){
+						$result['min'] = $item['count'];
+					}
 				}
 			}
 		}
@@ -173,7 +189,9 @@ class Faceting{
 		$taxonomy = array(
 			'selected' => array(),
 			'available' => array(),
-			'total' => 0
+			'total' => 0,
+			'max' => 0,
+			'min' => null
 		);
 
 		if(isset($facets[$tax])){
@@ -183,7 +201,7 @@ class Faceting{
 					'slug' => $term->slug
 				);
 
-				if(isset($_GET[$tax]) && in_array($term->slug, $_GET[$tax]['and'])){
+				if(isset($_GET['es'][$tax]) && in_array($term->slug, $_GET['es'][$tax]['and'])){
 					$taxonomy['selected'][$term->slug] = $item;
 				}else if(isset($facets[$tax][$term->slug])){
 					$count = $item['count'] = $facets[$tax][$term->slug];
@@ -191,12 +209,66 @@ class Faceting{
 					if($count > 0){
 						$taxonomy['available'][$term->slug] = $item;
 						$taxonomy['total'] += $item['count'];
+
+						if($item['count'] > $taxonomy['max']){
+							$taxonomy['max'] = $item['count'];
+						}
+
+						if($taxonomy['min'] == null || $item['count'] < $taxonomy['min']){
+							$taxonomy['min'] = $item['count'];
+						}
 					}
 				}
 			}
 		}
 
 		return $taxonomy;
+	}
+
+	static function types($types){
+		global $wp_query;
+
+		$facets = $wp_query->facets;
+
+		$posttypes = array(
+			'selected' => array(),
+			'available' => array(),
+			'total' => 0,
+			'max' => 0,
+			'min' => 0
+		);
+
+		if(isset($facets['post_type'])){
+			foreach($types as $type){
+				$type = get_post_type_object($type);
+
+				$item = array(
+					'name' => $type->label,
+					'slug' => $type->name
+				);
+
+				if(isset($_GET['es']['post_type']) && in_array($type->name, $_GET['es']['post_type']['and'])){
+					$posttypes['selected'][$type->name] = $item;
+				}else if(isset($facets['post_type'][$type->name])){
+					$count = $item['count'] = $facets['post_type'][$type->name];
+
+					if($count > 0){
+						$posttypes['available'][$type->name] = $item;
+						$posttypes['total'] += $item['count'];
+
+						if($item['count'] > $posttypes['max']){
+							$posttypes['max'] = $item['count'];
+						}
+
+						if($posttypes['min'] == null || $item['count'] < $posttypes['min']){
+							$posttypes['min'] = $item['count'];
+						}
+					}
+				}
+			}
+		}
+
+		return $posttypes;
 	}
 
 	/**
@@ -253,20 +325,23 @@ class Faceting{
 	**/
 	static function urlAdd($url, $type, $value, $operation = 'and'){
 		$filter = $_GET;
+		
+		if(!isset($filter['es'])){
+			$filter['es'] = array();
+		}
+
+		$es = &$filter['es'];
 
 		$op = $operation;
 
-		if(isset($filter[$type])){
-			$op = array_keys($filter[$type]);
+		if(isset($es[$type])){
+			$op = array_keys($es[$type]);
 			$op = $op[0];
 		}
 
-		$filter[$type][$op][] = $value;
+		$es[$type][$op][] = $value;
 
-		$url = new \Purl\Url($url);
-		$url->query->setData($filter);
-
-		return $url->getUrl();
+		return self::_buildUrl($url, $filter);
 	}
 
 	/**
@@ -281,28 +356,51 @@ class Faceting{
 	static function urlRemove($url, $type, $value){
 		$filter = $_GET;
 
-		$operation = isset($filter[$type]['and']) ? 'and' : 'or';
+		if(isset($filter['es'])){
+			$es = &$filter['es'];
 
-		if(isset($filter[$type][$operation])){
-			$index = array_search($value, $filter[$type][$operation]);
+			$operation = isset($es[$type]['and']) ? 'and' : 'or';
 
-			if($index !== false){
-				unset($filter[$type][$operation][$index]);
+			if(isset($es[$type][$operation])){
+				$index = array_search($value, $es[$type][$operation]);
 
-				if(count($filter[$type][$operation]) == 0){
-					unset($filter[$type][$operation]);
+				if($index !== false){
+					unset($es[$type][$operation][$index]);
+
+					if(count($es[$type][$operation]) == 0){
+						unset($es[$type][$operation]);
+					}
+
+					if(count($es[$type]) == 0){
+						unset($es[$type]);
+					}
 				}
+			}
 
-				if(count($filter[$type]) == 0){
-					unset($filter[$type]);
-				}
+			if(count($es) == 0){
+				unset($filter['es']);
 			}
 		}
 
-		$url = new \Purl\Url($url);
-		$url->query->setData($filter);
+		return self::_buildUrl($url, $filter);
+	}
 
-		return $url->getUrl();
+	static function _buildUrl($url, $query){
+		$parts = parse_url($url);
+
+		if(isset($parts['port'])){
+			$url = sprintf("%s://%s:%d%s", $parts['scheme'], $parts['host'], $parts['port'], $parts['path']);
+		}else{
+			$url = sprintf("%s://%s%s", $parts['scheme'], $parts['host'], $parts['path']);
+		}
+
+		if(count($query) > 0){
+			$url .= "?";
+
+			$url .= http_build_query($query);
+		}
+
+		return $url;		
 	}
 }
 

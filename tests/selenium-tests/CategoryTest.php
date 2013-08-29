@@ -27,7 +27,7 @@ class CategoryTest extends BaseTestCase
 
 	public function testTags()
 	{
-		$this->url('/?cat=2&post_tag[and][]=tag1');
+		$this->url('/?cat=2&es[post_tag][and][]=tag1');
 		$this->assertEquals('Parent Category I | Vagrant', $this->title());
 
 		$this->byXPath('(//article[1])[@id="post-45"]');
@@ -103,7 +103,8 @@ class CategoryTest extends BaseTestCase
 
 		$this->byXPath('(//aside[@id="facet-post_tag-selected"]//li[1])[@id="facet-post_tag-tag5"]');
 
-		$this->byXPath('(//article[1])[@id="post-43"]');
+		$this->byXPath('(//article[1])[@id="post-50"]');
+		$this->byXPath('(//article[2])[@id="post-43"]');
 	}
 }
 ?>
