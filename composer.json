@@ -1,5 +1,6 @@
 {
     "require": {
-    	"ruflin/elastica": "v0.90.1.0"
+    	"ruflin/elastica": "v0.90.1.0",
+    	"electrolinux/phpquery": "0.9.6"
     }
 }

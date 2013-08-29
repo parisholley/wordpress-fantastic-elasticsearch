@@ -44,9 +44,14 @@ if(!class_exists('NHP_Options')){
 
 require 'src/bootstrap.php';
 
+require 'wp/theme/AbstractArchive.php';
 require 'wp/theme/search.php';
 require 'wp/theme/category.php';
-require 'wp/theme/widget.php';
+require 'wp/theme/archive.php';
+require 'wp/theme/taxonomy.php';
+require 'wp/theme/tag.php';
+require 'wp/theme/widget-options.php';
+require 'wp/theme/widget-selected.php';
 require 'wp/admin/hooks.php';
 
 add_action( 'admin_enqueue_scripts', function() {

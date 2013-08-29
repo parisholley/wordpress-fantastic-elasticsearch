@@ -31,6 +31,7 @@ class Searcher{
 			);
 		}
 
+		// need to do rethink the signature of the search() method, arg list can't just keep growing
 		return self::_query($args, $pageIndex, $size, $sortByDate);
 	}
 
@@ -50,7 +51,7 @@ class Searcher{
 
 			$search = new \Elastica\Search($index->getClient());
 			$search->addIndex($index);
-			
+
 			if($sortByDate){
 				$query->addSort(array('post_date' => 'desc'));
 			}else{
@@ -169,8 +170,10 @@ class Searcher{
 
 			$qs = Config::apply_filters('searcher_query_string', $qs);
 
-			$args['query']['query_string'] = $qs;
+			$musts[] = array( 'query_string' => $qs );
 		}
+
+		self::_filterBySelectedFacets('post_type', $facets, 'term', $musts, $filters);
 
 		if(count($filters) > 0){
 			$args['filter']['bool']['should'] = $filters;
@@ -183,6 +186,11 @@ class Searcher{
 		$args['filter']['bool']['must'][] = array( 'term' => array( 'blog_id' => $blog_id ) );
 
 		$args = Config::apply_filters('searcher_query_pre_facet_filter', $args);
+
+		$args['facets']['post_type']['terms'] = array(
+			'field' => 'post_type',
+			'size' => Config::apply_filters('searcher_query_facet_size', 100)  // see https://github.com/elasticsearch/elasticsearch/issues/1832
+		);
 
 		// return facets
 		foreach(Config::facets() as $facet){

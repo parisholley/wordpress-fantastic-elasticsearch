@@ -110,6 +110,7 @@ class Config{
 
 		// this should always exist so we have a default to sort on
 		$fieldnames[] = 'post_date';
+		$fieldnames[] = 'post_type';
 
 		return self::apply_filters('config_fields', $fieldnames);
 	}
@@ -120,7 +121,7 @@ class Config{
 	* @return string[] field and/or association names
 	**/
 	static function facets(){
-		return self::apply_filters('config_facets', self::taxonomies());
+		return self::apply_filters('config_facets', array_merge(array('post_type'), self::taxonomies()));
 	}
 
 	/**

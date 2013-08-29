@@ -9,8 +9,7 @@ namespace elasticsearch;
 * @version 2.1.0
 **/
 class Theme{
-	private static $ajaxStart;
-	private static $ajaxEnd;
+	private static $selector;
 	private static $instance;
 
 	/**
@@ -26,35 +25,22 @@ class Theme{
 		}
 	}
 
-	public static function setAjaxStart($start){
-		self::$ajaxStart = $start;
-	}
-
-	public static function setAjaxStop($end){
-		self::$ajaxEnd = $end;
+	public static function setSelector($selector){
+		self::$selector = $selector;
 	}
 
 	public static function _ajax_footer(){
 		$html = ob_get_contents();
 		ob_clean();
 
-		$split = explode(self::$ajaxStart, $html);
+		\phpQuery::newDocumentHTML($html);
 
-		if(count($split) != 2){
-			echo $html;
-			return;
-		}
-
-		$split = explode(self::$ajaxEnd, $split[1]);
-	
-		if(count($split) != 2){
-			echo $html;
-			return;
-		}
+		global $wp_query;
 
 		$result = array(
-			'content' => $split[0],
-			'faceting' => Faceting::all()
+			'content' => pq(self::$selector)->html(),
+			'faceting' => Faceting::all(),
+			'found' => $wp_query->found_posts
 		);
 
 		echo json_encode($result);
