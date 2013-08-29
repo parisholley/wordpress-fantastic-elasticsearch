@@ -72,6 +72,50 @@ class FacetingTest extends BaseTestCase
 		$this->assertEquals('http://site.com/my/sub/page/', $url);
 	}
 
+	public function testTypes()
+	{
+		register_post_type('post', array(
+			'label' => 'Posts'
+		));
+		register_post_type('cpt', array(
+			'label' => 'Cpts'
+		));
+
+		update_option('fields', array('post_type'));
+		
+		global $wp_query;
+
+		$wp_query->facets = array(
+			'post_type' => array(
+				'post' => 3,
+				'cpt' => 4
+			)
+		);
+
+		$this->assertEquals(array(
+			'post_type' => array(
+				'available' => array(
+					'post' => array(
+						'count' => 3,
+						'name' => 'Posts',
+						'slug' => 'post',
+						'font' => 21.0
+					),
+					'cpt' => array(
+						'count'	=> 4,
+						'name' => 'Cpts',
+						'slug' => 'cpt',
+						'font' => 24.0
+					)
+				),
+				'selected' => array(),
+				'total' => 7,
+				'max' => 4,
+				'min' => 3
+			)
+		), Faceting::all());
+	}
+
 	public function testAllTax()
 	{
 		register_taxonomy('tag', 'post');
