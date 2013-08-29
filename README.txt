@@ -48,6 +48,7 @@ https://github.com/parisholley/wordpress-fantastic-elasticsearch/wiki
 * Removed dependency on purl due to memory leak
 * Added filters so devs can hook into NHP options (thanks to nielo)
 * Expanded ES integration to taxonomy, tag, and custom post archives
+* More strict fixes (thanks to markoheijnen and michaelsauter)
 
 = 2.1.0 =
 * Added some error messages if user has bad config or changed taxonomy
