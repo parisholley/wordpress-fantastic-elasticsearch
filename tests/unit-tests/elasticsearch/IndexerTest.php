@@ -216,7 +216,8 @@ class IndexerTest extends BaseTestCase
 
     $this->assertEquals(array(
       'name' => 'RubyOnRails',
-      'blog_id' => 1
+      'blog_id' => 1,
+      'post_type' => 'post'
     ), $document);
   }
 
@@ -235,7 +236,8 @@ class IndexerTest extends BaseTestCase
 
     $this->assertEquals(array(
       'name' => 'RubyOnRails',
-      'blog_id' => 1
+      'blog_id' => 1,
+      'post_type' => 'post'
     ), $document);
   }
 }
