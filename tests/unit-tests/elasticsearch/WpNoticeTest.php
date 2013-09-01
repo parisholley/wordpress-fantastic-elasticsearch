@@ -40,6 +40,10 @@ class WpNoticeTest extends BaseTestCase
 		TestContext::$is['is_admin'] = false;
 		TestContext::$is['is_tax'] = false;
 
+		add_filter('elasticsearch_searcher_query_post_facet_filter', function($value){
+			return array(); // prevent contact with ES
+		}, 10, 1);
+
 		update_option('enable_categories', array(1));
 
 		wp_insert_term('Category 1', 'category', array('slug' => 'cat1'));
@@ -56,6 +60,10 @@ class WpNoticeTest extends BaseTestCase
 		TestContext::$is['is_search'] = true;
 		TestContext::$is['is_admin'] = false;
 		TestContext::$is['is_tax'] = false;
+
+		add_filter('elasticsearch_searcher_query_post_facet_filter', function($value){
+			return array(); // prevent contact with ES
+		}, 10, 1);
 
 		update_option('enable_categories', array(1));
 
@@ -75,6 +83,10 @@ class WpNoticeTest extends BaseTestCase
 		TestContext::$is['is_search'] = true;
 		TestContext::$is['is_admin'] = false;
 		TestContext::$is['is_tax'] = false;
+
+		add_filter('elasticsearch_searcher_query_post_facet_filter', function($value){
+			return array(); // prevent contact with ES
+		}, 10, 1);
 
 		update_option('enable', 1);
 

@@ -6,8 +6,6 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    'Purl' => array($vendorDir . '/jwage/purl/src'),
-    'Pdp' => array($vendorDir . '/jeremykendall/php-domain-parser/library'),
     'Elastica\\Test' => array($vendorDir . '/ruflin/elastica/test/lib'),
     'Elastica' => array($vendorDir . '/ruflin/elastica/lib'),
 );

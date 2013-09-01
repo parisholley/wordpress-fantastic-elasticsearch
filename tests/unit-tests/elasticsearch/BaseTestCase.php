@@ -6,7 +6,7 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase{
 	{
 		global $wp_query, $blog_id, $wpdb;
 
-		$this->reset(TestContext::$options);
+		$this->reset(Config::$options);
 		$this->reset(TestContext::$filters);
 		$this->reset(TestContext::$taxes);
 		$this->reset(TestContext::$types);
@@ -25,11 +25,13 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase{
 	}
 
 	private function reset(&$array){
-		foreach($array as $key => $value){
-			unset($array[$key]);
-		}
+		if(is_array($array)){
+			foreach($array as $key => $value){
+				unset($array[$key]);
+			}
 
-		reset($array);
+			reset($array);
+		}
 	}
 }
 ?>

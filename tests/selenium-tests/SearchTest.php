@@ -43,10 +43,11 @@ class SearchTest extends BaseTestCase
 		// not sure how ES is coming up with this order
 		$this->assertEquals('post-37', $this->byXPath('//article[1]')->attribute('id'));
 		$this->assertEquals('post-41', $this->byXPath('//article[2]')->attribute('id'));
-		$this->assertEquals('post-43', $this->byXPath('//article[3]')->attribute('id'));
-		$this->assertEquals('post-5', $this->byXPath('//article[4]')->attribute('id'));
-		$this->assertEquals('post-57', $this->byXPath('//article[5]')->attribute('id'));
-		$this->assertEquals('post-45', $this->byXPath('//article[6]')->attribute('id'));
+		$this->assertEquals('post-50', $this->byXPath('//article[3]')->attribute('id'));
+		$this->assertEquals('post-43', $this->byXPath('//article[4]')->attribute('id'));
+		$this->assertEquals('post-5', $this->byXPath('//article[5]')->attribute('id'));
+		$this->assertEquals('post-57', $this->byXPath('//article[6]')->attribute('id'));
+		$this->assertEquals('post-45', $this->byXPath('//article[7]')->attribute('id'));
 	}
 
 	public function testExactPhraseWrong()

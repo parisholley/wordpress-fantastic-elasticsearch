@@ -9,7 +9,7 @@ namespace elasticsearch;
 * @version 2.0.0
 **/
 class Config{
-	private static $options = null;
+	static $options = null;
 
 	/**
 	* Retrieve a specific option from the wordpress database for this plugin. Note: This is cached once per request.
@@ -18,12 +18,12 @@ class Config{
 	*
 	* @return object
 	**/
-	static function option($name){
+	static function option($name, $default = null){
 		if(self::$options == null){
-			self::$options = &get_option('elasticsearch');
+			self::$options = get_option('elasticsearch');
 		}
 
-		return self::apply_filters('config_option', isset(self::$options[$name]) ? self::$options[$name] : null, $name);
+		return self::apply_filters('config_option', isset(self::$options[$name]) ? self::$options[$name] : $default, $name);
 	}
 
 	/**
@@ -104,7 +104,9 @@ class Config{
 	static function fields(){
 		$fieldnames = Defaults::fields();
 
-		if($fields = self::option('fields')){
+		$fields = self::option('fields');
+
+		if(is_array($fields)){
 			$fieldnames = array_keys($fields);
 		}
 
@@ -120,7 +122,13 @@ class Config{
 	* @return string[] field and/or association names
 	**/
 	static function facets(){
-		return self::apply_filters('config_facets', self::taxonomies());
+		$facets = self::taxonomies();
+
+		if(in_array('post_type',self::fields())){
+			$facets[] = 'post_type';
+		}
+
+		return self::apply_filters('config_facets', $facets);
 	}
 
 	/**
