@@ -120,66 +120,9 @@ class Indexer{
 	* @internal
 	**/
 	static function _map(){
-		$numeric = Config::option('numeric');
-		$notanalyzed = Config::option('not_analyzed');
-
-		$index = self::_index(false);
-
-		foreach(Config::taxonomies() as $tax){
-			$props = array(
-				'type' => 'string',
-				'index' => 'not_analyzed'
-			);
-
-			$props = Config::apply_filters('indexer_map_taxonomy', $props, $tax);
-
-			$propsname = array(
-				'type' => 'string'
-			);
-
-			$propsname = Config::apply_filters('indexer_map_taxonomy_name', $propsname, $tax);
-
-			foreach(Config::types() as $type){
-				$type = $index->getType($type);
-
-				$mapping = new \Elastica\Type\Mapping($type);
-				$mapping->setProperties(array($tax => $props));
-				$mapping->send();
-
-				$mapping = new \Elastica\Type\Mapping($type);
-				$mapping->setProperties(array($tax . '_name' => $propsname));
-				$mapping->send();
-			}			
-		}
-
-		foreach(Config::fields() as $field){
-			$props = array(
-				'type' => 'string'
-			);
-
-			if(isset($numeric[$field])){
-				$props['type'] = 'float';
-			}elseif($field == 'post_date'){
-				$props['type'] = 'date';
-				$props['format'] = 'date_time_no_millis';
-			}elseif(isset($notanalyzed[$field])){
-				$props['index'] = 'not_analyzed';
-			}else{
-				$props['index'] = 'analyzed';
-			}
-
-			$props = Config::apply_filters('indexer_map_field', $props, $field);
-
-			foreach(Config::types() as $type){
-				$type = $index->getType($type);
-
-				$mapping = new \Elastica\Type\Mapping($type);
-				$mapping->setProperties(array($field => $props));
-
-				$mapping->send();
-			}
-		}
-    self::_map_meta_values($index);
+    self::_map_values(Config::taxonomies(), 'taxonomy' );
+    self::_map_values(Config::fields(), 'field' );
+    self::_map_values(Config::meta_fields(), 'meta');
 	}
 
 	/**
@@ -284,37 +227,50 @@ class Indexer{
   }
 
   /**
-   * Add post meta values type definitions to elasticsearch.
-   * @param Elastica\Index $index to
-   * @internal
-   **/
-  static function _map_meta_values(&$index){
-
+   * Create new ES field mappings for the given fields from the configuration
+   * TODO align callback names with Config::names so we can simply call this method with the kind string
+   * @param array $config_fields
+   * @param string $kind of internal fields: meta|field|taxonomy used to call the right indexer_map filter
+   */
+  static function _map_values($config_fields, $kind){
+    $index = self::_index(false);
     $numeric = Config::option('numeric');
     $notanalyzed = Config::option('not_analyzed');
 
-    foreach(Config::meta_fields() as $field){
-      $props = array(
-        'type' => 'string'
-      );
-
+    foreach($config_fields as $field){
+      // set default
+      $props = array( 'type' => 'string' );
+      // detect special field type
       if(isset($numeric[$field])){
         $props['type'] = 'float';
-      }elseif(isset($notanalyzed[$field])){
+      }elseif(isset($notanalyzed[$field]) || $kind=='taxonomy'){
         $props['index'] = 'not_analyzed';
+      }elseif($field == 'post_date'){
+        $props['type'] = 'date';
+        $props['format'] = 'date_time_no_millis';
       }else{
         $props['index'] = 'analyzed';
       }
+      // generic filter indexer_map_field| indexer_map_meta | indexer_map_taxonomy
+      $props = Config::apply_filters('indexer_map_'.$kind, $props, $field);
 
-      $props = Config::apply_filters('indexer_map_meta_field', $props, $field);
+      // also index taxonomy_name field
+      if($kind=='taxonomy'){
+        $tax_name_props = array('type' => 'string');
+        $tax_name_props = Config::apply_filters('indexer_map_taxonomy_name', $tax_name_props, $field);
+      }
 
       foreach(Config::types() as $type){
         $type = $index->getType($type);
-
         $mapping = new \Elastica\Type\Mapping($type);
         $mapping->setProperties(array($field => $props));
-
         $mapping->send();
+        // second mapping for taxonomy_name
+        if (isset($tax_name_props)){
+          $mapping = new \Elastica\Type\Mapping($type);
+          $mapping->setProperties(array($field.'_name' => $tax_name_props));
+          $mapping->send();
+        }
       }
     }
   }
