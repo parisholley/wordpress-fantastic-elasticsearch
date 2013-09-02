@@ -201,6 +201,7 @@ class IndexerTest extends BaseTestCase
 
   public function testBuildDocumentOmitsUndefinedCustomFields()
   {
+    update_option('fields', array());
     update_option('meta_fields', array('name' => 1));
     register_post_type('post');
     add_meta_keys(array('name'));
@@ -217,12 +218,12 @@ class IndexerTest extends BaseTestCase
     $this->assertEquals(array(
       'name' => 'RubyOnRails',
       'blog_id' => 1,
-      'post_type' => 'post'
     ), $document);
   }
 
   public function testBuildDocumentOmitsEmptyCustomFields()
   {
+    update_option('fields', array());
     update_option('meta_fields', array('name' => 1, 'empty_field'=> 1));
     register_post_type('post');
     add_meta_keys(array('name', 'empty_field'));
@@ -237,7 +238,6 @@ class IndexerTest extends BaseTestCase
     $this->assertEquals(array(
       'name' => 'RubyOnRails',
       'blog_id' => 1,
-      'post_type' => 'post'
     ), $document);
   }
 }
