@@ -191,57 +191,10 @@ class Indexer{
 	**/
 	static function _build_document($post){
 		global $blog_id;
-		
-		$document = array(
-			'blog_id' => $blog_id
-		);
-
-		foreach(Config::fields() as $field){
-			if(isset($post->$field)){
-				if($field == 'post_date'){
-					$document[$field] = date('c',strtotime($post->$field));
-				}else if($field == 'post_content'){
-					$document[$field] = strip_tags($post->$field);
-				}else{
-					$document[$field] = $post->$field;
-				}
-			}
-		}
-
+		$document = array( 'blog_id' => $blog_id );
+    $document = self::_build_field_values($post, $document);
     $document = self::_build_meta_values($post, $document);
-
-		if(isset($post->post_type)){
-			$taxes = array_intersect(Config::taxonomies(), get_object_taxonomies($post->post_type));
-
-			foreach($taxes as $tax){
-				$document[$tax] = array();
-
-				foreach(wp_get_object_terms($post->ID, $tax) as $term){
-					if(!in_array($term->slug, $document[$tax])){
-						$document[$tax][] = $term->slug;
-						$document[$tax . '_name'][] = $term->name;
-					}
-
-					if(isset($term->parent) && $term->parent){
-						$parent = get_term($term->parent, $tax);
-						
-						while($parent != null){
-							if(!in_array($parent->slug, $document[$tax])){
-								$document[$tax][] = $parent->slug;
-								$document[$tax . '_name'][] = $parent->name;
-							}
-
-							if(isset($parent->parent) && $parent->parent){
-								$parent = get_term($parent->parent, $tax);
-							}else{
-								$parent = null;
-							}
-						}
-					}
-				}
-			}
-		}
-		
+    $document = self::_build_tax_values($post, $document);
 		return Config::apply_filters('indexer_build_document', $document, $post);
 	}
 
@@ -259,6 +212,73 @@ class Indexer{
       $val = get_post_meta($post->ID, $field, true);
       if(isset($val))
         $document[$field] = $val;
+    }
+    return $document;
+  }
+
+  /**
+   * Add post fields to new elasticsearch object, if the field is set
+   *
+   * @param WP_Post $post
+   * @param Array $document to write to es
+   * @return Array $document
+   * @internal
+   **/
+  static function _build_field_values($post, $document){
+    foreach(Config::fields() as $field){
+      if(isset($post->$field)){
+        if($field == 'post_date'){
+          $document[$field] = date('c',strtotime($post->$field));
+        }else if($field == 'post_content'){
+          $document[$field] = strip_tags($post->$field);
+        }else{
+          $document[$field] = $post->$field;
+        }
+      }
+    }
+    return $document;
+  }
+
+  /**
+   * Add post taxonomies to elasticsearch object
+   *
+   * @param WP_Post $post
+   * @param Array $document to write to es
+   * @return Array $document
+   * @internal
+   **/
+  static function _build_tax_values($post, $document){
+
+    if(!isset($post->post_type))
+      return;
+
+    $taxes = array_intersect(Config::taxonomies(), get_object_taxonomies($post->post_type));
+    foreach($taxes as $tax){
+      $document[$tax] = array();
+
+      foreach(wp_get_object_terms($post->ID, $tax) as $term){
+        if(!in_array($term->slug, $document[$tax])){
+          $document[$tax][] = $term->slug;
+          $document[$tax . '_name'][] = $term->name;
+        }
+
+        if(isset($term->parent) && $term->parent){
+          $parent = get_term($term->parent, $tax);
+
+          while($parent != null){
+            if(!in_array($parent->slug, $document[$tax])){
+              $document[$tax][] = $parent->slug;
+              $document[$tax . '_name'][] = $parent->name;
+            }
+
+            if(isset($parent->parent) && $parent->parent){
+              $parent = get_term($parent->parent, $tax);
+            }else{
+              $parent = null;
+            }
+          }
+        }
+      }
     }
     return $document;
   }
