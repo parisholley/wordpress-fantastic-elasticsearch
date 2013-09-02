@@ -51,14 +51,14 @@ class Searcher{
 
 			$search = new \Elastica\Search($index->getClient());
 			$search->addIndex($index);
-
-			if($sortByDate){
-				$query->addSort(array('post_date' => 'desc'));
-			}else{
-				$query->addSort('_score');
-			}
-
-			Config::apply_filters('searcher_search', $search);
+      if (!$query->hasParam('sort')){
+        if($sortByDate){
+          $query->addSort(array('post_date' => 'desc'));
+        }else{
+          $query->addSort('_score');
+        }
+      }
+			Config::apply_filters('searcher_search', $search, $query);
 
 			$results = $search->search($query);
 

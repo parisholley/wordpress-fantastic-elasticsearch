@@ -168,5 +168,26 @@ class Config{
 
 		return self::apply_filters('config_taxonomies', $val);
 	}
+
+  /**
+	* A list of custom fields that are used for indexing.
+	*
+	* @return string[] meta keys custom field names
+	**/
+	static function meta_fields(){
+		$keys = self::option('meta_fields');
+
+		$val = null;
+
+		if($keys){
+			$val = array_keys($keys);
+		}
+
+		if($val == null){
+			$val = Defaults::meta_fields();
+		}
+
+		return self::apply_filters('config_meta_fields', $val);
+	}
 }
 ?>

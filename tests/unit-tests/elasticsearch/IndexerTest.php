@@ -98,8 +98,13 @@ class IndexerTest extends BaseTestCase
 		add_filter('elasticsearch_indexer_build_document', function(){
 			return array('wee');
 		});
-		
-		$document = Indexer::_build_document(array());
+
+    $post = (object) array(
+      'ID' => 22,
+      'post_type' => 'post',
+      'field1' => 'value1'
+    );
+		$document = Indexer::_build_document($post);
 		$this->assertEquals(array('wee'), $document);
 	}
 
@@ -167,5 +172,73 @@ class IndexerTest extends BaseTestCase
 			'blog_id' => 1
 		), $document);
 	}
+
+  public function testBuildDocumentWithCustomFields()
+  {
+    update_option('fields', array('post_title' => 1));
+    update_option('meta_fields', array('price' => 1, 'name' => 1));
+    register_post_type('post');
+    add_meta_keys(array('price', 'name'));
+
+    $post = (object) array(
+      'ID' => 2,
+      'post_title' => 'No more PHP',
+      'post_type' => 'post'
+    );
+
+    add_post_meta($post->ID, 'price', 123);
+    add_post_meta($post->ID, 'name', 'RubyOnRails');
+    $document = Indexer::_build_document($post);
+
+
+    $this->assertEquals(array(
+      'post_title' => 'No more PHP',
+      'price' => 123,
+      'name' => 'RubyOnRails',
+      'blog_id' => 1
+    ), $document);
+  }
+
+  public function testBuildDocumentOmitsUndefinedCustomFields()
+  {
+    update_option('fields', array());
+    update_option('meta_fields', array('name' => 1));
+    register_post_type('post');
+    add_meta_keys(array('name'));
+
+    $post = (object) array(
+      'ID' => 2,
+      'post_type' => 'post'
+    );
+
+    add_post_meta($post->ID, 'price', 123);
+    add_post_meta($post->ID, 'name', 'RubyOnRails');
+    $document = Indexer::_build_document($post);
+
+    $this->assertEquals(array(
+      'name' => 'RubyOnRails',
+      'blog_id' => 1,
+    ), $document);
+  }
+
+  public function testBuildDocumentOmitsEmptyCustomFields()
+  {
+    update_option('fields', array());
+    update_option('meta_fields', array('name' => 1, 'empty_field'=> 1));
+    register_post_type('post');
+    add_meta_keys(array('name', 'empty_field'));
+
+    $post = (object) array(
+      'ID' => 2,
+      'post_type' => 'post'
+    );
+    add_post_meta($post->ID, 'name', 'RubyOnRails');
+    $document = Indexer::_build_document($post);
+
+    $this->assertEquals(array(
+      'name' => 'RubyOnRails',
+      'blog_id' => 1,
+    ), $document);
+  }
 }
 ?>
