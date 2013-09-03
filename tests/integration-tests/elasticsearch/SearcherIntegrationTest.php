@@ -301,6 +301,79 @@ class SearcherIntegrationTest extends BaseIntegrationTestCase
 		$this->assertEquals(1, $results['total']);
 	}
 
+	public function testPostType()
+	{
+		update_option('fields', array('post_type' => 1));
+
+		register_post_type('post');
+		register_post_type('cpt2');
+
+		Indexer::clear();
+
+		Indexer::addOrUpdate((object) array(
+			'post_type' => 'post',
+			'ID' => 1,
+			'post_date' => '10/24/1988 00:00:00 CST'
+		));
+
+		Indexer::addOrUpdate((object) array(
+			'post_type' => 'cpt2',
+			'ID' => 2,
+			'post_date' => '10/24/1988 00:00:00 CST'
+		));
+
+		Indexer::addOrUpdate((object) array(
+			'post_type' => 'cpt2',
+			'ID' => 3,
+			'post_date' => '10/24/1988 00:00:00 CST'
+		));
+
+		$this->index->refresh();
+
+		$results = $this->searcher->search();
+
+		$this->assertEquals(3, $results['total']);
+		$this->assertEquals(array(1,2,3), $results['ids']);
+		$this->assertEquals(array('post_type' => array('post' => 1, 'cpt2' => 2)), $results['facets']);
+
+		$results = $this->searcher->search('', 0, 10, array('post_type' => 'cpt2'));
+
+		$this->assertEquals(2, $results['total']);
+		$this->assertEquals(array(2,3), $results['ids']);
+		$this->assertEquals(array('post_type' => array('cpt2' => 2)), $results['facets']);
+	}
+
+	public function testMetaFields()
+	{
+		update_option('meta_fields', array('cfield1' => 1));
+		update_option('score_meta_cfield1', 1);
+
+		register_post_type('post');
+
+		Indexer::clear();
+
+		add_post_meta(1, 'cfield1', 'value1');
+		add_post_meta(1, 'cfield2', 'value2');
+
+		Indexer::addOrUpdate((object) array(
+			'post_type' => 'post',
+			'ID' => 1,
+			'post_date' => '10/24/1988 00:00:00 CST'
+		));
+
+		$this->index->refresh();
+
+		$results = $this->searcher->search('value1');
+
+		$this->assertEquals(1, $results['total']);
+		$this->assertEquals(array(1), $results['ids']);
+
+		$results = $this->searcher->search('value2');
+
+		$this->assertEquals(0, $results['total']);
+		$this->assertEquals(array(), $results['ids']);
+	}
+
 	public function testExact()
 	{
 		update_option('fields', array('field1' => 1));

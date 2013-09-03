@@ -20,7 +20,7 @@ class Searcher{
 	* 
 	* @return array The results of the search
 	**/
-	public static function search($search, $pageIndex = 0, $size = 10, $facets = array(), $sortByDate = false){
+	public static function search($search = '', $pageIndex = 0, $size = 10, $facets = array(), $sortByDate = false){
 		$args = self::_buildQuery($search, $facets);
 
 		if(empty($args) || (empty($args['query']) && empty($args['facets']))){
@@ -134,29 +134,11 @@ class Searcher{
 		$numeric = Config::option('numeric');
 
 		$exclude = Config::apply_filters('searcher_query_exclude_fields', array('post_date'));
+
 		$fields = Config::fields();
 
-		foreach($fields as $field){
-			if(in_array($field, $exclude)){
-				continue;
-			}
-
-			if($search){
-				$score = Config::score('field', $field);
-
-				if($score > 0){
-					$scored[] = "$field^$score";
-				}
-			}
-
-			if(isset($numeric[$field]) && $numeric[$field]){
-				$ranges = Config::ranges($field);
-
-				if(count($ranges) > 0 ){
-					self::_filterBySelectedFacets($field, $facets, 'range', $musts, $filters, $ranges);
-				}
-			}
-		}
+		self::_searchField($fields, 'field', $exclude, $search, $facets, $musts, $filters, $scored, $numeric);
+		self::_searchField(Config::meta_fields(), 'meta', $exclude, $search, $facets, $musts, $filters, $scored, $numeric);
 
 		if(count($scored) > 0 && $search){
 			$qs = array(
@@ -220,6 +202,30 @@ class Searcher{
 		}
 		
 		return Config::apply_filters('searcher_query_post_facet_filter', $args);
+	}
+
+	public static function _searchField($fields, $type, $exclude, $search, $facets, &$musts, &$filters, &$scored, $numeric){
+		foreach($fields as $field){
+			if(in_array($field, $exclude)){
+				continue;
+			}
+
+			if($search){
+				$score = Config::score($type, $field);
+
+				if($score > 0){
+					$scored[] = "$field^$score";
+				}
+			}
+
+			if(isset($numeric[$field]) && $numeric[$field]){
+				$ranges = Config::ranges($field);
+
+				if(count($ranges) > 0 ){
+					self::_filterBySelectedFacets($field, $facets, 'range', $musts, $filters, $ranges);
+				}
+			}
+		}
 	}
 
 	/**
