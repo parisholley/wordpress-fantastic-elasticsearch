@@ -1,6 +1,21 @@
 <?php
 class SearchTest extends BaseTestCase
 {
+	public function testMetaField()
+	{
+		$this->url('/');
+		$this->assertEquals('Vagrant | Just another WordPress site', $this->title());
+
+		$this->byName('s')->click();
+		$this->keys('value1');
+
+		$this->byId('searchsubmit')->click();
+		$this->assertEquals('value1 | Search Results | Vagrant', $this->title());
+
+		$this->assertEquals('post-50', $this->byXPath('//article[1]')->attribute('id'));
+		$this->assertEquals('post-57', $this->byXPath('//article[2]')->attribute('id'));
+	}
+
 	public function testInvalidTag()
 	{
 		$this->url('/');
