@@ -43,7 +43,7 @@ class FactingSelectedWidget extends \WP_Widget {
 		}elseif(is_archive()){
 			$url = get_post_type_archive_link($wp_query->queried_object->query_var);
 		}elseif(is_search()){
-			$url = get_search_link();
+			$url = home_url('/');
 		}
 
 		if($url == null){
