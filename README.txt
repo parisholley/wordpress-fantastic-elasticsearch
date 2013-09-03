@@ -50,6 +50,7 @@ https://github.com/parisholley/wordpress-fantastic-elasticsearch/wiki
 * Expanded ES integration to taxonomy, tag, and custom post archives
 * More strict fixes (thanks to markoheijnen and michaelsauter)
 * Support for indexing meta fields (thanks to schorsch)
+* Ability to facet on post_type
 
 = 2.1.0 =
 * Added some error messages if user has bad config or changed taxonomy
