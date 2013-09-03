@@ -19,12 +19,6 @@ $fields = array(
 		'type' => 'multi_checkbox',
 		'title' => 'Taxonomy Fields',
 		'options' => array()
-	),
-  array(
-		'id' => 'meta_fields',
-		'type' => 'multi_checkbox',
-		'title' => 'Custom Fields',
-		'options' => array()
 	)
 );
 
@@ -44,9 +38,20 @@ foreach(Defaults::taxonomies(Defaults::types()) as $tax){
 	$fields[2]['std'][$tax] = 1;
 }
 
-foreach(Defaults::meta_fields() as $key){
-	$fields[3]['options'][$key] = $key;
-	$fields[3]['std'][$key] = 1;
+$metas = Defaults::meta_fields();
+
+if(is_array($metas) && count($metas) > 0){
+	$fields[] = array(
+		'id' => 'meta_fields',
+		'type' => 'multi_checkbox',
+		'title' => 'Custom Fields',
+		'options' => array()
+	);
+
+	foreach($metas as $key){
+		$fields[3]['options'][$key] = $key;
+		$fields[3]['std'][$key] = 1;
+	}
 }
 
 $sections['content'] = array(

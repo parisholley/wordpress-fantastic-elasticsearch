@@ -150,12 +150,20 @@ class Indexer{
    * @internal
    **/
   static function _build_meta_values($post, $document){
-    $meta_fields = array_intersect(Config::meta_fields(), get_post_custom_keys($post->ID));
-    foreach($meta_fields as $field){
-      $val = get_post_meta($post->ID, $field, true);
-      if(isset($val))
-        $document[$field] = $val;
-    }
+  	$keys = get_post_custom_keys($post->ID);
+
+  	if(is_array($keys)){
+		$meta_fields = array_intersect(Config::meta_fields(), $keys);
+		
+		foreach($meta_fields as $field){
+			$val = get_post_meta($post->ID, $field, true);
+
+			if(isset($val)){
+				$document[$field] = $val;
+			}
+		}
+  	}
+
     return $document;
   }
 
