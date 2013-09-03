@@ -98,6 +98,7 @@ class IndexerTest extends BaseTestCase
 		update_option('fields', array('post_content' => 1));
 
 		$document = Indexer::_build_document((object) array(
+			'ID' => 1,
 			'post_content' => '<span class="foobar">wee</span>'
 		));
 

@@ -193,7 +193,7 @@ class Indexer{
   static function _build_tax_values($post, $document){
 
     if(!isset($post->post_type))
-      return;
+      return $document;
 
     $taxes = array_intersect(Config::taxonomies(), get_object_taxonomies($post->post_type));
     foreach($taxes as $tax){
