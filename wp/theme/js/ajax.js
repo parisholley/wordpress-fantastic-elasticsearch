@@ -124,7 +124,7 @@
 			return false;
 		});
 
-		$(document).on('click', '.pagination a', function(){
+		$(document).on('click', '.pagination a, .navigation a', function(){
 			$.getJSON($(this).attr('href'), $form.serialize() + '&esasync=1', onresponse);
 
 			return false;

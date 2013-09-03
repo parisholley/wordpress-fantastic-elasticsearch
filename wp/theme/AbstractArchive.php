@@ -3,6 +3,7 @@ namespace elasticsearch;
 
 abstract class AbstractArchive{
 	var $searched = false;
+	var $applied = false;
 	var $total = 0;
 	var $scores = array();
 	var $page = 1;
@@ -15,7 +16,7 @@ abstract class AbstractArchive{
 	function do_search($wp_query){
 		global $wp_query;
 
-		if(!$wp_query->is_main_query() || is_admin()){
+		if(!$wp_query->is_main_query() || is_admin() || $this->applied){
 			return;
 		}
 
@@ -59,6 +60,7 @@ abstract class AbstractArchive{
 
 		if($this->searched){
 			$this->searched = false;
+			$this->applied = true;
 
 			$wp_query->max_num_pages = ceil( $this->total / $wp_query->query_vars['posts_per_page'] );
 			$wp_query->found_posts = $this->total;
