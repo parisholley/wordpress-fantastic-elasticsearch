@@ -3,7 +3,9 @@ namespace elasticsearch;
 
 class Tag extends AbstractArchive{
 	function facets($wp_query, $args){
-		if(!is_tag()){
+		$enabled = Config::option('enable_all_tags', false);
+
+		if(!$enabled || !is_tag()){
 			return;
 		}
 		

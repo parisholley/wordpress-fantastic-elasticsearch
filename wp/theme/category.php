@@ -8,14 +8,15 @@ class Category extends AbstractArchive{
 		}
 
 		$enabled = Config::option('enable_categories', array());
+		$all = Config::option('enable_all_categories', false);
 
 		$cats = array();
 
 		if(isset($wp_query->query_vars['category_name']) && !empty($wp_query->query_vars['category_name'])){
 			$cat = get_category_by_slug($wp_query->query_vars['category_name']);
 
-			if(!in_array($cat->term_id, $enabled)){
-				return null;
+			if(!$all && !in_array($cat->term_id, $enabled)){
+				return;
 			}
 
 			$cats[] = $cat;
@@ -23,15 +24,15 @@ class Category extends AbstractArchive{
 			$catids = explode(',', $wp_query->query_vars['cat']);
 
 			foreach($catids as $id){
-				if(!in_array($id, $enabled)){
-					return null;
+				if(!$all && !in_array($id, $enabled)){
+					return;
 				}
 
 				$cats[] = get_category($id);
 			}
 		}
 		
-		if(empty($cats) || !$enabled){
+		if(empty($cats)){
 			return;
 		}
 
