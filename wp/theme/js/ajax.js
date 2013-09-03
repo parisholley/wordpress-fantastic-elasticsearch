@@ -61,11 +61,11 @@
 		};
 
 		var buildQuery = function(){
-			var s = '';
+			var s = [];
 
 			var terms = $selected.find('.term');
 			terms.each(function(){
-				s += $(this).data('term');
+				s.push($(this).data('term'));
 			});
 
 			if(terms.length == 1){
@@ -74,7 +74,7 @@
 				});
 			}
 
-			return $form.serialize() + '&esasync=1&s=' + s;
+			return $form.serialize() + '&esasync=1&s=' + s.join(' ');
 		}
 
 		$form.find('input[type=checkbox]').change(function(){

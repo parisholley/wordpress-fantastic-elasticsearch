@@ -7,6 +7,7 @@ abstract class AbstractArchive{
 	var $total = 0;
 	var $scores = array();
 	var $page = 1;
+	var $search = '';
 
 	function __construct(){
 		add_action('pre_get_posts', array(&$this, 'do_search'));
@@ -34,9 +35,9 @@ abstract class AbstractArchive{
 			$wp_query->query_vars['posts_per_page'] = get_option('posts_per_page');
 		}
 
-		$search = isset($wp_query->query_vars['s']) ? str_replace('\"', '"', $wp_query->query_vars['s']) : '';
+		$this->search = isset($wp_query->query_vars['s']) ? urldecode(str_replace('\"', '"', $wp_query->query_vars['s'])) : '';
 
-		$results = Searcher::search($search, $this->page, $wp_query->query_vars['posts_per_page'], $args, $search ? false : true);
+		$results = Searcher::search($this->search, $this->page, $wp_query->query_vars['posts_per_page'], $args, $this->search ? false : true);
 
 		if($results == null){
 			return null;
@@ -65,7 +66,7 @@ abstract class AbstractArchive{
 			$wp_query->max_num_pages = ceil( $this->total / $wp_query->query_vars['posts_per_page'] );
 			$wp_query->found_posts = $this->total;
 			$wp_query->query_vars['paged'] = $this->page + 1;
-			$wp_query->query_vars['s'] = isset($_GET['s']) ? str_replace('\"', '"', $_GET['s']) : '';
+			$wp_query->query_vars['s'] = $this->search;
 
 			usort($posts, array(&$this, 'sort_posts'));
 		}
