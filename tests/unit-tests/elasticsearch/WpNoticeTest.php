@@ -101,7 +101,6 @@ class WpNoticeTest extends BaseTestCase
 		register_post_type('post');
 		register_taxonomy('tax1', 'post');
 		update_option('numeric', array('field1' => 1));
-    add_meta_keys(array('price', 'date'));
 
 		do_action('init');
 		do_action('admin_menu');

@@ -184,7 +184,7 @@ class Config{
 		}
 
 		if($val == null){
-			$val = Defaults::meta_fields();
+			$val = array();
 		}
 
 		return self::apply_filters('config_meta_fields', $val);

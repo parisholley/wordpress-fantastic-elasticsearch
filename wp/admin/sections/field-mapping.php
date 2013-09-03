@@ -6,12 +6,14 @@ $fields = array(
 		'id' => 'numeric',
 		'type' => 'multi_checkbox',
 		'title' => 'Numeric Fields',
-		'desc' => 'Any field marked as "numeric" will enabled support for range faceting.'
+		'desc' => 'Any field marked as "numeric" will enabled support for range faceting.',
+		'options' => array()
 	),
 	'not_analyzed' => array(
 		'id' => 'not_analyzed',
 		'type' => 'multi_checkbox',
 		'title' => 'Non Analyzed Fields',
+		'options' => array(),
 		'desc' => 'Any string field marked as "non analyzed" will require search terms to match the entire value instead of any words in the value.'
 	)
 );

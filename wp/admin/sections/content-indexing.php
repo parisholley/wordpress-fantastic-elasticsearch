@@ -5,22 +5,26 @@ $fields = array(
 	array(
 		'id' => 'fields',
 		'type' => 'multi_checkbox',
-		'title' => 'Index Fields'
+		'title' => 'Index Fields',
+		'options' => array()
 	),
 	array(
 		'id' => 'types',
 		'type' => 'multi_checkbox',
-		'title' => 'Post Types'
+		'title' => 'Post Types',
+		'options' => array()
 	),
 	array(
 		'id' => 'taxonomies',
 		'type' => 'multi_checkbox',
-		'title' => 'Taxonomy Fields'
+		'title' => 'Taxonomy Fields',
+		'options' => array()
 	),
   array(
 		'id' => 'meta_fields',
 		'type' => 'multi_checkbox',
-		'title' => 'Custom Fields'
+		'title' => 'Custom Fields',
+		'options' => array()
 	)
 );
 

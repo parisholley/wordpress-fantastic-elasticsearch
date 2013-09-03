@@ -269,9 +269,13 @@ namespace {
 		return isset(elasticsearch\TestContext::$posts[$id]) ? elasticsearch\TestContext::$posts[$id] : null;
 	}
 
-  // todo: maybe add keys nested by post in TestContext
   function get_post_custom_keys( $post_id = 0 ) {
-    return isset(elasticsearch\TestContext::$all_meta_keys) ? elasticsearch\TestContext::$all_meta_keys : null;
+  	if(isset(elasticsearch\TestContext::$post_meta[$post_id])){
+  		return array_keys(elasticsearch\TestContext::$post_meta[$post_id]);
+  	}
+
+
+    return array();
   }
 
   function add_post_meta($postid, $key, $value){
@@ -287,10 +291,6 @@ namespace {
         isset(elasticsearch\TestContext::$post_meta[$postid][$key])) {
       return elasticsearch\TestContext::$post_meta[$postid][$key];
     }
-	}
-
-	function add_meta_keys($keys){
-    elasticsearch\TestContext::$all_meta_keys = $keys;
 	}
 
 	function trailingslashit($arg){

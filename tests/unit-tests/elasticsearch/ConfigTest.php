@@ -158,7 +158,7 @@ class ApiTest extends BaseTestCase
 
   public function testMetaKeysDefined()
   {
-    add_meta_keys(array('price', 'date'));
+    update_option('meta_fields', array('price' => 1, 'date' => 1));
     $this->assertEquals(array('price', 'date'), Config::meta_fields());
   }
 

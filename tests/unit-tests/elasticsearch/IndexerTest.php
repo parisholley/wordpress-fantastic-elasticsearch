@@ -193,7 +193,6 @@ class IndexerTest extends BaseTestCase
     update_option('fields', array('post_title' => 1));
     update_option('meta_fields', array('price' => 1, 'name' => 1));
     register_post_type('post');
-    add_meta_keys(array('price', 'name'));
 
     $post = (object) array(
       'ID' => 2,
@@ -219,7 +218,6 @@ class IndexerTest extends BaseTestCase
     update_option('fields', array());
     update_option('meta_fields', array('name' => 1));
     register_post_type('post');
-    add_meta_keys(array('name'));
 
     $post = (object) array(
       'ID' => 2,
@@ -241,7 +239,6 @@ class IndexerTest extends BaseTestCase
     update_option('fields', array());
     update_option('meta_fields', array('name' => 1, 'empty_field'=> 1));
     register_post_type('post');
-    add_meta_keys(array('name', 'empty_field'));
 
     $post = (object) array(
       'ID' => 2,
