@@ -57,7 +57,8 @@
 			var $el = $(window.esfaceting.replace);
 
 			$el.empty().html(data.content);
-			$(document).scrollTop($el.offset().top);	
+			$(document).scrollTop($el.offset().top);
+			overlay.remove();	
 		};
 
 		var buildQuery = function(){
@@ -77,14 +78,33 @@
 			return $form.serialize() + '&esasync=1&s=' + s.join(' ');
 		}
 
+		var overlay = null;
+
+		var showoverlay = function(){
+			overlay = $('<div></div>').css({
+				'position':'fixed',
+				'top': '0',
+				'left': '0',
+				'width': '100%',
+				'height': '100%',
+				'background': '#fff',
+				'z-index': 2147483646,
+				'opacity': 0.8
+			}).appendTo('body');
+		};
+
 		$form.find('input[type=checkbox]').change(function(){
 			var url = $form.attr('action');
+
+			showoverlay();
 
 			$.getJSON(url, buildQuery(), onresponse);
 		});
 
 		$form.find('.clear-inner').click(function(){
 			$form[0].reset();
+
+			showoverlay();
 
 			$.getJSON($(this).attr('href'), buildQuery(), onresponse);
 
@@ -107,6 +127,8 @@
 				});
 			}
 
+			showoverlay();
+
 			$.getJSON('#', buildQuery(), function(data){
 				$(this).parent().remove();
 
@@ -125,6 +147,8 @@
 		});
 
 		$(document).on('click', '.pagination a, .navigation a', function(){
+			showoverlay();
+
 			$.getJSON($(this).attr('href'), $form.serialize() + '&esasync=1', onresponse);
 
 			return false;
