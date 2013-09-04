@@ -10,7 +10,7 @@ abstract class AbstractArchive{
 	var $search = '';
 
 	function __construct(){
-		add_action('pre_get_posts', array(&$this, 'do_search'));
+		add_action('pre_get_posts', array(&$this, 'do_search'), 100);
 		add_action('the_posts', array(&$this, 'process_search'));
 	}
 
