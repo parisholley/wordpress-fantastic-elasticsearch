@@ -9,6 +9,13 @@ class Archive extends AbstractArchive{
 			return;
 		}
 
+		$fields = Config::fields();
+
+		// should handle this better, good for now
+		if(!in_array('post_type', $fields)){
+			die('You must re-index your data with the post_type field enabled to use this ElasticSearch on this post type.');
+		}
+
 		$args['post_type'] = $wp_query->query_vars['post_type'];
 
 		return $args;
