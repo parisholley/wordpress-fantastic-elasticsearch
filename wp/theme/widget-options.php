@@ -111,7 +111,7 @@ class FacetingOptionsWidget extends \WP_Widget {
 			}
 
 			if($async){
-				echo '<span class="clear"><a href="#" class="clear-inner">Clear All</a></span>';
+				echo '<span class="clear"><a href="#" class="clear-inner esclear">Clear All</a></span>';
 			}
 
 			echo '</form>';

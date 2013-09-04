@@ -53,7 +53,7 @@ class FactingSelectedWidget extends \WP_Widget {
 		if($async){
 			echo '<aside id="facet-selected" class="widget facets facets-selected">';
 
-			echo '<h3 class="widget-title"><span class="widget-title-inner">Your Selections</span></h3>';
+			echo '<h3 class="widget-title"><span class="widget-title-inner">Your Selections (<a href="#" class="esclear">clear all</a>)</span></h3>';
 
 			echo '<ul>';
 

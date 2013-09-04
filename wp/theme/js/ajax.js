@@ -101,7 +101,7 @@
 			$.getJSON(url, buildQuery(), onresponse);
 		});
 
-		$form.find('.clear-inner').click(function(){
+		$('.esclear').click(function(){
 			$form[0].reset();
 
 			showoverlay();
