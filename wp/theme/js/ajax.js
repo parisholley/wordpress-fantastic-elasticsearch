@@ -2,6 +2,7 @@
 	$(function(){
 		var $form = $('#esajaxform');
 		var $selected = $('#facet-selected');
+		var $replace = $(window.esfaceting.replace).css('position','relative');
 
 		var onresponse = function(data){
 			$selected.find('.facet-item.removable').hide();
@@ -54,11 +55,9 @@
 				$selected.show();
 			}
 
-			var $el = $(window.esfaceting.replace);
-
-			$el.empty().html(data.content);
-			$(document).scrollTop($el.offset().top);
-			overlay.remove();	
+			//$replace.empty().html(data.content);
+			//$(document).scrollTop($replace.offset().top);
+			//overlay.remove();	
 		};
 
 		var buildQuery = function(){
@@ -82,18 +81,15 @@
 
 		var showoverlay = function(){
 			overlay = $('<div></div>').css({
-				'position':'fixed',
+				'position':'absolute',
 				'top': '0',
 				'left': '0',
 				'width': '100%',
 				'height': '100%',
-				'background-image': 'url(' + window.esfaceting.loading + ')',
-				'background-position': 'center center',
-				'background-repeat': 'no-repeat',
 				'background-color': '#858585',
 				'z-index': 2147483646,
 				'opacity': 0.8
-			}).appendTo('body');
+			}).prependTo($replace);
 		};
 
 		$form.find('input[type=checkbox]').change(function(){
