@@ -18,7 +18,8 @@ class FacetingOptionsWidget extends \WP_Widget {
 			elasticsearch\Theme::setSelector($instance['asyncReplace']);
 
 			wp_localize_script( 'elasticsearch', 'esfaceting', array(
-				'replace' => $instance['asyncReplace']
+				'replace' => $instance['asyncReplace'],
+				'loading' => plugins_url('../images/loading.gif', __FILE__)
 			));
 		}
 		
@@ -73,6 +74,29 @@ class FacetingOptionsWidget extends \WP_Widget {
 				}
 			}
 		}
+
+		uksort($prep, function($a, $b){
+			if($a == $b){
+				return 0;
+			}
+
+			// prioritize these
+			$priority = array('post_type', 'category', 'post_tag');
+
+			$pa = array_search($a, $priority);
+			$pb = array_search($b, $priority);
+
+			if($pa !== false && $pb !== false){
+				return ($pa < $pb) ? 0 : 1;
+			}
+
+			if($pa !== false || $pb !== false){
+				return $pa === false;
+			}
+
+			// then by alpha
+			return ($a < $b) ? 0 : 1;
+		});
 
 		if(count($prep) > 0){
 			echo '<form action="' . $url . '" method="GET" id="esajaxform">';
