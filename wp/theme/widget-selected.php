@@ -77,7 +77,7 @@ class FactingSelectedWidget extends \WP_Widget {
 				$name = $type;
 
 				if(taxonomy_exists($type)){
-					$name = get_taxonomy($type)->label;
+					$name = get_taxonomy($type)->labels->singular_name;
 				}
 
 				if(isset($facet['available'])){
@@ -88,7 +88,7 @@ class FactingSelectedWidget extends \WP_Widget {
 						
 						if($isremovable){
 							echo ' style="display:none" class="facet-item removable">';
-							echo '<a href="#facet-' . $type . '-' . $option['slug'] . '">' . $name . ': ' . $option['name'] . '</a>';
+							echo '<a href="#facet-' . $type . '-' . $option['slug'] . '">' . ($name == 'post_type' ? 'Content Type' : $name) . ': ' . $option['name'] . '</a>';
 						}else{
 							echo 'class="facet-item">' . $name . ': ' . $option['name'];
 						}

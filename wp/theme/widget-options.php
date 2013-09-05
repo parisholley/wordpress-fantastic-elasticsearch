@@ -82,7 +82,7 @@ class FacetingOptionsWidget extends \WP_Widget {
 
 				echo '<aside id="facet-' . $type . '-available" class="widget facets facets-available" ' . $style . '>';
 
-				echo '<h3 class="widget-title"><span class="widget-title-inner">' . $settings['name'] . '</span></h3>';
+				echo '<h3 class="widget-title"><span class="widget-title-inner">' . ($settings['name'] == 'post_type' ? 'Content Type' : $settings['name']) . '</span></h3>';
 
 				if($async){
 					echo '<p class="facet-empty" style="display:none">You can not filter the results anymore.</p>';
