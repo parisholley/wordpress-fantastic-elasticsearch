@@ -94,7 +94,7 @@ class FactingSelectedWidget extends \WP_Widget {
 							echo ' style="display:none" class="facet-item removable">';
 							echo '<a href="#facet-' . $type . '-' . $option['slug'] . '">' . ($name == 'post_type' ? 'Content Type' : $name) . ': ' . $option['name'] . '</a>';
 						}else{
-							echo 'class="facet-item">' . $name . ': ' . $option['name'];
+							echo 'class="facet-item">' . ($name == 'post_type' ? 'Content Type' : $name) . ': ' . $option['name'];
 						}
 
 						echo '</li>';
