@@ -55,9 +55,9 @@
 				$selected.show();
 			}
 
-			//$replace.empty().html(data.content);
-			//$(document).scrollTop($replace.offset().top);
-			//overlay.remove();	
+			$replace.empty().html(data.content);
+			$(document).scrollTop($replace.offset().top);
+			overlay.remove();	
 		};
 
 		var buildQuery = function(){
