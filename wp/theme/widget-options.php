@@ -19,7 +19,7 @@ class FacetingOptionsWidget extends \WP_Widget {
 
 			wp_localize_script( 'elasticsearch', 'esfaceting', array(
 				'replace' => $instance['asyncReplace'],
-				'loading' => plugins_url('../images/loading.gif', __FILE__)
+				'loading' => plugins_url('images/loading.gif', __FILE__)
 			));
 		}
 		

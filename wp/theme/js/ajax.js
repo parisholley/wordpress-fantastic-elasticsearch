@@ -90,7 +90,7 @@
 				'background-image': 'url(' + window.esfaceting.loading + ')',
 				'background-position': 'center center',
 				'background-repeat': 'no-repeat',
-				'background-color': '#000',
+				'background-color': '#858585',
 				'z-index': 2147483646,
 				'opacity': 0.8
 			}).appendTo('body');
