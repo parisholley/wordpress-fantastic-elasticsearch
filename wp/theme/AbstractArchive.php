@@ -35,7 +35,7 @@ abstract class AbstractArchive{
 			$wp_query->query_vars['posts_per_page'] = get_option('posts_per_page');
 		}
 
-		$this->search = isset($wp_query->query_vars['s']) ? urldecode(str_replace('\"', '"', $wp_query->query_vars['s'])) : '';
+		$this->search = isset($wp_query->query_vars['s']) ? urldecode(urldecode(str_replace('\"', '"', $wp_query->query_vars['s']))) : '';
 
 		$results = Searcher::search($this->search, $this->page, $wp_query->query_vars['posts_per_page'], $args, $this->search ? false : true);
 
