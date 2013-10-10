@@ -51,6 +51,7 @@ https://github.com/parisholley/wordpress-fantastic-elasticsearch/wiki
 * More strict fixes (thanks to markoheijnen and michaelsauter)
 * Support for indexing meta fields (thanks to schorsch)
 * Ability to facet on post_type
+* Improved searching results (assumes English language, need to expand this in future)
 
 = 2.1.0 =
 * Added some error messages if user has bad config or changed taxonomy
