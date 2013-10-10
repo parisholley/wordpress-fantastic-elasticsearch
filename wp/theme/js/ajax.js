@@ -60,9 +60,12 @@
 				$selected.show();
 			}
 
-			$replace.empty().html(data.content);
-			$(document).scrollTop($replace.offset().top - offset);
-			overlay.remove();	
+			// work around for weird issue with scrolling (reproduced in chrome) probably related to showing checkboxes in scrolling contains in sidebar
+			setTimeout(function(){
+				$replace.empty().html(data.content);
+				$(document).scrollTop($replace.offset().top - offset);
+				overlay.remove();
+			},10);
 		};
 
 		var buildQuery = function(){
