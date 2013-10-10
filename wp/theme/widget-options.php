@@ -10,6 +10,7 @@ class FacetingOptionsWidget extends \WP_Widget {
 		global $wp_query;
 
 		$async = isset($instance['async']) && $instance['async'] && isset($instance['asyncReplace']);
+		$offset = isset($instance['cssOffset']) ? $instance['cssOffset'] : null;
 
 		if($async){
 			wp_enqueue_script("jquery");
@@ -18,7 +19,8 @@ class FacetingOptionsWidget extends \WP_Widget {
 			elasticsearch\Theme::setSelector($instance['asyncReplace']);
 
 			wp_localize_script( 'elasticsearch', 'esfaceting', array(
-				'replace' => $instance['asyncReplace']
+				'replace' => $instance['asyncReplace'],
+				'offset' => $offset
 			));
 		}
 		
@@ -156,6 +158,11 @@ class FacetingOptionsWidget extends \WP_Widget {
 				<label for="<?php echo $this->get_field_id( 'asyncReplace' ); ?>">CSS Selector of the container to copy/replace</label>  
 				<input id="<?php echo $this->get_field_id( 'asyncReplace' ); ?>" name="<?php echo $this->get_field_name( 'asyncReplace' ); ?>"
 					value="<?php echo htmlspecialchars($instance['asyncReplace']); ?>" style="width:100%;" />  
+			</p> 
+			<p>  
+				<label for="<?php echo $this->get_field_id( 'cssOffset' ); ?>">CSS Selector of item to offset against when scrolling to top (ie: floating header)</label>  
+				<input id="<?php echo $this->get_field_id( 'cssOffset' ); ?>" name="<?php echo $this->get_field_name( 'cssOffset' ); ?>"
+					value="<?php echo htmlspecialchars($instance['cssOffset']); ?>" style="width:100%;" />  
 			</p> 
 		<?php
 	}
