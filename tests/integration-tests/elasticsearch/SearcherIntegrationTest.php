@@ -10,12 +10,45 @@ class SearcherIntegrationTest extends BaseIntegrationTestCase
 		$this->searcher = new Searcher();
 	}
 
+	public function testSpecialCharacters()
+	{
+		update_option('fields', array('field1' => 1));
+		update_option('score_field_field1', 1);
+
+		register_post_type('post');
+
+		Indexer::clear();
+
+		Indexer::addOrUpdate((object) array(
+			'post_type' => 'post',
+			'ID' => 1,
+			'post_date' => '10/24/1988 00:00:00 CST',
+			'field1' => "doctor office"
+		));
+
+		Indexer::addOrUpdate((object) array(
+			'post_type' => 'post',
+			'ID' => 2,
+			'field1' => "doctor's office",
+			'post_date' => '10/25/1988 00:00:00 CST'
+		));
+
+		$this->index->refresh();
+
+		$results = $this->searcher->search('doctor', 0, 10, array(), false);
+
+		$this->assertEquals(2, $results['total']);
+		$this->assertEquals(array(1, 2), $results['ids']);
+	}
+
 	public function testDateSort()
 	{
 		update_option('fields', array('field1' => 1));
 		update_option('score_field_field1', 1);
 
 		register_post_type('post');
+
+		Indexer::clear();
 
 		Indexer::addOrUpdate((object) array(
 			'post_type' => 'post',
@@ -84,6 +117,8 @@ class SearcherIntegrationTest extends BaseIntegrationTestCase
 		register_post_type('post');
 
 		$blog_id = 1;
+
+		Indexer::clear();
 
 		Indexer::addOrUpdate((object) array(
 			'post_type' => 'post',
@@ -585,6 +620,8 @@ class SearcherIntegrationTest extends BaseIntegrationTestCase
 
 		register_post_type('post');
 
+		Indexer::clear();
+
 		Indexer::addOrUpdate((object) array(
 			'post_type' => 'post',
 			'ID' => 1,
@@ -657,6 +694,8 @@ class SearcherIntegrationTest extends BaseIntegrationTestCase
 
 		register_post_type('post');
 
+		Indexer::clear();
+
 		Indexer::addOrUpdate((object) array(
 			'post_type' => 'post',
 			'ID' => 1,
@@ -707,6 +746,8 @@ class SearcherIntegrationTest extends BaseIntegrationTestCase
 		update_option('score_field_field1', 1);
 
 		register_post_type('post');
+
+		Indexer::clear();
 
 		Indexer::addOrUpdate((object) array(
 			'post_type' => 'post',

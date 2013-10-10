@@ -259,6 +259,21 @@ class Indexer{
       }else{
         $props['index'] = 'analyzed';
       }
+
+	 if($props['type'] == 'string' && $props['index'] == 'analyzed'){
+	 	// provides more accurate searches
+	 	// TODO: assumes plugin users are in english
+	 	$props = array(
+			'type' => 'multi_field',
+			'fields' => array(
+				$field => $props,
+				'english' => array_merge($props,array(
+					'analyzer' => 'english'
+				))
+			)
+		);
+	 }
+
       // generic filter indexer_map_field| indexer_map_meta | indexer_map_taxonomy
       $props = Config::apply_filters('indexer_map_'.$kind, $props, $field);
 

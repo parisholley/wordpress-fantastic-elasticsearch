@@ -212,9 +212,15 @@ class Searcher{
 
 			if($search){
 				$score = Config::score($type, $field);
+				$notanalyzed = Config::option('not_analyzed');
 
 				if($score > 0){
-					$scored[] = "$field^$score";
+					if(strpos($search, "~") > -1 || isset($notanalyzed[$field])){
+						// TODO: fuzzy doesn't work with english analyzer
+						$scored[] = "$field^$score";
+					}else{
+						$scored[] = "$field.english^$score";
+					}
 				}
 			}
 
