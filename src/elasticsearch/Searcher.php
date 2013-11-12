@@ -43,6 +43,12 @@ class Searcher{
 		$query->setSize($size);
 		$query->setFields(array('id'));
 
+		if($sortByDate){
+			$query->addSort(array('post_date' => 'desc'));
+		}else{
+			$query->addSort('_score');
+		}
+
 		Config::apply_filters('searcher_query', $query);
 
 		try{
@@ -50,12 +56,6 @@ class Searcher{
 
 			$search = new \Elastica\Search($index->getClient());
 			$search->addIndex($index);
-			
-			if($sortByDate){
-				$query->addSort(array('post_date' => 'desc'));
-			}else{
-				$query->addSort('_score');
-			}
 
 			Config::apply_filters('searcher_search', $search);
 
