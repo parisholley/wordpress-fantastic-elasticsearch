@@ -57,13 +57,15 @@ add_action( 'admin_enqueue_scripts', function() {
 add_action('admin_init', function(){
 	$options = get_option('elasticsearch');
 
-	$keys = array_keys($options);
-
 	$hasScore = false;
 
-	foreach ($keys as $key) {
-		if(strpos($key, 'score_') > -1 && $options[$key]){
-			$hasScore = true;
+	if (is_array($options)) {
+		$keys = array_keys($options);
+
+		foreach ($keys as $key) {
+			if(strpos($key, 'score_') > -1 && $options[$key]){
+				$hasScore = true;
+			}
 		}
 	}
 
@@ -136,4 +138,3 @@ add_action('init', function(){
 
 	$NHP_Options = new \NHP_Options($sections, $args, $tabs);
 }, 10241988);
-?>
