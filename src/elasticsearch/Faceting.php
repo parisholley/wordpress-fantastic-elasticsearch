@@ -333,7 +333,10 @@ class Faceting{
 			foreach($items as $key => $value){
 				$item = $createItem($key, $value, $facets[$type]);
 
-				if(isset($_GET['es'][$type]) && (in_array($item['slug'], $_GET['es'][$type]['and']) || in_array($item['slug'], $_GET['es'][$type]['or']))){
+				$inand = isset($_GET['es'][$type]['and']) && in_array($item['slug'], $_GET['es'][$type]['and']);
+				$inor = isset($_GET['es'][$type]['or']) && in_array($item['slug'], $_GET['es'][$type]['or']);
+
+				if($inand || $inor){
 					$result['selected'][$item['slug']] = $item;
 				}else if(isset($facets[$type][$item['slug']])){
 					$count = $item['count'] = $facets[$type][$item['slug']];
