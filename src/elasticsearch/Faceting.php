@@ -315,8 +315,6 @@ class Faceting{
 	static function _buildFacetResult($type, $items, $createItem){
 		global $wp_query;
 
-		$facets = $wp_query->facets;
-
 		$result = array(
 			'selected' => array(),
 			'available' => array(),
@@ -325,11 +323,17 @@ class Faceting{
 			'min' => 0
 		);
 
+		if(!isset($wp_query->facets)){
+			return $result;
+		}
+		
+		$facets = $wp_query->facets;
+
 		if(isset($facets[$type])){
 			foreach($items as $key => $value){
 				$item = $createItem($key, $value, $facets[$type]);
 
-				if(isset($_GET['es'][$type]) && in_array($item['slug'], $_GET['es'][$type]['and'])){
+				if(isset($_GET['es'][$type]) && (in_array($item['slug'], $_GET['es'][$type]['and']) || in_array($item['slug'], $_GET['es'][$type]['or']))){
 					$result['selected'][$item['slug']] = $item;
 				}else if(isset($facets[$type][$item['slug']])){
 					$count = $item['count'] = $facets[$type][$item['slug']];
