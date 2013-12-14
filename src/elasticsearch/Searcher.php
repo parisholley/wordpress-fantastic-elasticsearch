@@ -187,7 +187,24 @@ class Searcher{
 				'size' => Config::apply_filters('searcher_query_facet_size', 100)  // see https://github.com/elasticsearch/elasticsearch/issues/1832
 			);
 
-			$args['facets'][$facet]['facet_filter'] = array( 'term' => array( 'blog_id' => $blog_id ) );
+			$args['facets'][$facet]['facet_filter'] = array( 'bool' => array( 'must' => array(
+				array( 'term' => array( 'blog_id' => $blog_id ))
+			)));
+
+			if(count($filters) > 0){
+				$applicable = array();
+
+				foreach($filters as $filter){
+					if(isset($filter['term']) && !in_array($facet, array_keys($filter['term']))){
+						// do not filter on itself when using OR
+						$applicable[] = $filter;
+					}
+				}
+
+				if(count($applicable) > 0){
+					$args['facets'][$facet]['facet_filter']['bool']['should'] = $applicable;
+				}
+			}
 		}
 
 		if(is_array($numeric)){
@@ -196,7 +213,9 @@ class Searcher{
 
 				if(count($ranges) > 0 ){
 					$args['facets'][$facet]['range'][$facet] = array_values($ranges);
-					$args['facets'][$facet]['facet_filter'] = array( 'term' => array( 'blog_id' => $blog_id ) );
+					$args['facets'][$facet]['facet_filter'] = array( 'bool' => array( 'must' => array(
+						array( 'term' => array( 'blog_id' => $blog_id ))
+					)));
 				}
 			}
 		}

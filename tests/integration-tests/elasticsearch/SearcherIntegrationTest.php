@@ -10,6 +10,101 @@ class SearcherIntegrationTest extends BaseIntegrationTestCase
 		$this->searcher = new Searcher();
 	}
 
+	public function testMorFaceting()
+	{
+
+		update_option('fields', array('post_title' => 1, 'post_type' => 1));
+		update_option('score_field_post_title', 1);
+
+		register_post_type('post');
+		register_post_type('article');
+		register_post_type('product');
+
+		register_taxonomy('tag', 'post');
+		register_taxonomy('cat', 'post');
+
+		wp_insert_term('John Doe', 'tag', array(
+			'slug' => 'name-game-1'
+		));
+
+		wp_insert_term('Jane Snow', 'tag', array(
+			'slug' => 'name-game-2'
+		));
+
+		wp_insert_term('Cat 1', 'cat', array(
+			'slug' => 'cat-1'
+		));
+
+		wp_insert_term('Cat 2', 'cat', array(
+			'slug' => 'cat-2'
+		));
+
+		wp_set_object_terms(1, array(2), 'tag');
+		wp_set_object_terms(1, array(1), 'cat');
+
+		wp_set_object_terms(2, array(1, 2), 'tag');
+		wp_set_object_terms(2, array(1), 'cat');
+
+		Indexer::clear();
+
+		Indexer::addOrUpdate((object) array(
+			'post_type' => 'post',
+			'post_date' => '10/24/1988 00:00:00 CST',
+			'post_title' => 'match',
+			'ID' => 1
+		));
+		
+		Indexer::addOrUpdate((object) array(
+			'post_type' => 'post',
+			'post_date' => '10/24/1988 00:00:00 CST',
+			'post_title' => 'match',
+			'ID' => 2
+		));
+
+		Indexer::addOrUpdate((object) array(
+			'post_type' => 'article',
+			'post_date' => '10/24/1988 00:00:00 CST',
+			'post_title' => 'match',
+			'ID' => 3
+		));
+
+		Indexer::addOrUpdate((object) array(
+			'post_type' => 'product',
+			'post_date' => '10/24/1988 00:00:00 CST',
+			'post_title' => 'match',
+			'ID' => 4
+		));
+
+		Indexer::addOrUpdate((object) array(
+			'post_type' => 'product',
+			'post_date' => '10/24/1988 00:00:00 CST',
+			'post_title' => 'match',
+			'ID' => 5
+		));
+
+		$this->index->refresh();
+
+		$results = $this->searcher->search('match', 0, 10);
+
+		$this->assertEquals(5, $results['total']);
+		$this->assertCount(3, $results['facets']['post_type']);
+		$this->assertEquals(1, $results['facets']['post_type']['article']);
+		$this->assertEquals(2, $results['facets']['post_type']['product']);	
+		$this->assertEquals(2, $results['facets']['post_type']['post']);
+		$this->assertCount(2, $results['facets']['tag']);
+		$this->assertCount(1, $results['facets']['cat']);
+
+		$results = $this->searcher->search('match', 0, 10, array('post_type' => array('or' => array('article', 'product'))));
+
+		$this->assertEquals(3, $results['total']);
+		$this->assertCount(3, $results['facets']['post_type']);
+		$this->assertEquals(1, $results['facets']['post_type']['article']);
+		$this->assertEquals(2, $results['facets']['post_type']['product']);
+		$this->assertEquals(2, $results['facets']['post_type']['post']);
+		$this->assertFalse(isset($results['facets']['tag']));
+		$this->assertFalse(isset($results['facets']['cat']));
+	}
+
 	public function testSpecialCharacters()
 	{
 		update_option('fields', array('field1' => 1));
@@ -162,17 +257,17 @@ class SearcherIntegrationTest extends BaseIntegrationTestCase
 		register_taxonomy('tag', 'post');
 
 		wp_insert_term('John Doe', 'tag', array(
-  			'slug' => 'name-game-1'
-  		));
+			'slug' => 'name-game-1'
+		));
 
-  		wp_insert_term('Jane Snow', 'tag', array(
-  			'slug' => 'name-game-2'
-  		));
+		wp_insert_term('Jane Snow', 'tag', array(
+			'slug' => 'name-game-2'
+		));
 
-  		wp_set_object_terms(1, array(2), 'tag');
-  		wp_set_object_terms(2, array(1, 2), 'tag');
+		wp_set_object_terms(1, array(2), 'tag');
+		wp_set_object_terms(2, array(1, 2), 'tag');
 
-  		Indexer::clear();
+		Indexer::clear();
 
 		Indexer::addOrUpdate((object) array(
 			'post_type' => 'post',
@@ -216,17 +311,17 @@ class SearcherIntegrationTest extends BaseIntegrationTestCase
 		register_taxonomy('tag', 'post');
 
 		wp_insert_term('Tag 1', 'tag', array(
-  			'slug' => 'tag-flag-1'
-  		));
+			'slug' => 'tag-flag-1'
+		));
 
-  		wp_insert_term('Tag 2', 'tag', array(
-  			'slug' => 'name-game-2'
-  		));
+		wp_insert_term('Tag 2', 'tag', array(
+			'slug' => 'name-game-2'
+		));
 
-  		wp_set_object_terms(1, array(1, 2), 'tag');
-  		wp_set_object_terms(2, array(1, 2), 'tag');
+		wp_set_object_terms(1, array(1, 2), 'tag');
+		wp_set_object_terms(2, array(1, 2), 'tag');
 
-  		Indexer::clear();
+		Indexer::clear();
 
 		Indexer::addOrUpdate((object) array(
 			'post_type' => 'post',
@@ -266,14 +361,14 @@ class SearcherIntegrationTest extends BaseIntegrationTestCase
 		register_taxonomy('tag', 'post');
 
 		wp_insert_term('Tag 1', 'tag', array(
-  			'slug' => 'tag1'
-  		));
+			'slug' => 'tag1'
+		));
 
-  		wp_insert_term('Tag 2', 'tag', array(
-  			'slug' => 'tag2'
-  		));
+		wp_insert_term('Tag 2', 'tag', array(
+			'slug' => 'tag2'
+		));
 
-  		wp_set_object_terms(1, array(1), 'tag');
+		wp_set_object_terms(1, array(1), 'tag');
 		wp_set_object_terms(2, array(1), 'tag');
 
 		$blog_id = 1;
@@ -797,14 +892,14 @@ class SearcherIntegrationTest extends BaseIntegrationTestCase
 		register_taxonomy('tag', 'post');
 
 		wp_insert_term('Tag 1', 'tag', array(
-  			'slug' => 'tag1'
-  		));
+			'slug' => 'tag1'
+		));
 
-  		wp_insert_term('Tag 2', 'tag', array(
-  			'slug' => 'tag2'
-  		));
+		wp_insert_term('Tag 2', 'tag', array(
+			'slug' => 'tag2'
+		));
 
-  		wp_set_object_terms(1, array(1), 'tag');
+		wp_set_object_terms(1, array(1), 'tag');
 		wp_set_object_terms(2, array(2), 'tag');
 		wp_set_object_terms(3, array(1, 2), 'tag');
 
