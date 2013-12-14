@@ -43,6 +43,7 @@ https://github.com/parisholley/wordpress-fantastic-elasticsearch/wiki
 == Changelog ==
 
 = 2.2.0 =
+* Better OR behavior when faceting is involved
 * Expanded widget options to allow for AJAX based faceting. See github wiki for help on using this.
 * Fixed bug where hooks weren't working on category pages when permalinks are on
 * Removed dependency on purl due to memory leak
