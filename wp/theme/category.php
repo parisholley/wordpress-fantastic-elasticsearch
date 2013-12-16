@@ -33,7 +33,7 @@ class Category{
 			$catids = explode(',', $wp_query->query_vars['cat']);
 
 			foreach($catids as $id){
-				if(!in_array($id, $enabled)){
+				if(isset($enabled) && !in_array($id, $enabled)){
 					return;
 				}
 
