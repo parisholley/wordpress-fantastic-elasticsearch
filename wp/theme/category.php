@@ -22,7 +22,7 @@ class Category{
 		if(isset($wp_query->query_vars['category_name']) && !empty($wp_query->query_vars['category_name'])){
 			$cat = get_category_by_slug($wp_query->query_vars['category_name']);
 
-			if(!in_array($cat->term_id, $enabled)){
+			if(isset($enabled) && !in_array($cat->term_id, $enabled)){
 				return;
 			}
 
