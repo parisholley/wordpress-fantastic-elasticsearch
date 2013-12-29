@@ -291,8 +291,6 @@ class IndexerIntegrationTest extends BaseIntegrationTestCase
   {
     update_option('fields', array('field15' => 1));
     register_post_type('post');
-
-//    add_filter('elasticsearch_indexer_map', array($this, 'es_mapping_callback'), 1,2);
     add_filter('elasticsearch_indexer_map', function ($props, $field){
       if ($field=='field15')
         $props['fields'][$field]['store'] = 'yes';
