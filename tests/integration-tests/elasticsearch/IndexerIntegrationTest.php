@@ -286,5 +286,20 @@ class IndexerIntegrationTest extends BaseIntegrationTestCase
 		$this->assertEquals(1, $results[0]->getId());
 		$this->assertEquals(2, $results[1]->getId());
 	}
+
+  public function testMapValuesFiltered()
+  {
+    update_option('fields', array('field15' => 1));
+    register_post_type('post');
+    add_filter('elasticsearch_indexer_map', function ($props, $field){
+      if ($field=='field15')
+        $props['fields'][$field]['store'] = 'yes';
+      return $props;
+    }, 1,2);
+    Indexer::_map();
+    $mapping = Indexer::_client()->request('_mapping', \Elastica\Request::GET);
+    $map = $mapping->getData()[Config::$options['server_index']]['post']['properties']['field15']['fields']['field15'];
+    $this->assertEquals($map['store'], true);
+  }
 }
 ?>

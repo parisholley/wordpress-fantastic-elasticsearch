@@ -3,6 +3,11 @@
 		var $form = $('#esajaxform');
 		var $selected = $('#facet-selected');
 		var $replace = $(window.esfaceting.replace).css('position','relative');
+		var offset = 0;
+
+		if(window.esfaceting.offset){
+			offset = $(window.esfaceting.offset).height() + $(window.esfaceting. offset).offset().top;
+		}
 
 		var onresponse = function(data){
 			$selected.find('.facet-item.removable').hide();
@@ -55,9 +60,12 @@
 				$selected.show();
 			}
 
-			$replace.empty().html(data.content);
-			$(document).scrollTop($replace.offset().top);
-			overlay.remove();	
+			// work around for weird issue with scrolling (reproduced in chrome) probably related to showing checkboxes in scrolling contains in sidebar
+			setTimeout(function(){
+				$replace.empty().html(data.content);
+				$(document).scrollTop($replace.offset().top - offset);
+				overlay.remove();
+			},10);
 		};
 
 		var buildQuery = function(){

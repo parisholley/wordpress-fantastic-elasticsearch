@@ -221,7 +221,7 @@ class SearcherTest extends BaseTestCase
 					'must' => array(
 						array(				
 							'query_string' => array(
-								'fields' => array('field1^1'),
+								'fields' => array('field1.english^1'),
 								'query' => 'string'
 							)
 						)
@@ -234,6 +234,63 @@ class SearcherTest extends BaseTestCase
 						array(
 							'term' => array(
 								'blog_id' => 1
+							)
+						)
+					)
+				)
+			)
+		), $query);
+	}
+
+	public function testBuildQueryTaxonomiesWithScoreFuzzy(){
+		update_option('taxonomies', array('tax1' => 1));
+		update_option('score_tax_tax1', 1);
+		update_option('fields', array());
+
+		$searcher = new Searcher();
+
+		$facets = array();
+
+		$query = $searcher->_buildQuery('string~', $facets);
+
+		$this->assertEquals(array(
+			'query' => array(
+				'bool' => array(
+					'must' => array(
+						array(				
+							'query_string' => array(
+								'fields' => array('tax1_name^1'),
+								'query' => 'string~'
+							)
+						)
+					)
+				)
+			),
+			'filter' => array(
+				'bool' => array(
+					'must' => array(
+						array(
+							'term' => array(
+								'blog_id' => 1
+							)
+						)		
+					)
+				)
+			),
+			'facets' => array(
+				'tax1' => array(
+					'terms' => array(
+						'field' => 'tax1',
+						'size' => 100
+					),
+					'facet_filter' => array(
+						'bool' => array(
+							'must' => array(
+								array(
+									'term' => array(
+										'blog_id' => 1
+									)
+								)
 							)
 						)
 					)
@@ -284,8 +341,14 @@ class SearcherTest extends BaseTestCase
 						'size' => 100
 					),
 					'facet_filter' => array(
-						'term' => array(
-							'blog_id' => 1
+						'bool' => array(
+							'must' => array(
+								array(
+									'term' => array(
+										'blog_id' => 1
+									)
+								)
+							)
 						)
 					)
 				)
@@ -322,8 +385,14 @@ class SearcherTest extends BaseTestCase
 						'size' => 100
 					),
 					'facet_filter' => array(
-						'term' => array(
-							'blog_id' => 1
+						'bool' => array(
+							'must' => array(
+								array(
+									'term' => array(
+										'blog_id' => 1
+									)
+								)
+							)
 						)
 					)
 				)
@@ -373,8 +442,14 @@ class SearcherTest extends BaseTestCase
 						'size' => 100
 					),
 					'facet_filter' => array(
-						'term' => array(
-							'blog_id' => 1
+						'bool' => array(
+							'must' => array(
+								array(
+									'term' => array(
+										'blog_id' => 1
+									)
+								)
+							)
 						)
 					)
 				)
@@ -429,8 +504,14 @@ class SearcherTest extends BaseTestCase
 						'size' => 100
 					),
 					'facet_filter' => array(
-						'term' => array(
-							'blog_id' => 1
+						'bool' => array(
+							'must' => array(
+								array(
+									'term' => array(
+										'blog_id' => 1
+									)
+								)
+							)
 						)
 					)
 				)
@@ -497,8 +578,14 @@ class SearcherTest extends BaseTestCase
 						'size' => 100
 					),
 					'facet_filter' => array(
-						'term' => array(
-							'blog_id' => 1
+						'bool' => array(
+							'must' => array(
+								array(
+									'term' => array(
+										'blog_id' => 1
+									)
+								)
+							)
 						)
 					)
 				),
@@ -508,8 +595,26 @@ class SearcherTest extends BaseTestCase
 						'size' => 100
 					),
 					'facet_filter' => array(
-						'term' => array(
-							'blog_id' => 1
+						'bool' => array(
+							'must' => array(
+								array(
+									'term' => array(
+										'blog_id' => 1
+									)
+								)
+							),
+							'should' => array(
+								array(
+									'term' => array(
+										'tax1' => 'value1'
+									)
+								),
+								array(
+									'term' => array(
+										'tax1' => 'value2'
+									)
+								)
+							),
 						)
 					)
 				)
@@ -582,8 +687,14 @@ class SearcherTest extends BaseTestCase
 						)
 					),
 					'facet_filter' => array(
-						'term' => array(
-							'blog_id' => 1
+						'bool' => array(
+							'must' => array(
+								array(
+									'term' => array(
+										'blog_id' => 1
+									)
+								)
+							)
 						)
 					)
 				)
@@ -650,8 +761,14 @@ class SearcherTest extends BaseTestCase
 						)
 					),
 					'facet_filter' => array(
-						'term' => array(
-							'blog_id' => 1
+						'bool' => array(
+							'must' => array(
+								array(
+									'term' => array(
+										'blog_id' => 1
+									)
+								)
+							)
 						)
 					)
 				)
@@ -736,8 +853,14 @@ class SearcherTest extends BaseTestCase
 						)
 					),
 					'facet_filter' => array(
-						'term' => array(
-							'blog_id' => 1
+						'bool' => array(
+							'must' => array(
+								array(
+									'term' => array(
+										'blog_id' => 1
+									)
+								)
+							)
 						)
 					)
 				),
@@ -747,8 +870,14 @@ class SearcherTest extends BaseTestCase
 						'size' => 100
 					),
 					'facet_filter' => array(
-						'term' => array(
-							'blog_id' => 1
+						'bool' => array(
+							'must' => array(
+								array(
+									'term' => array(
+										'blog_id' => 1
+									)
+								)
+							)
 						)
 					)
 				)

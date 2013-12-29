@@ -62,14 +62,14 @@ class FactingSelectedWidget extends \WP_Widget {
 			echo '<ul>';
 
 			if(is_search()){
-				if($split){
+				if($split && strpos($wp_query->query_vars['s'], ' ') !== false){
 					$split = explode(' ', trim($wp_query->query_vars['s']));
 
 					foreach($split as $term){
 						$term = trim($term);
 
 						if($term){
-							echo '<li class="term removable" data-term="' . $term . '"><a href="#search-term-'. $term . '">Search:' . $term . '</a></li>';
+							echo '<li class="term removable" data-term="' . $term . '"><a href="#search-term-'. $term . '">Search: ' . $term . '</a></li>';
 						}
 					}
 				}else{
