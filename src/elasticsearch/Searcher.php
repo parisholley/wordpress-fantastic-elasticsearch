@@ -6,7 +6,8 @@ namespace elasticsearch;
 *
 * @license http://opensource.org/licenses/MIT
 * @author Paris Holley <mail@parisholley.com>
-* @version 2.0.0
+* @author David Ashby <delta.mu.alpha@gmail.com>
+* @version 2.1.0
 **/
 class Searcher{
 	/**
@@ -21,6 +22,7 @@ class Searcher{
 	* @return array The results of the search
 	**/
 	public static function search($search, $pageIndex = 0, $size = 10, $facets = array(), $sortByDate = false){
+		$search = self::_escapeQuery($search);
 		$args = self::_buildQuery($search, $facets);
 
 		if(empty($args) || (empty($args['query']) && empty($args['facets']))){
@@ -101,6 +103,16 @@ class Searcher{
 		}
 
 		return Config::apply_filters('searcher_results', $val, $response);		
+	}
+
+	/**
+	* @internal
+	**/
+	public static function _escapeQuery($search) {
+		$string = \Elastica\Util::escapeTerm($search);
+		//however, that utility doesn't fully escape slashes. Thus:
+		$string = str_replace('/', '\/', $string);
+		return $string;
 	}
 
 	/**
