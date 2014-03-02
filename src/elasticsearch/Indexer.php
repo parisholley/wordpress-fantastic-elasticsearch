@@ -15,7 +15,7 @@ class Indexer{
 	* @return integer posts per page
 	**/
 	static function per_page(){
-		return Config::apply_filters('indexer_per_page', 10);
+		return Config::apply_filters('indexer_per_page', defined('FANTASTIC_SEARCH_INDEXER_LIMIT') ? (int) FANTASTIC_SEARCH_INDEXER_LIMIT : 10);
 	}
 
 	/**
