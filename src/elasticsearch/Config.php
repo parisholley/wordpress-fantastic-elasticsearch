@@ -20,7 +20,7 @@ class Config{
 	**/
 	static function option($name){
 		if(self::$options == null){
-			self::$options = &get_option('elasticsearch');
+			self::$options &= get_option('elasticsearch');
 		}
 
 		return self::apply_filters('config_option', isset(self::$options[$name]) ? self::$options[$name] : null, $name);
