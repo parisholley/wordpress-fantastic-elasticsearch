@@ -6,3 +6,7 @@
 composer.lock
 tests/work/
 elasticsearch-*/
+.idea
+*.ipr
+*.iml
+*.iwm
