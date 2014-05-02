@@ -4,7 +4,7 @@
  * PHP Domain Parser: Public Suffix List based URL parsing
  *
  * @link      http://github.com/jeremykendall/php-domain-parser for the canonical source repository
- * @copyright Copyright (c) 2013 Jeremy Kendall (http://about.me/jeremykendall)
+ * @copyright Copyright (c) 2014 Jeremy Kendall (http://about.me/jeremykendall)
  * @license   http://github.com/jeremykendall/php-domain-parser/blob/master/LICENSE MIT License
  */
 
@@ -20,6 +20,7 @@ use Pdp\Uri\Url\Host;
  */
 class Parser
 {
+    const SCHEME_PATTERN = '#^(http|ftp)s?://#i';
 
     /**
      * @var PublicSuffixList Public Suffix List
@@ -56,13 +57,15 @@ class Parser
             'fragment' => null,
         );
 
-        preg_match('#^https?://#i', $url, $schemeMatches);
-
-        if (empty($schemeMatches)) {
-            $url = 'http://' . $url;
+        if (preg_match(self::SCHEME_PATTERN, $url, $schemeMatches) === 0) {
+            $url = 'http://' . preg_replace('#^//#', '', $url, 1);
         }
 
         $parts = parse_url($url);
+
+        if ($parts === false) {
+            throw new \InvalidArgumentException(sprintf('Invalid url %s', $url));
+        }
 
         $elem = (array) $parts + $elem;
 
@@ -81,7 +84,7 @@ class Parser
     }
 
     /**
-     * Parses host
+     * Parses host part of url
      *
      * @param  string $host Host part of url
      * @return Host   Object representation of host portion of url
@@ -129,6 +132,13 @@ class Parser
                 $publicSuffixList = $publicSuffixList['*'];
                 continue;
             }
+
+            // Avoids improper parsing when $host's subdomain + public suffix ===
+            // a valid public suffix (e.g. host 'us.example.com' and public suffix 'us.com')
+            //
+            // Added by @goodhabit in https://github.com/jeremykendall/php-domain-parser/pull/15
+            // Resolves https://github.com/jeremykendall/php-domain-parser/issues/16
+            break;
         }
 
         // Apply algorithm rule #2: If no rules match, the prevailing rule is "*".

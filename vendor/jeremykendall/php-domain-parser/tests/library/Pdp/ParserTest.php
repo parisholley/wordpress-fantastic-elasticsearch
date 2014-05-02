@@ -23,6 +23,19 @@ class ParserTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @covers Pdp\Parser::parseUrl()
+     */
+    public function testParseBadUrlThrowsInvalidArgumentException()
+    {
+        $this->setExpectedException(
+            '\InvalidArgumentException', 
+            'Invalid url http:///example.com'
+        );
+
+        $this->parser->parseUrl('http:///example.com');
+    }
+
+    /**
+     * @covers Pdp\Parser::parseUrl()
      * @dataProvider parseDataProvider
      */
     public function testParseUrl($url, $publicSuffix, $registerableDomain, $subdomain, $hostPart)
@@ -32,39 +45,53 @@ class ParserTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers Pdp\Parser::parseUrl()
      * @covers Pdp\Parser::parseHost()
      * @dataProvider parseDataProvider
      */
     public function testParseHost($url, $publicSuffix, $registerableDomain, $subdomain, $hostPart)
     {
+        $pdpUrl = $this->parser->parseUrl($url);
+        $this->assertEquals($hostPart, $pdpUrl->host);
+
         $pdpHost = $this->parser->parseHost($hostPart);
         $this->assertInstanceOf('\Pdp\Uri\Url\Host', $pdpHost);
+        $this->assertEquals($hostPart, $pdpHost->__toString());
     }
 
     /**
+     * @covers Pdp\Parser::parseUrl()
      * @covers Pdp\Parser::getPublicSuffix()
      * @dataProvider parseDataProvider
      */
     public function testGetPublicSuffix($url, $publicSuffix, $registerableDomain, $subdomain, $hostPart)
     {
+        $pdpUrl = $this->parser->parseUrl($url);
+        $this->assertSame($publicSuffix, $pdpUrl->host->publicSuffix);
         $this->assertSame($publicSuffix, $this->parser->getPublicSuffix($hostPart));
     }
 
     /**
+     * @covers Pdp\Parser::parseUrl()
      * @covers Pdp\Parser::getRegisterableDomain()
      * @dataProvider parseDataProvider
      */
     public function testGetRegisterableDomain($url, $publicSuffix, $registerableDomain, $subdomain, $hostPart)
     {
+        $pdpUrl = $this->parser->parseUrl($url);
+        $this->assertSame($registerableDomain, $pdpUrl->host->registerableDomain);
         $this->assertSame($registerableDomain, $this->parser->getRegisterableDomain($hostPart));
     }
 
     /**
+     * @covers Pdp\Parser::parseUrl()
      * @covers Pdp\Parser::getSubdomain()
      * @dataProvider parseDataProvider
      */
     public function testGetSubdomain($url, $publicSuffix, $registerableDomain, $subdomain, $hostPart)
     {
+        $pdpUrl = $this->parser->parseUrl($url);
+        $this->assertSame($subdomain, $pdpUrl->host->subdomain);
         $this->assertSame($subdomain, $this->parser->getSubdomain($hostPart));
     }
     
@@ -78,6 +105,7 @@ class ParserTest extends \PHPUnit_Framework_TestCase
 
     public function parseDataProvider()
     {
+        // url, public suffix, registerable domain, subdomain, host part
         return array(
             array('http://www.waxaudio.com.au/audio/albums/the_mashening', 'com.au', 'waxaudio.com.au', 'www', 'www.waxaudio.com.au'),
             array('example.com', 'com', 'example.com', null, 'example.com'),
@@ -91,10 +119,22 @@ class ParserTest extends \PHPUnit_Framework_TestCase
             array('b.ide.kyoto.jp', 'ide.kyoto.jp', 'b.ide.kyoto.jp', null, 'b.ide.kyoto.jp'),
             array('a.b.example.uk.com', 'uk.com', 'example.uk.com', 'a.b', 'a.b.example.uk.com'),
             array('test.nic.ar', 'ar', 'nic.ar', 'test', 'test.nic.ar'),
-            array('a.b.test.om', 'test.om', 'b.test.om', 'a', 'a.b.test.om'),
+            array('a.b.test.ck', 'test.ck', 'b.test.ck', 'a', 'a.b.test.ck'),
             array('baez.songfest.om', 'om', 'songfest.om', 'baez', 'baez.songfest.om'),
             array('politics.news.omanpost.om', 'om', 'omanpost.om', 'politics.news', 'politics.news.omanpost.om'),
+            // BEGIN https://github.com/jeremykendall/php-domain-parser/issues/16
+            array('us.example.com', 'com', 'example.com', 'us', 'us.example.com'),
+            array('us.example.na', 'na', 'example.na', 'us', 'us.example.na'),
+            array('www.example.us.na', 'us.na', 'example.us.na', 'www', 'www.example.us.na'),
+            array('us.example.org', 'org', 'example.org', 'us', 'us.example.org'),
+            array('webhop.broken.biz', 'biz', 'broken.biz', 'webhop', 'webhop.broken.biz'),
+            array('www.broken.webhop.biz', 'webhop.biz', 'broken.webhop.biz', 'www', 'www.broken.webhop.biz'),
+            // END https://github.com/jeremykendall/php-domain-parser/issues/16
+            // Test schemeless url
+            array('//www.broken.webhop.biz', 'webhop.biz', 'broken.webhop.biz', 'www', 'www.broken.webhop.biz'),
+            // Test ftp support - https://github.com/jeremykendall/php-domain-parser/issues/18
+            array('ftp://www.waxaudio.com.au/audio/albums/the_mashening', 'com.au', 'waxaudio.com.au', 'www', 'www.waxaudio.com.au'),
+            array('ftps://test.k12.ak.us', 'k12.ak.us', 'test.k12.ak.us', null, 'test.k12.ak.us'),
         );
     }
-	
 }

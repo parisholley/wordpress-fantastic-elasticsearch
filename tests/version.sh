@@ -16,7 +16,7 @@ fi
 
 if [ ! -f "es.pid" ]; then
 	echo "Launching ElasticSearch $1."
-	elasticsearch-$1/bin/elasticsearch -p es.pid
+	elasticsearch-$1/bin/elasticsearch -d -p es.pid
 
 	echo "Waiting for ElasticSearch to launch."
 	sleep 5

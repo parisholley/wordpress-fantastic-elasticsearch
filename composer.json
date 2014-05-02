@@ -1,6 +1,6 @@
 {
     "require": {
-    	"ruflin/elastica": "v0.90.1.0",
-    	"jwage/purl": "v0.0.2"
+        "ruflin/elastica": "v1.1.1.1",
+    	"jwage/purl": "v0.0.3"
     }
 }

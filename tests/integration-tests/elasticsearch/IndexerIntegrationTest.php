@@ -37,12 +37,14 @@ class IndexerIntegrationTest extends BaseIntegrationTestCase
 
 		register_post_type('post');
 
-		Indexer::addOrUpdate((object) array(
-			'post_type' => 'post',
-			'ID' => 1,
-			'field1' => 'value1',
-			'field2' => 'value2'
-		));
+        $post = (object) array(
+            'post_type' => 'post',
+            'ID' => 1,
+            'field1' => 'value1',
+            'field2' => 'value2'
+        );
+
+		Indexer::addOrUpdate($post);
 
 		$this->index->refresh();
 

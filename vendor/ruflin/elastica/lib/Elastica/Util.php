@@ -50,6 +50,9 @@ class Util
             $result = str_replace($char, '\\' . $char, $result);
         }
 
+        // since elastisearch uses lucene 4.0 / needs to be escaped by \\
+        $result = str_replace('/', '\\\\/', $result);
+
         return $result;
     }
 

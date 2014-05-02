@@ -4,12 +4,13 @@
  * PHP Domain Parser: Public Suffix List based URL parsing
  *
  * @link      http://github.com/jeremykendall/php-domain-parser for the canonical source repository
- * @copyright Copyright (c) 2013 Jeremy Kendall (http://about.me/jeremykendall)
+ * @copyright Copyright (c) 2014 Jeremy Kendall (http://about.me/jeremykendall)
  * @license   http://github.com/jeremykendall/php-domain-parser/blob/master/LICENSE MIT License
  */
 
 namespace Pdp\Uri;
 
+use Pdp\Parser;
 use Pdp\Uri\Url\Host;
 
 /**
@@ -17,7 +18,6 @@ use Pdp\Uri\Url\Host;
  */
 class Url
 {
-
     /**
      * @var string scheme
      */
@@ -101,6 +101,16 @@ class Url
     }
 
     /**
+     * Gets schemeless url
+     *
+     * @return string Url without scheme
+     */
+    public function getSchemeless()
+    {
+        return preg_replace(Parser::SCHEME_PATTERN, '//', $this->__toString(), 1);
+    }
+
+    /**
      * Converts the URI object to a string and returns it.
      *
      * @return string The full URI this object represents.
@@ -146,4 +156,25 @@ class Url
         return $url;
     }
 
+    /**
+     * Converts the URI object to an array and returns it.
+     *
+     * @return array Array of URI component parts
+     */
+    public function toArray()
+    {
+        return array(
+            'scheme' => $this->scheme,
+            'user' => $this->user,
+            'pass' => $this->pass,
+            'host' => $this->host->__toString(),
+            'subdomain' => $this->host->subdomain,
+            'registerableDomain' => $this->host->registerableDomain,
+            'publicSuffix' => $this->host->publicSuffix,
+            'port' => $this->port,
+            'path' => $this->path,
+            'query' => $this->query,
+            'fragment' => $this->fragment,
+        );
+    }
 }

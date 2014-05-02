@@ -23,7 +23,7 @@ cd work
 PASSED=$?
 
 if [ $PASSED -eq 0 ]; then
-	../version.sh "0.20.6"
+	../version.sh "0.90.10"
 
 	PASSED=$?
 
