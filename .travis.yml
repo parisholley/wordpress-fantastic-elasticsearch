@@ -6,4 +6,4 @@ php:
 services:
   - elasticsearch
 before_script:
-  - sleep 3 # wait to make sure ES is up
+  - sleep 5 # wait to make sure ES is up

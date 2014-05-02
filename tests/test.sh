@@ -18,7 +18,7 @@ fi
 
 cd work
 
-../version.sh "0.90.2"
+../version.sh "1.1.1"
 
 PASSED=$?
 
