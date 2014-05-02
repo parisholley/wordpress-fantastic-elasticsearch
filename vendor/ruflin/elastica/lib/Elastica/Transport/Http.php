@@ -2,7 +2,13 @@
 
 namespace Elastica\Transport;
 
+if (!defined('JSON_UNESCAPED_UNICODE')) {
+    define('JSON_UNESCAPED_SLASHES', 64);
+    define('JSON_UNESCAPED_UNICODE', 256);
+}
+
 use Elastica\Exception\Connection\HttpException;
+use Elastica\Exception\PartialShardFailureException;
 use Elastica\Exception\ResponseException;
 use Elastica\Request;
 use Elastica\Response;
@@ -35,8 +41,8 @@ class Http extends AbstractTransport
      *
      * All calls that are made to the server are done through this function
      *
-     * @param  \Elastica\Request                     $request
-     * @param  array                                $params  Host, Port, ...
+     * @param  \Elastica\Request $request
+     * @param  array $params Host, Port, ...
      * @throws \Elastica\Exception\ConnectionException
      * @throws \Elastica\Exception\ResponseException
      * @throws \Elastica\Exception\Connection\HttpException
@@ -49,7 +55,7 @@ class Http extends AbstractTransport
         $conn = $this->_getConnection($connection->isPersistent());
 
         // If url is set, url is taken. Otherwise port, host and path
-        $url = $connection->hasConfig('url')?$connection->getConfig('url'):'';
+        $url = $connection->hasConfig('url') ? $connection->getConfig('url') : '';
 
         if (!empty($url)) {
             $baseUri = $url;
@@ -69,9 +75,14 @@ class Http extends AbstractTransport
         curl_setopt($conn, CURLOPT_TIMEOUT, $connection->getTimeout());
         curl_setopt($conn, CURLOPT_FORBID_REUSE, 0);
 
+        $proxy = $connection->getProxy();
+        if (!is_null($proxy)) {
+            curl_setopt($conn, CURLOPT_PROXY, $proxy);
+        }
+
         $this->_setupCurl($conn);
 
-        $headersConfig = $connection->hasConfig('headers')?$connection->getConfig('headers'):array();
+        $headersConfig = $connection->hasConfig('headers') ? $connection->getConfig('headers') : array();
 
         if (!empty($headersConfig)) {
             $headers = array();
@@ -92,7 +103,7 @@ class Http extends AbstractTransport
             }
 
             if (is_array($data)) {
-                $content = json_encode($data);
+                $content = json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
             } else {
                 $content = $data;
             }
@@ -101,6 +112,8 @@ class Http extends AbstractTransport
             $content = str_replace('\/', '/', $content);
 
             curl_setopt($conn, CURLOPT_POSTFIELDS, $content);
+        } else {
+            curl_setopt($conn, CURLOPT_POSTFIELDS, '');
         }
 
         curl_setopt($conn, CURLOPT_NOBODY, $httpMethod == 'HEAD');
@@ -124,7 +137,7 @@ class Http extends AbstractTransport
         // Checks if error exists
         $errorNumber = curl_errno($conn);
 
-        $response = new Response($responseString);
+        $response = new Response($responseString, curl_getinfo($this->_getConnection(), CURLINFO_HTTP_CODE));
 
         if (defined('DEBUG') && DEBUG) {
             $response->setQueryTime($end - $start);
@@ -135,6 +148,10 @@ class Http extends AbstractTransport
 
         if ($response->hasError()) {
             throw new ResponseException($request, $response);
+        }
+
+        if ($response->hasFailedShards()) {
+            throw new PartialShardFailureException($request, $response);
         }
 
         if ($errorNumber > 0) {
@@ -161,7 +178,7 @@ class Http extends AbstractTransport
     /**
      * Return Curl resource
      *
-     * @param  bool     $persistent False if not persistent connection
+     * @param  bool $persistent False if not persistent connection
      * @return resource Connection resource
      */
     protected function _getConnection($persistent = true)

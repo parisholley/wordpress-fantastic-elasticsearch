@@ -57,6 +57,11 @@ add_action( 'admin_enqueue_scripts', function() {
 add_action('admin_init', function(){
 	$options = get_option('elasticsearch');
 
+
+    if(!is_array($options)){
+        $options = array();
+    }
+    
 	$keys = array_keys($options);
 
 	$hasScore = false;

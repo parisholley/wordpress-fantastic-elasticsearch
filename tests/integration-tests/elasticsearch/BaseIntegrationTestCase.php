@@ -24,5 +24,20 @@ class BaseIntegrationTestCase extends BaseTestCase
 		
 		return $info['version']['number'] == $version;
 	}
+
+    /**
+     * Match if 2 arrays have the same keys and/or values regardless of order
+     * @param $a
+     * @param $b
+     * @return bool
+     */
+    public function  arraysAreSimilar($a, $b) {
+    // if the indexes don't match, return immediately
+    if (count(array_diff($a, $b)) > 0) {
+        return false;
+    }
+    // we have identical indexes, and no unequal values
+    return true;
+    }
 }
 ?>
