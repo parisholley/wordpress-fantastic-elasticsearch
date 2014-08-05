@@ -55,7 +55,7 @@ add_action( 'admin_enqueue_scripts', function() {
 });
 
 add_action('admin_init', function(){
-	$options = get_option('elasticsearch');
+	$options = get_option('elasticsearch', array());
 
 	$keys = array_keys($options);
 
