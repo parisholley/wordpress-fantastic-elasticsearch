@@ -58,10 +58,8 @@ class Indexer{
 			$index = self::_index(true);
 			$mapping = $index->getMapping();
 
-			if(isset($mapping[Config::option('server_index')])){
-				foreach($mapping[Config::option('server_index')] as $type => $props){
-					$index->getType($type)->delete();
-				}
+			foreach($mapping[Config::option('server_index')] as $type => $props){
+				$index->getType($type)->delete();
 			}
 		}
 
