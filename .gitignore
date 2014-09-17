@@ -9,3 +9,7 @@ composer.lock
 tests/work/
 elasticsearch-*/
 wordpress/
+.idea
+*.ipr
+*.iml
+*.iwm
