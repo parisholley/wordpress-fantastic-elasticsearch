@@ -123,7 +123,7 @@ class SearcherIntegrationTest extends BaseIntegrationTestCase
 		$results = $this->searcher->search('jane', 0, 10);
 
 		$this->assertEquals(2, $results['total']);
-		$this->assertEquals(array(1, 2), $results['ids']);
+		$this->assertEquals(0, count(array_diff(array(1, 2), $results['ids'])));
 		$this->assertEquals(array('tag' => array('name-game-1' => 1, 'name-game-2' => 2)), $results['facets']);
 
 		$results = $this->searcher->search('john', 0, 10);
@@ -172,7 +172,7 @@ class SearcherIntegrationTest extends BaseIntegrationTestCase
 		$results = $this->searcher->search(null, 0, 10, array('tag' => 'tag-flag-1'));
 
 		$this->assertEquals(2, $results['total']);
-		$this->assertEquals(array(1, 2), $results['ids']);
+		$this->assertEquals(0, count(array_diff(array(1, 2), $results['ids'])));
 		$this->assertEquals(array('tag' => array('name-game-2' => 2, 'tag-flag-1' => 2)), $results['facets']);
 
 		$results = $this->searcher->search(null, 0, 10, array('tag' => 'name'));
@@ -339,17 +339,17 @@ class SearcherIntegrationTest extends BaseIntegrationTestCase
 		$results = $this->searcher->search('brown or yellow');
 
 		$this->assertEquals(2, $results['total']);
-		$this->assertEquals(array(1, 2), $results['ids']);
+		$this->assertEquals(0, count(array_diff(array(1, 2), $results['ids'])));
 
 		$results = $this->searcher->search('brown OR yellow');
 
 		$this->assertEquals(2, $results['total']);
-		$this->assertEquals(array(1, 2), $results['ids']);
+		$this->assertEquals(0, count(array_diff(array(1, 2), $results['ids'])));
 
 		$results = $this->searcher->search('brown Or yellow');
 
 		$this->assertEquals(2, $results['total']);
-		$this->assertEquals(array(1, 2), $results['ids']);
+		$this->assertEquals(0, count(array_diff(array(1, 2), $results['ids'])));
 	}
 
 	public function testFuzzy()
@@ -494,17 +494,17 @@ class SearcherIntegrationTest extends BaseIntegrationTestCase
 		$results = $this->searcher->search('value1');
 
 		$this->assertEquals(2, $results['total']);
-		$this->assertEquals(array(2, 1), $results['ids']);
+		$this->assertEquals(0, count(array_diff(array(1, 2), $results['ids'])));
 
 		$results = $this->searcher->search('value2');
 
 		$this->assertEquals(2, $results['total']);
-		$this->assertEquals(array(1, 2), $results['ids']);
+		$this->assertEquals(0, count(array_diff(array(1, 2), $results['ids'])));
 
 		$results = $this->searcher->search('value1 value2');
 
 		$this->assertEquals(2, $results['total']);
-		$this->assertEquals(array(1, 2), $results['ids']);
+		$this->assertEquals(0, count(array_diff(array(1, 2), $results['ids'])));
 	}
 
 	public function testSearchNotScored()
@@ -571,12 +571,12 @@ class SearcherIntegrationTest extends BaseIntegrationTestCase
 		$results = $this->searcher->search('value2');
 
 		$this->assertEquals(2, $results['total']);
-		$this->assertEquals(array(1, 2), $results['ids']);
+		$this->assertEquals(0, count(array_diff(array(1, 2), $results['ids'])));
 
 		$results = $this->searcher->search('value1 value3');
 
 		$this->assertEquals(2, $results['total']);
-		$this->assertEquals(array(1, 2), $results['ids']);
+		$this->assertEquals(0, count(array_diff(array(1, 2), $results['ids'])));
 
 		$results = $this->searcher->search('value3');
 
