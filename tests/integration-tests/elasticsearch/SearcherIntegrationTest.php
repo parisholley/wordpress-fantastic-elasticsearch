@@ -606,28 +606,33 @@ class SearcherIntegrationTest extends BaseIntegrationTestCase
 		Indexer::addOrUpdate((object) array(
 			'post_type' => 'post',
 			'ID' => 2,
-			'post_date' => '10/24/1988 00:00:00 CST',
+			'post_date' => '10/21/1988 00:00:00 CST',
 			'field1' => 'value1',
 		));
 
 		Indexer::addOrUpdate((object) array(
 			'post_type' => 'post',
 			'ID' => 3,
-			'post_date' => '10/24/1988 00:00:00 CST',
+			'post_date' => '10/20/1988 00:00:00 CST',
 			'field1' => 'value1',
 		));
 
 		$this->index->refresh();
 
-		$results = $this->searcher->search('value1', 0, 1);
+		$results = $this->searcher->search('value1', 0, 1, true);
 
 		$this->assertEquals(3, $results['total']);
 		$this->assertEquals(array(1), $results['ids']);
 
-		$results = $this->searcher->search('value1', 1, 1);
+		$results = $this->searcher->search('value1', 1, 1, true);
 
 		$this->assertEquals(3, $results['total']);
-		$this->assertTrue($results['ids'][0] != 1);
+		$this->assertEquals(array(2), $results['ids']);
+
+		$results = $this->searcher->search('value1', 2, 1, true);
+
+		$this->assertEquals(3, $results['total']);
+		$this->assertEquals(array(3), $results['ids']);
 	}
 
 	public function testSearchTaxonomies()
