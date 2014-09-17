@@ -7,3 +7,5 @@ services:
   - elasticsearch
 before_script:
   - sleep 3 # wait to make sure ES is up
+before_install:
+  - wget https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticserach-1.3.0.deb && sudo dpkg -i elasticsearch-1.3.0.deb && sudo service elasticsearch restart
