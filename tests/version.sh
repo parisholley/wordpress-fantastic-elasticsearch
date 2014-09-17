@@ -16,10 +16,11 @@ fi
 
 if [ ! -f "es.pid" ]; then
 	echo "Launching ElasticSearch $1."
-	elasticsearch-$1/bin/elasticsearch -p es.pid
+	elasticsearch-$1/bin/elasticsearch -d
+	ps -ef | grep elasticsearch-1.1.0 | awk 'NR==1 {print $2}' > es.pid
 
 	echo "Waiting for ElasticSearch to launch."
-	sleep 5
+	sleep 10
 fi
 
 echo "Starting PHPUnit Tests."

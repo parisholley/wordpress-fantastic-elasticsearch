@@ -18,23 +18,17 @@ fi
 
 cd work
 
-../version.sh "0.90.2"
+../version.sh "1.1.0"
 
 PASSED=$?
 
 if [ $PASSED -eq 0 ]; then
-	../version.sh "0.20.6"
+	if [ $XDEBUG -eq 0 ]; then
+        echo "Opening Coverage Report."
+        open report/index.html
+    fi
 
-	PASSED=$?
-
-	if [ $PASSED -eq 0 ]; then
-		if [ $XDEBUG -eq 0 ]; then
-			echo "Opening Coverage Report."
-			open report/index.html
-		fi
-
-		exit 0
-	fi
+    exit 0
 fi
 
 exit 1

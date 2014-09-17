@@ -1,4 +1,8 @@
 <?php
+namespace {
+    date_default_timezone_set('UTC');
+}
+
 namespace elasticsearch{
 	error_reporting(E_ALL | E_STRICT);
 
