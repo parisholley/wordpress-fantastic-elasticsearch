@@ -627,12 +627,7 @@ class SearcherIntegrationTest extends BaseIntegrationTestCase
 		$results = $this->searcher->search('value1', 1, 1);
 
 		$this->assertEquals(3, $results['total']);
-		$this->assertEquals(array(2), $results['ids']);
-
-		$results = $this->searcher->search('value1', 2, 1);
-
-		$this->assertEquals(3, $results['total']);
-		$this->assertEquals(array(3), $results['ids']);
+		$this->assertTrue($results['ids'][0] != 1);
 	}
 
 	public function testSearchTaxonomies()
@@ -677,25 +672,25 @@ class SearcherIntegrationTest extends BaseIntegrationTestCase
 		$results = $this->searcher->search(null, 0, 10, array('tag' => 'tag1'));
 
 		$this->assertEquals(2, $results['total']);
-		$this->assertEquals(array(1, 3), $results['ids']);
+		$this->assertEquals(0, count(array_diff(array(1,3), $results['ids'])));
 		$this->assertEquals(array('tag' => array('tag2' => 1, 'tag1' => 2)), $results['facets']);
 
 		$results = $this->searcher->search(null, 0, 10, array('tag' => array('tag1')));
 
 		$this->assertEquals(2, $results['total']);
-		$this->assertEquals(array(1, 3), $results['ids']);
+		$this->assertEquals(0, count(array_diff(array(1,3), $results['ids'])));
 		$this->assertEquals(array('tag' => array('tag2' => 1, 'tag1' => 2)), $results['facets']);
 
 		$results = $this->searcher->search(null, 0, 10, array('tag' => 'tag2'));
 
 		$this->assertEquals(2, $results['total']);
-		$this->assertEquals(array(2, 3), $results['ids']);
+		$this->assertEquals(0, count(array_diff(array(2,3), $results['ids'])));
 		$this->assertEquals(array('tag' => array('tag2' => 2, 'tag1' => 1)), $results['facets']);
 
 		$results = $this->searcher->search(null, 0, 10, array('tag' => array('tag2')));
 
 		$this->assertEquals(2, $results['total']);
-		$this->assertEquals(array(2, 3), $results['ids']);
+		$this->assertEquals(0, count(array_diff(array(2,3), $results['ids'])));
 		$this->assertEquals(array('tag' => array('tag2' => 2, 'tag1' => 1)), $results['facets']);
 
 		$results = $this->searcher->search(null, 0, 10, array('tag' => array('tag1', 'tag2')));
@@ -725,13 +720,13 @@ class SearcherIntegrationTest extends BaseIntegrationTestCase
 		$results = $this->searcher->search(null, 0, 10, array('tag' => array( 'or' => array('tag1', 'tag2'))));
 
 		$this->assertEquals(3, $results['total']);
-		$this->assertEquals(array(1, 2, 3), $results['ids']);
+		$this->assertEquals(0, count(array_diff(array(1,2, 3), $results['ids'])));
 		$this->assertEquals(array('tag' => array('tag2' => 2, 'tag1' => 2)), $results['facets']);
 
 		$results = $this->searcher->search(null, 0, 10, array('tag' => array( 'or' => array('tag1', 'tag3'))));
 
 		$this->assertEquals(2, $results['total']);
-		$this->assertEquals(array(1, 3), $results['ids']);
+		$this->assertEquals(0, count(array_diff(array(1,3), $results['ids'])));
 		$this->assertEquals(array('tag' => array('tag2' => 2, 'tag1' => 2)), $results['facets']);
 	}
 
@@ -796,7 +791,7 @@ class SearcherIntegrationTest extends BaseIntegrationTestCase
 		$results = $this->searcher->search(null, 0, 10, array('field1' => '10-20'));
 
 		$this->assertEquals(2, $results['total']);
-		$this->assertEquals(array(2, 3), $results['ids']);
+		$this->assertEquals(0, count(array_diff(array(2, 3), $results['ids'])));
 		$this->assertEquals(array('field1' => array('-10' => 0, '10-20' => 2, '20-' => 0)), $results['facets']);
 
 		$results = $this->searcher->search(null, 0, 10, array('field1' => array('-10', '10-20')));
@@ -814,13 +809,13 @@ class SearcherIntegrationTest extends BaseIntegrationTestCase
 		$results = $this->searcher->search(null, 0, 10, array('field1' => array( 'or' => array('-10', '10-20'))));
 
 		$this->assertEquals(3, $results['total']);
-		$this->assertEquals(array(1, 2, 3), $results['ids']);
+		$this->assertEquals(0, count(array_diff(array(1, 2, 3), $results['ids'])));
 		$this->assertEquals(array('field1' => array('-10' => 1, '10-20' => 2, '20-' => 3)), $results['facets']);
 
 		$results = $this->searcher->search(null, 0, 10, array('field1' => '20-'));
 
 		$this->assertEquals(3, $results['total']);
-		$this->assertEquals(array(4, 5, 6), $results['ids']);
+		$this->assertEquals(0, count(array_diff(array(4, 5, 6), $results['ids'])));
 		$this->assertEquals(array('field1' => array('-10' => 0, '10-20' => 0, '20-' => 3)), $results['facets']);
 
 		$results = $this->searcher->search(null, 0, 10, array('field1' => array('-10', '20-')));
@@ -850,19 +845,19 @@ class SearcherIntegrationTest extends BaseIntegrationTestCase
 		$results = $this->searcher->search(null, 0, 10, array('field1' => array( 'or' => array('10-20', '20-'))));
 
 		$this->assertEquals(5, $results['total']);
-		$this->assertEquals(array(4, 5, 6, 2, 3), $results['ids']);
+		$this->assertEquals(0, count(array_diff(array(4, 5, 6, 2, 3), $results['ids'])));
 		$this->assertEquals(array('field1' => array('-10' => 1, '10-20' => 2, '20-' => 3)), $results['facets']);
 
 		$results = $this->searcher->search(null, 0, 10, array('field1' => array( 'or' => array('-10', '20-'))));
 
 		$this->assertEquals(4, $results['total']);
-		$this->assertEquals(array(4, 5, 1, 6), $results['ids']);
+		$this->assertEquals(0, count(array_diff(array(4, 5, 1, 6), $results['ids'])));
 		$this->assertEquals(array('field1' => array('-10' => 1, '10-20' => 2, '20-' => 3)), $results['facets']);
 
 		$results = $this->searcher->search(null, 0, 10, array('field1' => array( 'or' => array('-10', '10-20', '20-'))));
 
 		$this->assertEquals(6, $results['total']);
-		$this->assertEquals(array(4, 5, 1, 6, 2, 3), $results['ids']);
+		$this->assertEquals(0, count(array_diff(array(4, 5, 1, 6, 2, 3), $results['ids'])));
 		$this->assertEquals(array('field1' => array('-10' => 1, '10-20' => 2, '20-' => 3)), $results['facets']);
 	}
 
@@ -921,19 +916,19 @@ class SearcherIntegrationTest extends BaseIntegrationTestCase
 		$results = $this->searcher->search(null, 0, 10, array('field1' => '0-'));
 
 		$this->assertEquals(6, $results['total']);
-		$this->assertEquals(array(4, 5, 1, 6, 2, 3), $results['ids']);
+		$this->assertEquals(0, count(array_diff(array(4, 5, 1, 6, 2, 3), $results['ids'])));
 		$this->assertEquals(array('field1' => array('0-' => 6, '10-' => 5, '20-' => 3)), $results['facets']);
 
 		$results = $this->searcher->search(null, 0, 10, array('field1' => '10-'));
 
 		$this->assertEquals(5, $results['total']);
-		$this->assertEquals(array(4, 5, 6, 2, 3), $results['ids']);
+		$this->assertEquals(0, count(array_diff(array(4, 5, 6, 2, 3), $results['ids'])));
 		$this->assertEquals(array('field1' => array('0-' => 5, '10-' => 5, '20-' => 3)), $results['facets']);
 
 		$results = $this->searcher->search(null, 0, 10, array('field1' => '20-'));
 
 		$this->assertEquals(3, $results['total']);
-		$this->assertEquals(array(4, 5, 6), $results['ids']);
+		$this->assertEquals(0, count(array_diff(array(4, 5, 6), $results['ids'])));
 		$this->assertEquals(array('field1' => array('0-' => 3, '10-' => 3, '20-' => 3)), $results['facets']);
 	}
 
@@ -992,19 +987,19 @@ class SearcherIntegrationTest extends BaseIntegrationTestCase
 		$results = $this->searcher->search(null, 0, 10, array('field1' => '-30'));
 
 		$this->assertEquals(6, $results['total']);
-		$this->assertEquals(array(4, 5, 1, 6, 2, 3), $results['ids']);
+		$this->assertEquals(0, count(array_diff(array(4, 5, 1, 6, 2, 3), $results['ids'])));
 		$this->assertEquals(array('field1' => array('-10' => 1, '-20' => 3, '-30' => 6)), $results['facets']);
 
 		$results = $this->searcher->search(null, 0, 10, array('field1' => '-20'));
 
 		$this->assertEquals(3, $results['total']);
-		$this->assertEquals(array(1, 2, 3), $results['ids']);
+		$this->assertEquals(0, count(array_diff(array(1, 2, 3), $results['ids'])));
 		$this->assertEquals(array('field1' => array('-10' => 1, '-20' => 3, '-30' => 3)), $results['facets']);
 
 		$results = $this->searcher->search(null, 0, 10, array('field1' => '-10'));
 
 		$this->assertEquals(1, $results['total']);
-		$this->assertEquals(array(1), $results['ids']);
+		$this->assertEquals(0, count(array_diff(array(1), $results['ids'])));
 		$this->assertEquals(array('field1' => array('-10' => 1, '-20' => 1, '-30' => 1)), $results['facets']);
 	}
 }
