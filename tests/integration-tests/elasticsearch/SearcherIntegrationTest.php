@@ -619,20 +619,22 @@ class SearcherIntegrationTest extends BaseIntegrationTestCase
 
 		$this->index->refresh();
 
-		$results = $this->searcher->search('value1', 0, 1, true);
+		$results = $this->searcher->search('value1', 0, 1);
 
 		$this->assertEquals(3, $results['total']);
-		$this->assertEquals(array(1), $results['ids']);
+		$first = $results['ids'][0];
 
-		$results = $this->searcher->search('value1', 1, 1, true);
-
-		$this->assertEquals(3, $results['total']);
-		$this->assertEquals(array(2), $results['ids']);
-
-		$results = $this->searcher->search('value1', 2, 1, true);
+		$results = $this->searcher->search('value1', 1, 1);
 
 		$this->assertEquals(3, $results['total']);
-		$this->assertEquals(array(3), $results['ids']);
+
+		$second = $results['ids'][0];
+		$this->assertTrue($second != $first);
+
+		$results = $this->searcher->search('value1', 2, 1);
+
+		$this->assertEquals(3, $results['total']);
+		$this->assertTrue($results['ids'][0] != $first && $results['ids'][0] != $second);
 	}
 
 	public function testSearchTaxonomies()
