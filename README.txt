@@ -42,6 +42,9 @@ https://github.com/parisholley/wordpress-fantastic-elasticsearch/wiki
 
 == Changelog ==
 
+= 3.1.1 =
+* Updated to latest composer
+
 = 3.1.0 =
 * Better OR behavior when faceting is involved
 * Expanded widget options to allow for AJAX based faceting. See github wiki for help on using this.
