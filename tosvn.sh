@@ -12,30 +12,29 @@ if [ ! $? -eq 0 ]; then
 	echo "Forgot to add revision log entry"
 fi
 
-if [ ! -d $SVNPATH ]; then
-	echo "Checking out plugin"
-	svn co --non-recursive $SVNURL $SVNPATH
+rm -rf $SVNPATH
 
-	cd $SVNPATH
-	svn update trunk/
-	svn update --depth=immediates tags/
+echo "Checking out plugin"
+svn co --non-recursive $SVNURL $SVNPATH
 
-	cd $CURRENTDIR
+cd $SVNPATH
+svn update trunk/
+svn update --depth=immediates tags/
 
-	echo "Exporting the HEAD of master from git to the trunk of SVN"
-	git checkout-index -a -f --prefix=$SVNPATH/trunk/
-fi
+cd $CURRENTDIR
+
+echo "Exporting the HEAD of master from git to the trunk of SVN"
+git checkout-index -a -f --prefix=$SVNPATH/trunk/
 
 cd $SVNPATH
 
-svn status | grep -v "^.[ \t]*\..*" | grep "^?" >/dev/null 2>&1
-
-if [ $? -eq 0 ]; then
-	echo "ERROR: There are new files in the SVN repository. Resolve then try again."
-	exit
-fi
-
 cd trunk
+
+rm -rf tests
+rm -rf vendor/electrolinux/phpquery/test-cases
+rm -rf vendor/ruflin/elastica/test
+
+svn st | grep ^? | sed 's/?    //' | xargs svn add
 
 svn commit -m "Preparing for $PHP release"
 
@@ -46,4 +45,4 @@ if [ $? -eq 0 ]; then
 fi
 
 echo "Removing temporary directory $SVNPATH"
-rm -fr $SVNPATH/
+rm -rf $SVNPATH/
