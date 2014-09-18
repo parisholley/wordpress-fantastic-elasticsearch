@@ -113,7 +113,12 @@ done
 
 echo "Detecting phpunit/PHPUnit_Selenium pear extension is installed."
 
-type pear >/dev/null 2>&1 || { echo >&2 "Pear is not installed."; exit 1; }
+type pear >/dev/null 2>&1 || {
+	echo "Installing PEAR"
+
+	curl -O http://pear.php.net/go-pear.phar
+	sudo php -d detect_unicode=0 go-pear.phar
+}
 
 echo '<?php require "PHPUnit/Autoload.php"; require "PHPUnit/Extensions/Selenium2TestCase.php"; ?>' | php &>/dev/null
 
