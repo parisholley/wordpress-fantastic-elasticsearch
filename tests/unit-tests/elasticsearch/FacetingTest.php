@@ -3,43 +3,49 @@ namespace elasticsearch;
 
 class FacetingTest extends BaseTestCase
 {
+	public function testPort()
+	{
+		$url = Faceting::urlAdd('http://site.com:8080/my/sub/page/', 'facet', 'facet1');
+		$this->assertEquals('http://site.com:8080/my/sub/page/?es%5Bfacet%5D%5Band%5D%5B0%5D=facet1', $url);
+	}
+
 	public function testUrlAddEmpty()
 	{
 		$url = Faceting::urlAdd('http://site.com/my/sub/page/', 'facet', 'facet1');
-		$this->assertEquals('http://site.com/my/sub/page/?facet%5Band%5D%5B0%5D=facet1', $url);
+		$this->assertEquals('http://site.com/my/sub/page/?es%5Bfacet%5D%5Band%5D%5B0%5D=facet1', $url);
 
 		$url = Faceting::urlAdd('http://site.com/my/sub/page/', 'facet', 'facet1', 'or');
-		$this->assertEquals('http://site.com/my/sub/page/?facet%5Bor%5D%5B0%5D=facet1', $url);
+		$this->assertEquals('http://site.com/my/sub/page/?es%5Bfacet%5D%5Bor%5D%5B0%5D=facet1', $url);
 	}
 
 	public function testUrlAddAnother()
 	{
-		$_GET = array(
+		$_GET = array( 'es' => array(
 			'facet' => array(
 				'and' => array('facet1')
 			)
-		);
+		));
 
 		$url = Faceting::urlAdd('http://site.com/my/sub/page/', 'facet', 'facet2');
-		$this->assertEquals('http://site.com/my/sub/page/?facet%5Band%5D%5B0%5D=facet1&facet%5Band%5D%5B1%5D=facet2', $url);
+		$this->assertEquals('http://site.com/my/sub/page/?es%5Bfacet%5D%5Band%5D%5B0%5D=facet1&es%5Bfacet%5D%5Band%5D%5B1%5D=facet2', $url);
 
 		$url = Faceting::urlAdd('http://site.com/my/sub/page/', 'facet', 'facet2', 'or');
-		$this->assertEquals('http://site.com/my/sub/page/?facet%5Band%5D%5B0%5D=facet1&facet%5Band%5D%5B1%5D=facet2', $url);
+		$this->assertEquals('http://site.com/my/sub/page/?es%5Bfacet%5D%5Band%5D%5B0%5D=facet1&es%5Bfacet%5D%5Band%5D%5B1%5D=facet2', $url);
 	}
 
 	public function testUrlAddOther()
 	{
-		$_GET = array(
+		$_GET = array( 'es' => array(
 			'field' => array(
 				'and' => array('val')
 			)
-		);
+		));
 
 		$url = Faceting::urlAdd('http://site.com/my/sub/page/', 'facet', 'facet2');
-		$this->assertEquals('http://site.com/my/sub/page/?field%5Band%5D%5B0%5D=val&facet%5Band%5D%5B0%5D=facet2', $url);
+		$this->assertEquals('http://site.com/my/sub/page/?es%5Bfield%5D%5Band%5D%5B0%5D=val&es%5Bfacet%5D%5Band%5D%5B0%5D=facet2', $url);
 
 		$url = Faceting::urlAdd('http://site.com/my/sub/page/', 'facet', 'facet2', 'or');
-		$this->assertEquals('http://site.com/my/sub/page/?field%5Band%5D%5B0%5D=val&facet%5Bor%5D%5B0%5D=facet2', $url);
+		$this->assertEquals('http://site.com/my/sub/page/?es%5Bfield%5D%5Band%5D%5B0%5D=val&es%5Bfacet%5D%5Bor%5D%5B0%5D=facet2', $url);
 	}
 
 	public function testUrlRemoveEmpty()
@@ -53,17 +59,61 @@ class FacetingTest extends BaseTestCase
 
 	public function testUrlRemoveExisting()
 	{
-		$_GET = array(
+		$_GET = array( 'es' => array(
 			'facet' => array(
 				'and' => array('facet1')
 			)
-		);
+		));
 
 		$url = Faceting::urlRemove('http://site.com/my/sub/page/', 'facet', 'facet2');
-		$this->assertEquals('http://site.com/my/sub/page/?facet%5Band%5D%5B0%5D=facet1', $url);
+		$this->assertEquals('http://site.com/my/sub/page/?es%5Bfacet%5D%5Band%5D%5B0%5D=facet1', $url);
 
 		$url = Faceting::urlRemove('http://site.com/my/sub/page/', 'facet', 'facet1');
 		$this->assertEquals('http://site.com/my/sub/page/', $url);
+	}
+
+	public function testTypes()
+	{
+		register_post_type('post', array(
+			'label' => 'Posts'
+		));
+		register_post_type('cpt', array(
+			'label' => 'Cpts'
+		));
+
+		update_option('fields', array('post_type'));
+		
+		global $wp_query;
+
+		$wp_query->facets = array(
+			'post_type' => array(
+				'post' => 3,
+				'cpt' => 4
+			)
+		);
+
+		$this->assertEquals(array(
+			'post_type' => array(
+				'available' => array(
+					'post' => array(
+						'count' => 3,
+						'name' => 'Posts',
+						'slug' => 'post',
+						'font' => 21.0
+					),
+					'cpt' => array(
+						'count'	=> 4,
+						'name' => 'Cpts',
+						'slug' => 'cpt',
+						'font' => 24.0
+					)
+				),
+				'selected' => array(),
+				'total' => 7,
+				'max' => 4,
+				'min' => 3
+			)
+		), Faceting::all());
 	}
 
 	public function testAllTax()
@@ -75,7 +125,8 @@ class FacetingTest extends BaseTestCase
 		wp_insert_term('Tag 2', 'tag', array( 'slug' => 'tag2' ));
 
 		update_option('taxonomies', array('tag' => 1));
-
+		update_option('fields', array());
+		
 		global $wp_query;
 
 		$wp_query->facets = array(
@@ -102,7 +153,9 @@ class FacetingTest extends BaseTestCase
 					)
 				),
 				'selected' => array(),
-				'total' => 7
+				'total' => 7,
+				'max' => 4,
+				'min' => 3
 			)
 		), Faceting::all());
 	}
@@ -116,6 +169,7 @@ class FacetingTest extends BaseTestCase
 		wp_insert_term('Tag 2', 'tag', array( 'slug' => 'tag2' ));
 
 		update_option('taxonomies', array('tag' => 1));
+		update_option('fields', array());
 
 		global $wp_query;
 
@@ -127,8 +181,10 @@ class FacetingTest extends BaseTestCase
 		);
 
 		$_GET = array(
-			'tag' => array(
-				'and' => array('tag1')
+			'es' => array(
+				'tag' => array(
+					'and' => array('tag1')
+				)
 			)
 		);
 
@@ -148,7 +204,9 @@ class FacetingTest extends BaseTestCase
 						'slug' => 'tag1'
 					)
 				),
-				'total' => 4
+				'total' => 4,
+				'max' => 4,
+				'min' => 4
 			)
 		), Faceting::all());
 	}
@@ -188,7 +246,9 @@ class FacetingTest extends BaseTestCase
 					)
 				),
 				'selected' => array(),
-				'total' => 10
+				'total' => 10,
+				'max' => 7,
+				'min' => 3
 			)
 		), Faceting::all());
 	}
@@ -210,8 +270,10 @@ class FacetingTest extends BaseTestCase
 		);
 
 		$_GET = array(
-			'field1' => array(
-				'and' => array('10-20')
+			'es' => array(
+				'field1' => array(
+					'and' => array('10-20')
+				)
 			)
 		);
 
@@ -234,7 +296,9 @@ class FacetingTest extends BaseTestCase
 						'count' => 3
 					)
 				),
-				'total' => 7
+				'total' => 7,
+				'min' => 7,
+				'max' => 7
 			)
 		), Faceting::all());
 	}

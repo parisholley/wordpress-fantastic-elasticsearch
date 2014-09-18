@@ -20,7 +20,7 @@ class Searcher{
 	* 
 	* @return array The results of the search
 	**/
-	public static function search($search, $pageIndex = 0, $size = 10, $facets = array(), $sortByDate = false){
+	public static function search($search = '', $pageIndex = 0, $size = 10, $facets = array(), $sortByDate = false){
 		$args = self::_buildQuery($search, $facets);
 
 		if(empty($args) || (empty($args['query']) && empty($args['facets']))){
@@ -31,6 +31,7 @@ class Searcher{
 			);
 		}
 
+		// need to do rethink the signature of the search() method, arg list can't just keep growing
 		return self::_query($args, $pageIndex, $size, $sortByDate);
 	}
 
@@ -50,14 +51,14 @@ class Searcher{
 
 			$search = new \Elastica\Search($index->getClient());
 			$search->addIndex($index);
-			
-			if($sortByDate){
-				$query->addSort(array('post_date' => 'desc'));
-			}else{
-				$query->addSort('_score');
-			}
-
-			Config::apply_filters('searcher_search', $search);
+      if (!$query->hasParam('sort')){
+        if($sortByDate){
+          $query->addSort(array('post_date' => 'desc'));
+        }else{
+          $query->addSort('_score');
+        }
+      }
+			Config::apply_filters('searcher_search', $search, $query);
 
 			$results = $search->search($query);
 
@@ -114,13 +115,14 @@ class Searcher{
 		$fields = array();
 		$musts = array();
 		$filters = array();
+		$scored = array();
 
 		foreach(Config::taxonomies() as $tax){
 			if($search){
 				$score = Config::score('tax', $tax);
 
 				if($score > 0){
-					$fields[] = "{$tax}_name^$score";
+					$scored[] = "{$tax}_name^$score";
 				}
 			}
 
@@ -133,31 +135,14 @@ class Searcher{
 
 		$exclude = Config::apply_filters('searcher_query_exclude_fields', array('post_date'));
 
-		foreach(Config::fields() as $field){
-			if(in_array($field, $exclude)){
-				continue;
-			}
+		$fields = Config::fields();
 
-			if($search){
-				$score = Config::score('field', $field);
+		self::_searchField($fields, 'field', $exclude, $search, $facets, $musts, $filters, $scored, $numeric);
+		self::_searchField(Config::meta_fields(), 'meta', $exclude, $search, $facets, $musts, $filters, $scored, $numeric);
 
-				if($score > 0){
-					$fields[] = "$field^$score";
-				}
-			}
-
-			if(isset($numeric[$field]) && $numeric[$field]){
-				$ranges = Config::ranges($field);
-
-				if(count($ranges) > 0 ){
-					self::_filterBySelectedFacets($field, $facets, 'range', $musts, $filters, $ranges);
-				}
-			}
-		}
-
-		if(count($fields) > 0){
+		if(count($scored) > 0 && $search){
 			$qs = array(
-				'fields' => $fields,
+				'fields' => $scored,
 				'query' => $search
 			);
 
@@ -169,7 +154,11 @@ class Searcher{
 
 			$qs = Config::apply_filters('searcher_query_string', $qs);
 
-			$args['query']['query_string'] = $qs;
+			$musts[] = array( 'query_string' => $qs );
+		}
+
+		if(in_array('post_type', $fields)){
+			self::_filterBySelectedFacets('post_type', $facets, 'term', $musts, $filters);
 		}
 
 		if(count($filters) > 0){
@@ -184,10 +173,38 @@ class Searcher{
 
 		$args = Config::apply_filters('searcher_query_pre_facet_filter', $args);
 
+		if(in_array('post_type', $fields)){
+			$args['facets']['post_type']['terms'] = array(
+				'field' => 'post_type',
+				'size' => Config::apply_filters('searcher_query_facet_size', 100)  // see https://github.com/elasticsearch/elasticsearch/issues/1832
+			);
+		}
+
 		// return facets
 		foreach(Config::facets() as $facet){
-			$args['facets'][$facet]['terms']['field'] = $facet;
-			$args['facets'][$facet]['facet_filter'] = array( 'term' => array( 'blog_id' => $blog_id ) );
+			$args['facets'][$facet]['terms'] = array(
+				'field' => $facet,
+				'size' => Config::apply_filters('searcher_query_facet_size', 100)  // see https://github.com/elasticsearch/elasticsearch/issues/1832
+			);
+
+			$args['facets'][$facet]['facet_filter'] = array( 'bool' => array( 'must' => array(
+				array( 'term' => array( 'blog_id' => $blog_id ))
+			)));
+
+			if(count($filters) > 0){
+				$applicable = array();
+
+				foreach($filters as $filter){
+					if(isset($filter['term']) && !in_array($facet, array_keys($filter['term']))){
+						// do not filter on itself when using OR
+						$applicable[] = $filter;
+					}
+				}
+
+				if(count($applicable) > 0){
+					$args['facets'][$facet]['facet_filter']['bool']['should'] = $applicable;
+				}
+			}
 		}
 
 		if(is_array($numeric)){
@@ -196,12 +213,44 @@ class Searcher{
 
 				if(count($ranges) > 0 ){
 					$args['facets'][$facet]['range'][$facet] = array_values($ranges);
-					$args['facets'][$facet]['facet_filter'] = array( 'term' => array( 'blog_id' => $blog_id ) );
+					$args['facets'][$facet]['facet_filter'] = array( 'bool' => array( 'must' => array(
+						array( 'term' => array( 'blog_id' => $blog_id ))
+					)));
 				}
 			}
 		}
 		
 		return Config::apply_filters('searcher_query_post_facet_filter', $args);
+	}
+
+	public static function _searchField($fields, $type, $exclude, $search, $facets, &$musts, &$filters, &$scored, $numeric){
+		foreach($fields as $field){
+			if(in_array($field, $exclude)){
+				continue;
+			}
+
+			if($search){
+				$score = Config::score($type, $field);
+				$notanalyzed = Config::option('not_analyzed');
+
+				if($score > 0){
+					if(strpos($search, "~") > -1 || isset($notanalyzed[$field])){
+						// TODO: fuzzy doesn't work with english analyzer
+						$scored[] = "$field^$score";
+					}else{
+						$scored[] = "$field.english^$score";
+					}
+				}
+			}
+
+			if(isset($numeric[$field]) && $numeric[$field]){
+				$ranges = Config::ranges($field);
+
+				if(count($ranges) > 0 ){
+					self::_filterBySelectedFacets($field, $facets, 'range', $musts, $filters, $ranges);
+				}
+			}
+		}
 	}
 
 	/**

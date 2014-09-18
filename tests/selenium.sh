@@ -130,7 +130,14 @@ if [ ! -d "vagrantpress-wordpress-fantastic-elasticsearch" ]; then
 fi
 
 cd vagrantpress-wordpress-fantastic-elasticsearch
-vagrant up
+
+echo "Waiting for VM to launch."
+
+vagrant up &>/dev/null
+
+echo "Restoring database incase it was modified."
+
+vagrant ssh -c "mysql -uwordpress -pwordpress wordpress < /vagrant/puppet/modules/wordpress/files/wordpress-db.sql" &>/dev/null
 
 PLUGIN_DIR="wordpress/wp-content/plugins/wordpress-fantastic-elasticsearch"
 

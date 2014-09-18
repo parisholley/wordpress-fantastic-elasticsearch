@@ -93,13 +93,33 @@ class IndexerTest extends BaseTestCase
 		$this->assertEquals('publish', $wp_query->args['post_status']);
 	}
 
+	public function testBuildDocumentHtml()
+	{	
+		update_option('fields', array('post_content' => 1));
+
+		$document = Indexer::_build_document((object) array(
+			'ID' => 1,
+			'post_content' => '<span class="foobar">wee</span>'
+		));
+
+		$this->assertEquals(array(
+			'post_content' => 'wee',
+			'blog_id' => 1
+		), $document);
+	}
+
 	public function testBuildDocumentFiltered()
 	{
 		add_filter('elasticsearch_indexer_build_document', function(){
 			return array('wee');
 		});
-		
-		$document = Indexer::_build_document(array());
+
+    $post = (object) array(
+      'ID' => 22,
+      'post_type' => 'post',
+      'field1' => 'value1'
+    );
+		$document = Indexer::_build_document($post);
 		$this->assertEquals(array('wee'), $document);
 	}
 
@@ -167,5 +187,70 @@ class IndexerTest extends BaseTestCase
 			'blog_id' => 1
 		), $document);
 	}
+
+  public function testBuildDocumentWithCustomFields()
+  {
+    update_option('fields', array('post_title' => 1));
+    update_option('meta_fields', array('price' => 1, 'name' => 1));
+    register_post_type('post');
+
+    $post = (object) array(
+      'ID' => 2,
+      'post_title' => 'No more PHP',
+      'post_type' => 'post'
+    );
+
+    add_post_meta($post->ID, 'price', 123);
+    add_post_meta($post->ID, 'name', 'RubyOnRails');
+    $document = Indexer::_build_document($post);
+
+
+    $this->assertEquals(array(
+      'post_title' => 'No more PHP',
+      'price' => 123,
+      'name' => 'RubyOnRails',
+      'blog_id' => 1
+    ), $document);
+  }
+
+  public function testBuildDocumentOmitsUndefinedCustomFields()
+  {
+    update_option('fields', array());
+    update_option('meta_fields', array('name' => 1));
+    register_post_type('post');
+
+    $post = (object) array(
+      'ID' => 2,
+      'post_type' => 'post'
+    );
+
+    add_post_meta($post->ID, 'price', 123);
+    add_post_meta($post->ID, 'name', 'RubyOnRails');
+    $document = Indexer::_build_document($post);
+
+    $this->assertEquals(array(
+      'name' => 'RubyOnRails',
+      'blog_id' => 1,
+    ), $document);
+  }
+
+  public function testBuildDocumentOmitsEmptyCustomFields()
+  {
+    update_option('fields', array());
+    update_option('meta_fields', array('name' => 1, 'empty_field'=> 1));
+    register_post_type('post');
+
+    $post = (object) array(
+      'ID' => 2,
+      'post_type' => 'post'
+    );
+    add_post_meta($post->ID, 'name', 'RubyOnRails');
+    $document = Indexer::_build_document($post);
+
+    $this->assertEquals(array(
+      'name' => 'RubyOnRails',
+      'blog_id' => 1,
+    ), $document);
+  }
 }
 ?>

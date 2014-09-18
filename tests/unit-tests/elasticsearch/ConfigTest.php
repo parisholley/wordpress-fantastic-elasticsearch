@@ -121,7 +121,7 @@ class ApiTest extends BaseTestCase
 
 	public function testFieldsDefault()
 	{
-		$this->assertEquals(array('post_content', 'post_title', 'post_date'), Config::fields());
+		$this->assertEquals(array('post_content', 'post_title', 'post_type', 'post_date'), Config::fields());
 	}
 
 	public function testFieldsDefined()
@@ -154,6 +154,17 @@ class ApiTest extends BaseTestCase
 		register_taxonomy('tax2', 'post');
 
 		$this->assertEquals(array('tax1', 'tax2'), Config::taxonomies());
+	}
+
+  public function testMetaKeysDefined()
+  {
+    update_option('meta_fields', array('price' => 1, 'date' => 1));
+    $this->assertEquals(array('price', 'date'), Config::meta_fields());
+  }
+
+  public function testMetaKeysUndefined()
+	{
+		$this->assertEquals(array(), Config::meta_fields());
 	}
 
 	public function testTypesUndefined()

@@ -27,7 +27,7 @@ class CategoryTest extends BaseTestCase
 
 	public function testTags()
 	{
-		$this->url('/?cat=2&post_tag[and][]=tag1');
+		$this->url('/?cat=2&es[post_tag][and][]=tag1');
 		$this->assertEquals('Parent Category I | Vagrant', $this->title());
 
 		$this->byId('post-45');

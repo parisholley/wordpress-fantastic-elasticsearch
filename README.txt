@@ -42,6 +42,18 @@ https://github.com/parisholley/wordpress-fantastic-elasticsearch/wiki
 
 == Changelog ==
 
+= 3.1.0 =
+* Better OR behavior when faceting is involved
+* Expanded widget options to allow for AJAX based faceting. See github wiki for help on using this.
+* Fixed bug where hooks weren't working on category pages when permalinks are on
+* Removed dependency on purl due to memory leak
+* Added filters so devs can hook into NHP options (thanks to nielo)
+* Expanded ES integration to taxonomy, tag, and custom post archives
+* More strict fixes (thanks to markoheijnen and michaelsauter)
+* Support for indexing meta fields (thanks to schorsch)
+* Ability to facet on post_type
+* Improved searching results (assumes English language, need to expand this in future)
+
 = 3.0.0 =
 * Tested against Wordpress 4.0
 * Tested against ElasticSearch 1.3 (Make sure you test before upgrading, in theory, old versions should work just fine)

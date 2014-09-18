@@ -118,65 +118,9 @@ class Indexer{
 	* @internal
 	**/
 	static function _map(){
-		$numeric = Config::option('numeric');
-		$notanalyzed = Config::option('not_analyzed');
-
-		$index = self::_index(false);
-
-		foreach(Config::taxonomies() as $tax){
-			$props = array(
-				'type' => 'string',
-				'index' => 'not_analyzed'
-			);
-
-			$props = Config::apply_filters('indexer_map_taxonomy', $props, $tax);
-
-			$propsname = array(
-				'type' => 'string'
-			);
-
-			$propsname = Config::apply_filters('indexer_map_taxonomy_name', $propsname, $tax);
-
-			foreach(Config::types() as $type){
-				$type = $index->getType($type);
-
-				$mapping = new \Elastica\Type\Mapping($type);
-				$mapping->setProperties(array($tax => $props));
-				$mapping->send();
-
-				$mapping = new \Elastica\Type\Mapping($type);
-				$mapping->setProperties(array($tax . '_name' => $propsname));
-				$mapping->send();
-			}			
-		}
-
-		foreach(Config::fields() as $field){
-			$props = array(
-				'type' => 'string'
-			);
-
-			if(isset($numeric[$field])){
-				$props['type'] = 'float';
-			}elseif($field == 'post_date'){
-				$props['type'] = 'date';
-				$props['format'] = 'date_time_no_millis';
-			}elseif(isset($notanalyzed[$field])){
-				$props['index'] = 'not_analyzed';
-			}else{
-				$props['index'] = 'analyzed';
-			}
-
-			$props = Config::apply_filters('indexer_map_field', $props, $field);
-
-			foreach(Config::types() as $type){
-				$type = $index->getType($type);
-
-				$mapping = new \Elastica\Type\Mapping($type);
-				$mapping->setProperties(array($field => $props));
-
-				$mapping->send();
-			}
-		}
+    self::_map_values(Config::taxonomies(), 'taxonomy' );
+    self::_map_values(Config::fields(), 'field' );
+    self::_map_values(Config::meta_fields(), 'meta');
 	}
 
 	/**
@@ -188,57 +132,169 @@ class Indexer{
 	**/
 	static function _build_document($post){
 		global $blog_id;
-		
-		$document = array(
-			'blog_id' => $blog_id
-		);
-
-		foreach(Config::fields() as $field){
-			if(isset($post->$field)){
-				if($field == 'post_date'){
-					$document[$field] = date('c',strtotime($post->$field));
-				}else if($field == 'post_content'){
-					$document[$field] = strip_tags($post->$field);
-				}else{
-					$document[$field] = $post->$field;
-				}
-			}
-		}
-
-		if(isset($post->post_type)){
-			$taxes = array_intersect(Config::taxonomies(), get_object_taxonomies($post->post_type));
-
-			foreach($taxes as $tax){
-				$document[$tax] = array();
-
-				foreach(wp_get_object_terms($post->ID, $tax) as $term){
-					if(!in_array($term->slug, $document[$tax])){
-						$document[$tax][] = $term->slug;
-						$document[$tax . '_name'][] = $term->name;
-					}
-
-					if(isset($term->parent) && $term->parent){
-						$parent = get_term($term->parent, $tax);
-						
-						while($parent != null){
-							if(!in_array($parent->slug, $document[$tax])){
-								$document[$tax][] = $parent->slug;
-								$document[$tax . '_name'][] = $parent->name;
-							}
-
-							if(isset($parent->parent) && $parent->parent){
-								$parent = get_term($parent->parent, $tax);
-							}else{
-								$parent = null;
-							}
-						}
-					}
-				}
-			}
-		}
-		
+		$document = array( 'blog_id' => $blog_id );
+    $document = self::_build_field_values($post, $document);
+    $document = self::_build_meta_values($post, $document);
+    $document = self::_build_tax_values($post, $document);
 		return Config::apply_filters('indexer_build_document', $document, $post);
 	}
+
+  /**
+   * Add post meta values to elasticsearch object, only if they are present.
+   *
+   * @param WP_Post $post
+   * @param Array $document to write to es
+   * @return Array $document
+   * @internal
+   **/
+  static function _build_meta_values($post, $document){
+  	$keys = get_post_custom_keys($post->ID);
+
+  	if(is_array($keys)){
+		$meta_fields = array_intersect(Config::meta_fields(), $keys);
+		
+		foreach($meta_fields as $field){
+			$val = get_post_meta($post->ID, $field, true);
+
+			if(isset($val)){
+				$document[$field] = $val;
+			}
+		}
+  	}
+
+    return $document;
+  }
+
+  /**
+   * Add post fields to new elasticsearch object, if the field is set
+   *
+   * @param WP_Post $post
+   * @param Array $document to write to es
+   * @return Array $document
+   * @internal
+   **/
+  static function _build_field_values($post, $document){
+    foreach(Config::fields() as $field){
+      if(isset($post->$field)){
+        if($field == 'post_date'){
+          $document[$field] = date('c',strtotime($post->$field));
+        }else if($field == 'post_content'){
+          $document[$field] = strip_tags($post->$field);
+        }else{
+          $document[$field] = $post->$field;
+        }
+      }
+    }
+    return $document;
+  }
+
+  /**
+   * Add post taxonomies to elasticsearch object
+   *
+   * @param WP_Post $post
+   * @param Array $document to write to es
+   * @return Array $document
+   * @internal
+   **/
+  static function _build_tax_values($post, $document){
+
+    if(!isset($post->post_type))
+      return $document;
+
+    $taxes = array_intersect(Config::taxonomies(), get_object_taxonomies($post->post_type));
+    foreach($taxes as $tax){
+      $document[$tax] = array();
+
+      foreach(wp_get_object_terms($post->ID, $tax) as $term){
+        if(!in_array($term->slug, $document[$tax])){
+          $document[$tax][] = $term->slug;
+          $document[$tax . '_name'][] = $term->name;
+        }
+
+        if(isset($term->parent) && $term->parent){
+          $parent = get_term($term->parent, $tax);
+
+          while($parent != null){
+            if(!in_array($parent->slug, $document[$tax])){
+              $document[$tax][] = $parent->slug;
+              $document[$tax . '_name'][] = $parent->name;
+            }
+
+            if(isset($parent->parent) && $parent->parent){
+              $parent = get_term($parent->parent, $tax);
+            }else{
+              $parent = null;
+            }
+          }
+        }
+      }
+    }
+    return $document;
+  }
+
+  /**
+   * Create new ES field mappings for the given fields from the configuration
+   * TODO align callback names with Config::names so we can simply call this method with the kind string
+   * @param array $config_fields
+   * @param string $kind of internal fields: meta|field|taxonomy used to call the right indexer_map filter
+   */
+  static function _map_values($config_fields, $kind){
+    $index = self::_index(false);
+    $numeric = Config::option('numeric');
+    $notanalyzed = Config::option('not_analyzed');
+
+    foreach($config_fields as $field){
+      // set default
+      $props = array( 'type' => 'string' );
+      // detect special field type
+      if(isset($numeric[$field])){
+        $props['type'] = 'float';
+      }elseif(isset($notanalyzed[$field]) || $kind=='taxonomy'){
+        $props['index'] = 'not_analyzed';
+      }elseif($field == 'post_date'){
+        $props['type'] = 'date';
+        $props['format'] = 'date_time_no_millis';
+      }else{
+        $props['index'] = 'analyzed';
+      }
+
+	 if($props['type'] == 'string' && $props['index'] == 'analyzed'){
+	 	// provides more accurate searches
+	 	// TODO: assumes plugin users are in english
+	 	$props = array(
+			'type' => 'multi_field',
+			'fields' => array(
+				$field => $props,
+				'english' => array_merge($props,array(
+					'analyzer' => 'english'
+				))
+			)
+		);
+	 }
+
+      // generic filter indexer_map_field| indexer_map_meta | indexer_map_taxonomy
+      $props = Config::apply_filters('indexer_map_'.$kind, $props, $field);
+
+      // also index taxonomy_name field
+      if($kind=='taxonomy'){
+        $tax_name_props = array('type' => 'string');
+        $tax_name_props = Config::apply_filters('indexer_map_taxonomy_name', $tax_name_props, $field);
+      }
+
+      foreach(Config::types() as $type){
+        $type = $index->getType($type);
+        $mapping = new \Elastica\Type\Mapping($type);
+        $mapping->setProperties(array($field => $props));
+        $mapping->send();
+        // second mapping for taxonomy_name
+        if (isset($tax_name_props)){
+          $mapping = new \Elastica\Type\Mapping($type);
+          $mapping->setProperties(array($field.'_name' => $tax_name_props));
+          $mapping->send();
+        }
+      }
+    }
+  }
 
 	/**
 	* The Elastica\Client object used by F.E.S

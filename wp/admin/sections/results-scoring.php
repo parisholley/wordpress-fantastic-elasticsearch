@@ -6,7 +6,7 @@ $fields = array(
 		'id' => 'fuzzy',
 		'type' => 'text',
 		'desc' => 'The number of characters that can be swapped out to match a word. For example; 1 = anoth(a)r~ = anoth(e)r; 2 = (e)noth(a)r~ = (a)noth(e)r; 2 = an()th(u)r~ = an(o)th(e)r. The smaller the number, the better the performance. Leave this blank to disable fuzzy searching. ONLY WORKS FOR VERSIONS > 0.90.1.',
-		'title' => 'Fuzziness Prefix Length'
+		'title' => 'Fuzziness Amount'
 	)
 );
 
@@ -29,6 +29,17 @@ foreach(Config::taxonomies() as $tax){
 		'desc' => 'A numeric value (if 0, it will have no influence)',
 		'title' => "Taxonomy: $tax",
 		'std' => 2
+	);
+}
+
+foreach(Config::meta_fields() as $field){
+	$fields[] = array(
+		'id' => 'score_meta_' . $field,
+		'type' => 'text',
+		'validation' => 'numeric',
+		'desc' => 'A numeric value (if 0, it will have no influence)',
+		'title' => "Meta: $field",
+		'std' => 3
 	);
 }
 

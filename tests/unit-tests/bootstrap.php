@@ -21,6 +21,8 @@ namespace elasticsearch{
 		static $posts = array();
 		static $actions = array();
 		static $is = array();
+		static $all_meta_keys = array();
+		static $post_meta = array();
 	}
 }
 
@@ -47,6 +49,17 @@ namespace {
 		}
 	}
 
+  // ock for cstom field tests
+  class wpdb {
+    // name of the post meta db table
+    public $postmeta = 'wp_postmeta';
+
+    public function get_col($query){
+      return isset(elasticsearch\TestContext::$all_meta_keys) ? elasticsearch\TestContext::$all_meta_keys : null;
+    }
+  }
+
+
 	function __($val){
 		return $val;
 	}
@@ -57,6 +70,18 @@ namespace {
 
 	function add_settings_section(){
 
+	}
+
+	function is_tag(){
+		return true;
+	}
+
+	function is_archive(){
+		return true;
+	}
+
+	function is_category(){
+		return true;
 	}
 
 	function checked(){
@@ -110,10 +135,6 @@ namespace {
 	}
 
 	function &get_option($name){
-		if($name == 'elasticsearch'){
-			return elasticsearch\TestContext::$options;
-		}
-
 		return elasticsearch\TestContext::$option[$name];
 	}
 
@@ -220,7 +241,7 @@ namespace {
 	}
 
 	function update_option($name, $value){
-		elasticsearch\TestContext::$options[$name] = $value;
+		elasticsearch\Config::$options[$name] = $value;
 	}
 
 	function add_filter($name, $function, $order = 1, $args = 1){
@@ -252,11 +273,35 @@ namespace {
 		return isset(elasticsearch\TestContext::$posts[$id]) ? elasticsearch\TestContext::$posts[$id] : null;
 	}
 
+  function get_post_custom_keys( $post_id = 0 ) {
+  	if(isset(elasticsearch\TestContext::$post_meta[$post_id])){
+  		return array_keys(elasticsearch\TestContext::$post_meta[$post_id]);
+  	}
+
+
+    return array();
+  }
+
+  function add_post_meta($postid, $key, $value){
+    if(!isset(elasticsearch\TestContext::$post_meta[$postid])){
+      elasticsearch\TestContext::$post_meta[$postid] = array();
+    }
+
+    elasticsearch\TestContext::$post_meta[$postid][$key] = $value;
+	}
+
+  function get_post_meta($postid, $key, $args){
+    if( isset(elasticsearch\TestContext::$post_meta[$postid]) &&
+        isset(elasticsearch\TestContext::$post_meta[$postid][$key])) {
+      return elasticsearch\TestContext::$post_meta[$postid][$key];
+    }
+	}
+
 	function trailingslashit($arg){
 
 	}
 
-	function add_menu_page(){
+  function add_menu_page(){
 
 	}
 
@@ -294,7 +339,11 @@ namespace {
 				$args = func_get_args();
 				array_shift($args); // remove $name
 
-				call_user_func_array($action, $args);
+				if(is_array($action)){
+					call_user_func_array($action, $args);
+				}elseif(is_callable($action)){
+					$action($args);
+				}
 			}
 		}
 	}

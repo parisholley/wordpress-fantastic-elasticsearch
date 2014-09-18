@@ -64,11 +64,17 @@ class Faceting{
 			if(isset($numeric[$field])){
 				$options[$field] = self::range($field);
 			}
+
+			if($field == 'post_type'){
+				$options['post_type'] = self::types(Config::types());
+			}
 		}
 
 		foreach($options as $name => &$field){
-			foreach($field['available'] as &$available){
-				$available['font'] = self::cloud($field['available'], $available, $minFont, $maxFont);
+			if(isset($field['available'])){
+				foreach($field['available'] as &$available){
+					$available['font'] = self::cloud($field['available'], $available, $minFont, $maxFont);
+				}
 			}
 		}
 
@@ -103,39 +109,16 @@ class Faceting{
 	* @return array An associative array based on example provided
 	**/
 	static function range($field){
-		global $wp_query;
+		return self::_buildFacetResult($field, Config::ranges($field), function($slug, $range, $facet){
+			$split = explode('-', $slug);
 
-		$facets = $wp_query->facets;
-
-		$result = array(
-			'selected' => array(),
-			'available' => array(),
-			'total' => 0
-		);
-
-		$ranges = Config::ranges($field);
-
-		if($ranges){
-			foreach($ranges as $slug => $range){
-				$split = explode('-', $slug);
-
-				$item = array(
-					'slug' => $slug,
-					'count' => $facets[$field][$slug],
-					'to' => $split[1],
-					'from' => $split[0]
-				);
-
-				if(isset($_GET[$field]) && in_array($slug, $_GET[$field]['and'])){
-					$result['selected'][$slug] = $item;
-				}else if($item['count'] > 0){
-					$result['available'][$slug] = $item;
-					$result['total'] += $item['count'];
-				}
-			}
-		}
-
-		return $result;
+			return array(
+				'slug' => $slug,
+				'count' => $facet[$slug],
+				'to' => $split[1],
+				'from' => $split[0]
+			);
+		});
 	}
 
 	/**
@@ -166,37 +149,50 @@ class Faceting{
 	* @return array An associative array based on example provided
 	**/
 	static function taxonomy($tax){
-		global $wp_query;
+		return self::_buildFacetResult($tax, get_terms($tax), function($key, $term){
+			return array(
+				'name' => $term->name ?: $term->slug,
+				'slug' => $term->slug
+			);
+		});
+	}
 
-		$facets = $wp_query->facets;
+	/**
+	* Gather post type facet information for the provided post types. Example of output:
+	* 
+	* <code>
+	* 	array(
+	* 		'available' => array(
+	* 			'post' => array(
+	* 				'count' => 10,
+	* 				'slug'	=> 'post',
+	* 				'name'	=> 'Posts',
+	* 				'font'	=> 24
+	* 			)
+	* 		),
+	* 		'selected' => array(
+	* 			'custom_post_type'	=> array(
+	* 				'slug'	=> 'cpt',
+	* 				'name'	=> 'Customs'
+	* 			)
+	* 		),
+	* 		'total' => 10
+	* 	)
+ 	* 	</code>
+	* 
+	* @param string $field The post types that were configured for indexing
+	* 
+	* @return array An associative array based on example provided
+	**/
+	static function types($types){
+		return self::_buildFacetResult('post_type', $types, function($key, $value){
+			$type = get_post_type_object($value);
 
-		$taxonomy = array(
-			'selected' => array(),
-			'available' => array(),
-			'total' => 0
-		);
-
-		if(isset($facets[$tax])){
-			foreach(get_terms($tax) as $term){
-				$item = array(
-					'name' => $term->name ?: $term->slug,
-					'slug' => $term->slug
-				);
-
-				if(isset($_GET[$tax]) && in_array($term->slug, $_GET[$tax]['and'])){
-					$taxonomy['selected'][$term->slug] = $item;
-				}else if(isset($facets[$tax][$term->slug])){
-					$count = $item['count'] = $facets[$tax][$term->slug];
-
-					if($count > 0){
-						$taxonomy['available'][$term->slug] = $item;
-						$taxonomy['total'] += $item['count'];
-					}
-				}
-			}
-		}
-
-		return $taxonomy;
+			return array(
+				'name' => $type->label,
+				'slug' => $type->name
+			);
+		});
 	}
 
 	/**
@@ -253,20 +249,23 @@ class Faceting{
 	**/
 	static function urlAdd($url, $type, $value, $operation = 'and'){
 		$filter = $_GET;
+		
+		if(!isset($filter['es'])){
+			$filter['es'] = array();
+		}
+
+		$es = &$filter['es'];
 
 		$op = $operation;
 
-		if(isset($filter[$type])){
-			$op = array_keys($filter[$type]);
+		if(isset($es[$type])){
+			$op = array_keys($es[$type]);
 			$op = $op[0];
 		}
 
-		$filter[$type][$op][] = $value;
+		$es[$type][$op][] = $value;
 
-		$url = new \Purl\Url($url);
-		$url->query->setData($filter);
-
-		return $url->getUrl();
+		return self::_buildUrl($url, $filter);
 	}
 
 	/**
@@ -281,28 +280,105 @@ class Faceting{
 	static function urlRemove($url, $type, $value){
 		$filter = $_GET;
 
-		$operation = isset($filter[$type]['and']) ? 'and' : 'or';
+		if(isset($filter['es'])){
+			$es = &$filter['es'];
 
-		if(isset($filter[$type][$operation])){
-			$index = array_search($value, $filter[$type][$operation]);
+			$operation = isset($es[$type]['and']) ? 'and' : 'or';
 
-			if($index !== false){
-				unset($filter[$type][$operation][$index]);
+			if(isset($es[$type][$operation])){
+				$index = array_search($value, $es[$type][$operation]);
 
-				if(count($filter[$type][$operation]) == 0){
-					unset($filter[$type][$operation]);
+				if($index !== false){
+					unset($es[$type][$operation][$index]);
+
+					if(count($es[$type][$operation]) == 0){
+						unset($es[$type][$operation]);
+					}
+
+					if(count($es[$type]) == 0){
+						unset($es[$type]);
+					}
 				}
+			}
 
-				if(count($filter[$type]) == 0){
-					unset($filter[$type]);
-				}
+			if(count($es) == 0){
+				unset($filter['es']);
 			}
 		}
 
-		$url = new \Purl\Url($url);
-		$url->query->setData($filter);
+		return self::_buildUrl($url, $filter);
+	}
 
-		return $url->getUrl();
+	/**
+	* @internal
+	**/
+	static function _buildFacetResult($type, $items, $createItem){
+		global $wp_query;
+
+		$result = array(
+			'selected' => array(),
+			'available' => array(),
+			'total' => 0,
+			'max' => 0,
+			'min' => 0
+		);
+
+		if(!isset($wp_query->facets)){
+			return $result;
+		}
+		
+		$facets = $wp_query->facets;
+
+		if(isset($facets[$type])){
+			foreach($items as $key => $value){
+				$item = $createItem($key, $value, $facets[$type]);
+
+				$inand = isset($_GET['es'][$type]['and']) && in_array($item['slug'], $_GET['es'][$type]['and']);
+				$inor = isset($_GET['es'][$type]['or']) && in_array($item['slug'], $_GET['es'][$type]['or']);
+
+				if($inand || $inor){
+					$result['selected'][$item['slug']] = $item;
+				}else if(isset($facets[$type][$item['slug']])){
+					$count = $item['count'] = $facets[$type][$item['slug']];
+
+					if($count > 0){
+						$result['available'][$item['slug']] = $item;
+						$result['total'] += $item['count'];
+
+						if($item['count'] > $result['max']){
+							$result['max'] = $item['count'];
+						}
+
+						if($result['min'] == null || $item['count'] < $result['min']){
+							$result['min'] = $item['count'];
+						}
+					}
+				}
+			}
+		}		
+
+		return $result;
+	}
+
+	/**
+	* @internal
+	**/
+	static function _buildUrl($url, $query){
+		$parts = parse_url($url);
+
+		if(isset($parts['port'])){
+			$url = sprintf("%s://%s:%d%s", $parts['scheme'], $parts['host'], $parts['port'], $parts['path']);
+		}else{
+			$url = sprintf("%s://%s%s", $parts['scheme'], $parts['host'], $parts['path']);
+		}
+
+		if(count($query) > 0){
+			$url .= "?";
+
+			$url .= http_build_query($query);
+		}
+
+		return $url;		
 	}
 }
 
