@@ -43,8 +43,9 @@ https://github.com/parisholley/wordpress-fantastic-elasticsearch/wiki
 == Changelog ==
 
 = 3.0.0 =
-* Tested against Wordpress 4
-* Tested against ElasticSearch 1.3
+* Tested against Wordpress 4.0
+* Tested against ElasticSearch 1.3 (Make sure you test before upgrading, in theory, old versions should work just fine)
+* Fix broken category integration
 
 = 2.1.0 =
 * Added some error messages if user has bad config or changed taxonomy

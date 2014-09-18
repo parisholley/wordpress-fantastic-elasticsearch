@@ -1,6 +1,6 @@
 # Fantastic ElasticSearch
 
-[![build status](https://travis-ci.org/parisholley/wordpress-fantastic-elasticsearch.svg?branch=3.0)](https://travis-ci.org/parisholley/wordpress-fantastic-elasticsearch)
+[![build status](https://travis-ci.org/parisholley/wordpress-fantastic-elasticsearch.svg?branch=master)](https://travis-ci.org/parisholley/wordpress-fantastic-elasticsearch)
 
 Improve wordpress search performance/accuracy and enable faceted search by leveraging an ElasticSearch server.
 
