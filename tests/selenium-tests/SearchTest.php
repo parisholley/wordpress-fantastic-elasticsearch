@@ -12,8 +12,8 @@ class SearchTest extends BaseTestCase
 		$this->byId('searchsubmit')->click();
 		$this->assertEquals('value1 | Search Results | Vagrant', $this->title());
 
-		$this->assertEquals('post-50', $this->byXPath('//article[1]')->attribute('id'));
-		$this->assertEquals('post-57', $this->byXPath('//article[2]')->attribute('id'));
+		$this->byId('post-50');
+		$this->byId('post-57');
 	}
 
 	public function testInvalidTag()

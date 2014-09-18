@@ -12,9 +12,7 @@ class Category extends AbstractArchive{
 
 		$cats = array();
 
-		$enabled = Config::option('enable_categories');
-
-		if(!$wp_query->is_main_query() || is_admin() || !is_category() || !$enabled) {
+		if(!$wp_query->is_main_query() || is_admin()) {
 			return;
 		}
 
