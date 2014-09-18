@@ -18,7 +18,7 @@ class Category{
 		$cats = array();
 
 		$enabled = Config::option('enable_categories');
-		
+
 		if(!$wp_query->is_main_query() || is_admin() || !is_category() || !$enabled) {
 			return;
 		}
@@ -26,14 +26,12 @@ class Category{
 		if(isset($wp_query->query_vars['category_name']) && !empty($wp_query->query_vars['category_name'])){
 			$cat = get_category_by_slug($wp_query->query_vars['category_name']);
 
-			if(isset($enabled) && !in_array($cat->term_id, $enabled)){
+			if(!in_array($cat->term_id, $enabled)){
 				return;
 			}
 
 			$cats[] = $cat;
-		}
-
-		if(isset($wp_query->query_vars['cat'])){
+		}else if(isset($wp_query->query_vars['cat'])){
 			$catids = explode(',', $wp_query->query_vars['cat']);
 
 			foreach($catids as $id){

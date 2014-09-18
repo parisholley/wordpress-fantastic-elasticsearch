@@ -13,6 +13,18 @@ class FacetingOptionsWidget extends \WP_Widget {
 
 		$prep = array();
 
+		$url = null;
+		
+		if(is_category() || is_tax()){
+			$url = get_term_link($wp_query->queried_object);
+		}elseif(is_tag()){
+			$url = get_tag_link($wp_query->queried_object->term_id);				
+		}elseif(is_archive()){
+			$url = get_post_type_archive_link($wp_query->queried_object->query_var);
+		}elseif(is_search()){
+			$url = home_url('/');
+		}
+
 		foreach($facets as $type => $facet){
 			if($facet['total'] > 0){
 				foreach($facet['available'] as $option){
@@ -32,7 +44,7 @@ class FacetingOptionsWidget extends \WP_Widget {
 						}
 
 						$prep[$type]['avail'][] = array(
-							'url' => elasticsearch\Faceting::urlAdd(get_permalink(), $type, $option['slug']),
+							'url' => elasticsearch\Faceting::urlAdd($url, $type, $option['slug']),
 							'option' => $option
 						);
 					}
