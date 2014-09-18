@@ -40,13 +40,12 @@ class SearchTest extends BaseTestCase
 		$this->byId('searchsubmit')->click();
 		$this->assertEquals('tag2 | Search Results | Vagrant', $this->title());
 
-		// not sure how ES is coming up with this order
-		$this->assertEquals('post-37', $this->byXPath('//article[1]')->attribute('id'));
-		$this->assertEquals('post-41', $this->byXPath('//article[2]')->attribute('id'));
-		$this->assertEquals('post-43', $this->byXPath('//article[3]')->attribute('id'));
-		$this->assertEquals('post-5', $this->byXPath('//article[4]')->attribute('id'));
-		$this->assertEquals('post-57', $this->byXPath('//article[5]')->attribute('id'));
-		$this->assertEquals('post-45', $this->byXPath('//article[6]')->attribute('id'));
+		$this->byId('post-37');
+		$this->byId('post-41');
+		$this->byId('post-43');
+		$this->byId('post-5');
+		$this->byId('post-57');
+		$this->byId('post-45');
 	}
 
 	public function testExactPhraseWrong()
@@ -75,15 +74,14 @@ class SearchTest extends BaseTestCase
 		$this->byId('searchsubmit')->click();
 		$this->assertEquals('“lorem ipsum” | Search Results | Vagrant', $this->title());
 
-		// not sure how ES is coming up with this order
-		$this->assertEquals('post-39', $this->byXPath('//article[1]')->attribute('id'));
-		$this->assertEquals('post-32', $this->byXPath('//article[2]')->attribute('id'));
-		$this->assertEquals('post-43', $this->byXPath('//article[3]')->attribute('id'));
-		$this->assertEquals('post-55', $this->byXPath('//article[4]')->attribute('id'));
-		$this->assertEquals('post-5', $this->byXPath('//article[5]')->attribute('id'));
-		$this->assertEquals('post-57', $this->byXPath('//article[6]')->attribute('id'));
-		$this->assertEquals('post-45', $this->byXPath('//article[7]')->attribute('id'));
-		$this->assertEquals('post-35', $this->byXPath('//article[8]')->attribute('id'));
+		$this->byId('post-39');
+		$this->byId('post-32');
+		$this->byId('post-43');
+		$this->byId('post-55');
+		$this->byId('post-5');
+		$this->byId('post-57');
+		$this->byId('post-45');
+		$this->byId('post-35');
 	}
 }
 ?>

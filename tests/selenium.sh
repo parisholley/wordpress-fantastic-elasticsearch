@@ -1,4 +1,4 @@
-SUSPEND=1
+SUSPEND=0
 
 if [ -f "$HOME/.fes.sh" ]; then
 	source $HOME/.fes.sh
@@ -22,11 +22,9 @@ fi
 
 cd work
 
-VERSION="selenium-server-standalone-2.33.0.jar"
-
-if [ ! -f $VERSION ]; then
+if [ ! -f "selenium.jar" ]; then
 	echo "Downloading selenium."
-	wget https://selenium.googlecode.com/files/$VERSION
+	wget http://selenium-release.storage.googleapis.com/2.43/selenium-server-standalone-2.43.1.jar -O selenium.jar
 fi
 
 if [ -f "selenium.pid" ]; then
@@ -47,7 +45,7 @@ fi
 
 echo -n "Starting selenium service."
 
-java -jar $VERSION -role hub &> selenium.log &
+java -jar selenium.jar -role hub &> selenium.log &
 
 echo "$!" > selenium.pid
 
@@ -63,7 +61,7 @@ while [ $REGISTERED -eq 0 ]; do
 		echo -n "."
 		sleep 1s
 
-		ps -ef | grep "selenium-server" | grep -v grep  &>/dev/null
+		ps -ef | grep "selenium.jar" | grep -v grep  &>/dev/null
 
 		if [ $? -eq 1 ]; then
 			echo "ERROR: selenium died"
@@ -120,12 +118,9 @@ type pear >/dev/null 2>&1 || {
 	sudo php -d detect_unicode=0 go-pear.phar
 }
 
-echo '<?php require "PHPUnit/Autoload.php"; require "PHPUnit/Extensions/Selenium2TestCase.php"; ?>' | php &>/dev/null
-
-if [ ! $? -eq 0 ]; then
-	echo "Installing phpunit/PHPUnit_Selenium."
-	pear install phpunit/PHPUnit_Selenium
-fi
+#Need a way to detect this
+sudo pear channel-discover pear.phpunit.de
+sudo pear install phpunit/PHPUnit_Selenium
 
 if [ ! -d "vagrantpress-wordpress-fantastic-elasticsearch" ]; then
 	echo "Downloading vagrant information."

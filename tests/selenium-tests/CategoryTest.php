@@ -6,12 +6,12 @@ class CategoryTest extends BaseTestCase
 		$this->url('/?cat=2,3');
 		$this->assertEquals('Parent Category I | Vagrant', $this->title());
 
-		$this->byXPath('(//article[1])[@id="post-57"]');
-		$this->byXPath('(//article[2])[@id="post-45"]');
-		$this->byXPath('(//article[3])[@id="post-41"]');
-		$this->byXPath('(//article[4])[@id="post-39"]');
-		$this->byXPath('(//article[5])[@id="post-32"]');
-		$this->byXPath('(//article[6])[@id="post-5"]');
+		$this->byId('post-57');
+		$this->byId('post-45');
+		$this->byId('post-41');
+		$this->byId('post-39');
+		$this->byId('post-32');
+		$this->byId('post-5');
 	}
 
 	public function testDefaultCategory()
@@ -19,10 +19,10 @@ class CategoryTest extends BaseTestCase
 		$this->url('/?cat=2');
 		$this->assertEquals('Parent Category I | Vagrant', $this->title());
 
-		$this->byXPath('(//article[1])[@id="post-57"]');
-		$this->byXPath('(//article[2])[@id="post-45"]');
-		$this->byXPath('(//article[3])[@id="post-39"]');
-		$this->byXPath('(//article[4])[@id="post-5"]');
+		$this->byId('post-57');
+		$this->byId('post-45');
+		$this->byId('post-5');
+		$this->byId('post-39');
 	}
 
 	public function testTags()
@@ -30,8 +30,8 @@ class CategoryTest extends BaseTestCase
 		$this->url('/?cat=2&post_tag[and][]=tag1');
 		$this->assertEquals('Parent Category I | Vagrant', $this->title());
 
-		$this->byXPath('(//article[1])[@id="post-45"]');
-		$this->byXPath('(//article[2])[@id="post-5"]');
+		$this->byId('post-45');
+		$this->byId('post-5');
 	}
 
 	public function testCategoryFaceting()
@@ -48,8 +48,8 @@ class CategoryTest extends BaseTestCase
 
 		$this->byXPath('(//aside[@id="facet-category-selected"]//li[1])[@id="facet-category-child-category-ii"]');
 
-		$this->byXPath('(//article[1])[@id="post-45"]');
-		$this->byXPath('(//article[2])[@id="post-39"]');
+		$this->byId('post-45');
+		$this->byId('post-39');
 	}
 
 	public function testTagsFacetingMixed()
@@ -65,9 +65,9 @@ class CategoryTest extends BaseTestCase
 
 		$this->byXPath('(//aside[@id="facet-post_tag-selected"]//li[1])[@id="facet-post_tag-tag5"]');
 
-		$this->byXPath('(//article[1])[@id="post-57"]');
-		$this->byXPath('(//article[2])[@id="post-45"]');
-		$this->byXPath('(//article[3])[@id="post-5"]');
+		$this->byId('post-57');
+		$this->byId('post-45');
+		$this->byId('post-5');
 
 		$this->byXPath('(//aside[@id="facet-post_tag-available"]//li[1])[@id="facet-post_tag-tag1"]');
 
@@ -76,16 +76,16 @@ class CategoryTest extends BaseTestCase
 		$this->byXPath('(//aside[@id="facet-post_tag-selected"]//li[1])[@id="facet-post_tag-tag1"]');
 		$this->byXPath('(//aside[@id="facet-post_tag-selected"]//li[2])[@id="facet-post_tag-tag5"]');
 
-		$this->byXPath('(//article[1])[@id="post-45"]');
-		$this->byXPath('(//article[2])[@id="post-5"]');
+		$this->byId('post-45');
+		$this->byId('post-5');
 
 		$this->byCssSelector('#facet-post_tag-tag1 a')->click();
 
 		$this->byXPath('(//aside[@id="facet-post_tag-selected"]//li[1])[@id="facet-post_tag-tag5"]');
 
-		$this->byXPath('(//article[1])[@id="post-57"]');
-		$this->byXPath('(//article[2])[@id="post-45"]');
-		$this->byXPath('(//article[3])[@id="post-5"]');
+		$this->byId('post-57');
+		$this->byId('post-45');
+		$this->byId('post-5');
 
 		$this->byXPath('(//aside[@id="facet-post_tag-available"]//li[1])[@id="facet-post_tag-tag1"]');
 	}
@@ -103,7 +103,8 @@ class CategoryTest extends BaseTestCase
 
 		$this->byXPath('(//aside[@id="facet-post_tag-selected"]//li[1])[@id="facet-post_tag-tag5"]');
 
-		$this->byXPath('(//article[1])[@id="post-43"]');
+		$this->byId('post-43');
+		$this->byId('post-50');
 	}
 }
 ?>
