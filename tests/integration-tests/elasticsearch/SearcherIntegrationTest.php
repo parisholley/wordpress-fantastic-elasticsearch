@@ -133,7 +133,7 @@ class SearcherIntegrationTest extends BaseIntegrationTestCase
 		$results = $this->searcher->search('doctor', 0, 10, array(), false);
 
 		$this->assertEquals(2, $results['total']);
-		$this->assertEquals(array(1, 2), $results['ids']);
+		$this->assertEquals(0, count(array_diff(array(1, 2), $results['ids'])));
 	}
 
 	public function testDateSort()
@@ -171,7 +171,7 @@ class SearcherIntegrationTest extends BaseIntegrationTestCase
 		$results = $this->searcher->search('value1', 0, 10, array(), true);
 
 		$this->assertEquals(3, $results['total']);
-		$this->assertEquals(array(2,1,3), $results['ids']);
+		$this->assertEquals(0, count(array_diff(array(2, 1, 3), $results['ids'])));
 	}
 
 	/** reproduces issue #25 */
@@ -463,13 +463,13 @@ class SearcherIntegrationTest extends BaseIntegrationTestCase
 		$results = $this->searcher->search();
 
 		$this->assertEquals(3, $results['total']);
-		$this->assertEquals(array(1,2,3), $results['ids']);
+		$this->assertEquals(0, count(array_diff(array(1, 2, 3), $results['ids'])));
 		$this->assertEquals(array('post_type' => array('post' => 1, 'cpt2' => 2)), $results['facets']);
 
 		$results = $this->searcher->search('', 0, 10, array('post_type' => 'cpt2'));
 
 		$this->assertEquals(2, $results['total']);
-		$this->assertEquals(array(2,3), $results['ids']);
+		$this->assertEquals(0, count(array_diff(array(2, 3), $results['ids'])));
 		$this->assertEquals(array('post_type' => array('cpt2' => 2)), $results['facets']);
 	}
 
