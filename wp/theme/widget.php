@@ -14,7 +14,7 @@ class FacetingOptionsWidget extends \WP_Widget {
 		$prep = array();
 
 		$url = null;
-		
+
 		if(is_category() || is_tax()){
 			$url = get_term_link($wp_query->queried_object);
 		}elseif(is_tag()){
@@ -90,7 +90,21 @@ class FactingSelectedWidget extends \WP_Widget {
 	}
 
 	function widget( $args, $instance ) {
+		global $wp_query;
+		
 		$facets = elasticsearch\Faceting::all();
+
+		$url = null;
+		
+		if(is_category() || is_tax()){
+			$url = get_term_link($wp_query->queried_object);
+		}elseif(is_tag()){
+			$url = get_tag_link($wp_query->queried_object->term_id);				
+		}elseif(is_archive()){
+			$url = get_post_type_archive_link($wp_query->queried_object->query_var);
+		}elseif(is_search()){
+			$url = home_url('/');
+		}
 
 		foreach($facets as $type => $facet){
 			if(count($facet['selected']) > 0){
@@ -107,7 +121,7 @@ class FactingSelectedWidget extends \WP_Widget {
 				echo '<ul>';
 
 				foreach($facet['selected'] as $option){
-					$url = elasticsearch\Faceting::urlRemove(get_permalink(), $type, $option['slug']);
+					$url = elasticsearch\Faceting::urlRemove($url , $type, $option['slug']);
 
 					echo '<li id="facet-' . $type . '-' . $option['slug'] . '" class="facet-item">';
 					echo '<a href="' . $url . '">' . $option['name'] . '</a>';
