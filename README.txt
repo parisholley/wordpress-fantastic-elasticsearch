@@ -3,8 +3,8 @@ Contributors: parisholley
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=paris%40holleywoodproductions%2ecom&lc=US&item_name=Paris%20Holley&no_note=0&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHostedGuest
 Tags: search,performance,elastic search,elastic,elasticsearch,facet,faceting,faceted search
 Requires at least: 3.5
-Tested up to: 3.5
-Stable tag: 2.1.0
+Tested up to: 4.0
+Stable tag: 3.0.0
 
 Improve wordpress search performance/accuracy and enable faceted search by leveraging an ElasticSearch server.
 
@@ -41,6 +41,10 @@ https://github.com/parisholley/wordpress-fantastic-elasticsearch/wiki
 4. Wipe and re-index data is available if needed
 
 == Changelog ==
+
+= 3.0.0 =
+* Tested against Wordpress 4
+* Tested against ElasticSearch 1.3
 
 = 2.1.0 =
 * Added some error messages if user has bad config or changed taxonomy
