@@ -311,6 +311,10 @@ namespace {
 		return isset(elasticsearch\TestContext::$is['is_tax']) ? elasticsearch\TestContext::$is['is_tax'] : false;
 	}
 
+	function is_category(){
+		return isset(elasticsearch\TestContext::$is['is_category']) ? elasticsearch\TestContext::$is['is_category'] : false;
+	}
+
 	require __DIR__ . '/../../elasticsearch.php';
 }
 ?>
