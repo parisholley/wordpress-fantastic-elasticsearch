@@ -44,7 +44,7 @@ class Searcher{
 		$query->setSize($size);
 		$query->setFields(array('id'));
 
-		Config::apply_filters('searcher_query', $query);
+		$query = Config::apply_filters('searcher_query', $query);
 
 		try{
 			$index = Indexer::_index(false);
@@ -58,7 +58,7 @@ class Searcher{
           $query->addSort('_score');
         }
       }
-			Config::apply_filters('searcher_search', $search, $query);
+			$search = Config::apply_filters('searcher_search', $search, $query);
 
 			$results = $search->search($query);
 
