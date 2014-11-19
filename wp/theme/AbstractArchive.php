@@ -15,8 +15,6 @@ abstract class AbstractArchive{
 	}
 
 	function do_search($wp_query){
-		global $wp_query;
-
 		if(!$wp_query->is_main_query() || is_admin() || $this->attempted){
 			return;
 		}
