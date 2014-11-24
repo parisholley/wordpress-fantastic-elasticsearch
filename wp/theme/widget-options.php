@@ -148,6 +148,14 @@ class FacetingOptionsWidget extends \WP_Widget {
 	}
 
 	function form( $instance ) {
+		$defaults = array(
+			'async' => false,
+			'asyncReplace' => '',
+			'cssOffset' => '',
+		);
+
+		$instance = array_merge($defaults,$instance);
+
 		?>
 			<p>  
 				<input class="checkbox" type="checkbox" <?php checked( $instance['async'], true ); ?>

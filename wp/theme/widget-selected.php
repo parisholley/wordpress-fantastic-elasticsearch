@@ -149,6 +149,13 @@ class FactingSelectedWidget extends \WP_Widget {
 	}
 
 	function form( $instance ) {
+		$defaults = array(
+			'async' => false,
+			'showEmpty' => false,
+			'splitSpaces' => false,
+		);
+
+		$instance = array_merge($defaults,$instance);
 		?>
 			<p>  
 				<input class="checkbox" type="checkbox" <?php checked( $instance['async'], true ); ?>
