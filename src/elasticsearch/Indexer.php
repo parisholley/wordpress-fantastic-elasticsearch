@@ -42,10 +42,10 @@ class Indexer{
 	* @return integer number of posts
 	**/
 	static function get_count(){
-		$query = new \WP_Query(array(
+		$query = new \WP_Query(Config::apply_filters('indexer_count_posts', array(
 			'post_type' => Config::types(),
 			'post_status' => 'publish'
-		));
+		)));
 
 		return $query->found_posts; //performance risk?
 	}
