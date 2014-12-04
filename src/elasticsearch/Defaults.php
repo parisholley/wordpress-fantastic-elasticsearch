@@ -16,7 +16,7 @@ class Defaults{
 	**/
 	static function fields(){
 		$fields = array('post_content', 'post_title', 'post_type');
-        return Config::apply_filters('post_fields', $fields);
+        	return Config::apply_filters('post_fields', $fields);
 	}
 
 	/**
