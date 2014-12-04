@@ -6,6 +6,7 @@
 		if(failed){
 			$('#error').show().find('.msg').text(failed);
 		}else{
+            $('.finished').text(0);
 			$('#complete').show();
 		}
 	}
