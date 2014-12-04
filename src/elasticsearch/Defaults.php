@@ -10,12 +10,13 @@ namespace elasticsearch;
 **/
 class Defaults{
 	/**
-	* Useful field names that wordpress provides out the box
-	*
+	* Useful field names that wordpress provides out of the box
+	* Possible to apply filter elasticsearch_post_attributes to alter index-able post fields that are accessible in WP_Post
 	* @return string[] field names
 	**/
 	static function fields(){
-		return array('post_content', 'post_title', 'post_type');
+		$fields = array('post_content', 'post_title', 'post_type');
+        return Config::apply_filters('post_fields', $fields);
 	}
 
 	/**
