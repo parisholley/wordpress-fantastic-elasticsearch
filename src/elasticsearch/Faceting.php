@@ -60,19 +60,13 @@ class Faceting{
 
 		$numeric = Config::option('numeric');
 
-		foreach(Config::fields() as $field){
+		foreach(array_merge(Config::fields(),Config::meta_fields()) as $field){
 			if(isset($numeric[$field])){
 				$options[$field] = self::range($field);
 			}
 
 			if($field == 'post_type'){
 				$options['post_type'] = self::types(Config::types());
-			}
-		}
-
-		foreach(Config::meta_fields() as $field){
-			if(isset($numeric[$field])){
-				$options[$field] = self::range($field);
 			}
 		}
 
