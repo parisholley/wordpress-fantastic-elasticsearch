@@ -315,6 +315,9 @@ class Indexer{
 			$settings['timeout'] = Config::option('server_timeout_read') ?: 1;
 		}
 
+      // Allow custom settings to be passed by users who want to.
+      $settings = apply_filters('indexer_client_settings',$settings);
+
 		return new \Elastica\Client($settings);
 	}
 
