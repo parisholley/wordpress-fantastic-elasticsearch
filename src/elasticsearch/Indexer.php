@@ -258,27 +258,27 @@ class Indexer{
         $props['index'] = 'analyzed';
       }
 
-	 if($props['type'] == 'string' && $props['index'] == 'analyzed'){
-	 	// provides more accurate searches
-	 	// TODO: assumes plugin users are in english
-	 	$props = array(
-			'type' => 'multi_field',
-			'fields' => array(
-				$field => $props,
-				'english' => array_merge($props,array(
-					'analyzer' => 'english'
-				))
-			)
-		);
-	 }
+     if($props['type'] == 'string' && $props['index'] == 'analyzed'){
+      // provides more accurate searches
+      // TODO: assumes plugin users are in english
+      $props = array(
+        'type' => 'multi_field',
+        'fields' => array(
+          $field => $props,
+          'english' => array_merge($props,array(
+            'analyzer' => 'english'
+          ))
+        )
+      );
+     }
 
-      // generic filter indexer_map_field| indexer_map_meta | indexer_map_taxonomy
-      $props = Config::apply_filters('indexer_map_'.$kind, $props, $field);
+      // generic filter
+      $props = Config::apply_filters('indexer_map', $props, $field, $kind);
 
       // also index taxonomy_name field
       if($kind=='taxonomy'){
         $tax_name_props = array('type' => 'string');
-        $tax_name_props = Config::apply_filters('indexer_map_taxonomy_name', $tax_name_props, $field);
+        $tax_name_props = Config::apply_filters('indexer_map', $tax_name_props, $field.'_name', $kind);
       }
 
       foreach(Config::types() as $type){
