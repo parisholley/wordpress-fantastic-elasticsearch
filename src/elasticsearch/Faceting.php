@@ -70,6 +70,12 @@ class Faceting{
 			}
 		}
 
+		foreach(Config::meta_fields() as $field){
+			if(isset($numeric[$field])){
+				$options[$field] = self::range($field);
+			}
+		}
+
 		foreach($options as $name => &$field){
 			if(isset($field['available'])){
 				foreach($field['available'] as &$available){
