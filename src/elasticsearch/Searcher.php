@@ -238,7 +238,10 @@ class Searcher{
 						// TODO: fuzzy doesn't work with english analyzer
 						$scored[] = "$field^$score";
 					}else{
-						$scored[] = "$field.english^$score";
+						$scored[] = sprintf(
+							"$field.%s^$score",
+							Config::apply_filters('string_language','english')
+						);
 					}
 				}
 			}

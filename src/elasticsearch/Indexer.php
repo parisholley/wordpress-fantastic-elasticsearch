@@ -261,12 +261,14 @@ class Indexer{
 	 if($props['type'] == 'string' && $props['index'] == 'analyzed'){
 	 	// provides more accurate searches
 	 	// TODO: assumes plugin users are in english
+		$lang = Config::apply_filters('string_language', 'english');
+
 	 	$props = array(
 			'type' => 'multi_field',
 			'fields' => array(
 				$field => $props,
-				'english' => array_merge($props,array(
-					'analyzer' => 'english'
+				$lang => array_merge($props,array(
+					'analyzer' => $lang
 				))
 			)
 		);
