@@ -15,10 +15,7 @@ class Defaults{
 	* @return string[] field names
 	**/
 	static function fields(){
-		$fields = array('post_content', 'post_title', 'post_type');
-
-		$fields = Config::apply_filters('default_fields',$fields);
-		return $fields;
+		return array('post_content', 'post_title', 'post_type');
 	}
 
 	/**
@@ -70,15 +67,11 @@ class Defaults{
                             GROUP BY meta_key
                             HAVING meta_key NOT LIKE '\_%'
                             ORDER BY meta_key" );
-
-		$keys = Config::apply_filters('default_meta_fields',$keys);
-
-	    if ( $keys ){
-	      natcasesort($keys);
-	    } else{
-	      $keys = array();
-	    }
-
+    if ( $keys ){
+      natcasesort($keys);
+    } else{
+      $keys = array();
+    }
 		return $keys;
 	}
 }
