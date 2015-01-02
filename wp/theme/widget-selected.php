@@ -158,17 +158,17 @@ class FactingSelectedWidget extends \WP_Widget {
 		$instance = array_merge($defaults,$instance);
 		?>
 			<p>  
-				<input class="checkbox" type="checkbox" <?php checked( $instance['async'], true ); ?>
+				<input class="checkbox" type="checkbox" <?php checked( isset($instance['async']) ? $instance['async'] : false, true ); ?>
 					id="<?php echo $this->get_field_id( 'async' ); ?>" name="<?php echo $this->get_field_name( 'async' ); ?>" value="1" />   
 				<label for="<?php echo $this->get_field_id( 'async' ); ?>">Update selected items asynchronously (requires faceting options widget)</label>  
 			</p>  
 			<p>  
-				<input class="checkbox" type="checkbox" <?php checked( $instance['showEmpty'], true ); ?>
+				<input class="checkbox" type="checkbox" <?php checked( isset($instance['showEmpty']) ? $instance['showEmpty'] : false, true ); ?>
 					id="<?php echo $this->get_field_id( 'showEmpty' ); ?>" name="<?php echo $this->get_field_name( 'showEmpty' ); ?>" value="1" />   
 				<label for="<?php echo $this->get_field_id( 'showEmpty' ); ?>">Show empty message and hide available options when all facets are selected.</label>  
 			</p>
 			<p>  
-				<input class="checkbox" type="checkbox" <?php checked( $instance['splitSpaces'], true ); ?>
+				<input class="checkbox" type="checkbox" <?php checked( isset($instance['splitSpaces']) ? $instance['splitSpaces'] : false, true ); ?>
 					id="<?php echo $this->get_field_id( 'splitSpaces' ); ?>" name="<?php echo $this->get_field_name( 'splitSpaces' ); ?>" value="1" />   
 				<label for="<?php echo $this->get_field_id( 'splitSpaces' ); ?>">Split search query by spaces so user can remove words individually.</label>  
 			</p>
