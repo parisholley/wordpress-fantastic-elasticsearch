@@ -165,12 +165,12 @@ class FacetingOptionsWidget extends \WP_Widget {
 			<p>  
 				<label for="<?php echo $this->get_field_id( 'asyncReplace' ); ?>">CSS Selector of the container to copy/replace</label>  
 				<input id="<?php echo $this->get_field_id( 'asyncReplace' ); ?>" name="<?php echo $this->get_field_name( 'asyncReplace' ); ?>"
-					value="<?php echo htmlspecialchars($instance['asyncReplace']); ?>" style="width:100%;" />  
+					value="<?php echo isset($instance['asyncReplace']) ? htmlspecialchars($instance['asyncReplace']) : ''; ?>" style="width:100%;" />  
 			</p> 
 			<p>  
 				<label for="<?php echo $this->get_field_id( 'cssOffset' ); ?>">CSS Selector of item to offset against when scrolling to top (ie: floating header)</label>  
 				<input id="<?php echo $this->get_field_id( 'cssOffset' ); ?>" name="<?php echo $this->get_field_name( 'cssOffset' ); ?>"
-					value="<?php echo htmlspecialchars($instance['cssOffset']); ?>" style="width:100%;" />  
+					value="<?php echo isset($instance['cssOffset']) ? htmlspecialchars($instance['cssOffset']) : ''; ?>" style="width:100%;" />  
 			</p> 
 		<?php
 	}
