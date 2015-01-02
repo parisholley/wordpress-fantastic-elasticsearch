@@ -158,7 +158,7 @@ class FacetingOptionsWidget extends \WP_Widget {
 
 		?>
 			<p>  
-				<input class="checkbox" type="checkbox" <?php checked( $instance['async'], true ); ?>
+				<input class="checkbox" type="checkbox" <?php checked( isset($instance['async']) ? $instance['async'] : false, true ); ?>
 					id="<?php echo $this->get_field_id( 'async' ); ?>" name="<?php echo $this->get_field_name( 'async' ); ?>" value="1" />   
 				<label for="<?php echo $this->get_field_id( 'async' ); ?>">Update page content asynchronously</label>  
 			</p>  
