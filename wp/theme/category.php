@@ -19,7 +19,7 @@ class Category extends AbstractArchive{
 		if(isset($wp_query->query_vars['category_name']) && !empty($wp_query->query_vars['category_name'])){
 			$cat = get_category_by_slug($wp_query->query_vars['category_name']);
 
-			if(!$all && !in_array($cat->term_id, $enabled)){
+			if(!$all && (!$cat || !in_array($cat->term_id, $enabled))){
 				return;
 			}
 
