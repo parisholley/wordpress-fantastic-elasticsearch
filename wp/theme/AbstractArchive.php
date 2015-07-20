@@ -19,6 +19,10 @@ abstract class AbstractArchive{
 			return;
 		}
 
+		if ( !isset($wp_query->query) || empty($wp_query->query_vars)) {
+			return;
+		}
+
 		$this->attempted = true;
 
 		$args = $this->facets($wp_query, isset($_GET['es']) ? $_GET['es'] : array());
