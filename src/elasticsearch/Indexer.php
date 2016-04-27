@@ -286,13 +286,14 @@ class Indexer
 
 			if ($props['type'] == 'string' && $props['index'] == 'analyzed') {
 				// provides more accurate searches
-				// TODO: assumes plugin users are in english
+
+				$lang = Config::apply_filters('string_language', 'english');
 				$props = array(
 					'type' => 'multi_field',
 					'fields' => array(
 						$field => $props,
-						'english' => array_merge($props, array(
-							'analyzer' => 'english'
+						$lang => array_merge($props, array(
+							'analyzer' => $lang
 						))
 					)
 				);
@@ -334,6 +335,9 @@ class Indexer
 		} else {
 			$settings['timeout'] = Config::option('server_timeout_read') ?: 1;
 		}
+
+		// Allow custom settings to be passed by users who want to.
+		$settings = apply_filters('indexer_client_settings', $settings);
 
 		return new \Elastica\Client($settings);
 	}

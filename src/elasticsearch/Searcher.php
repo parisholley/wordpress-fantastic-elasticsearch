@@ -35,7 +35,7 @@ class Searcher
 
 		// need to do rethink the signature of the search() method, arg list can't just keep growing
 		return self::_query($args, $pageIndex, $size, $sortByDate);
-	}
+	}git ad
 
 	/**
 	 * @internal
@@ -47,13 +47,14 @@ class Searcher
 		$query->setSize($size);
 		$query->setFields(array('id'));
 
-		Config::apply_filters('searcher_query', $query);
+		$query = Config::apply_filters('searcher_query', $query);
 
 		try {
 			$index = Indexer::_index(false);
 
 			$search = new \Elastica\Search($index->getClient());
 			$search->addIndex($index);
+
 			if (!$query->hasParam('sort')) {
 				if ($sortByDate) {
 					$query->addSort(array('post_date' => 'desc'));
@@ -61,7 +62,7 @@ class Searcher
 					$query->addSort('_score');
 				}
 			}
-			Config::apply_filters('searcher_search', $search, $query);
+			$search = Config::apply_filters('searcher_search', $search, $query);
 
 			$results = $search->search($query);
 
@@ -270,7 +271,10 @@ class Searcher
 						// TODO: fuzzy doesn't work with english analyzer
 						$scored[] = "$field^$score";
 					} else {
-						$scored[] = "$field.english^$score";
+						$scored[] = sprintf(
+							"$field.%s^$score",
+							Config::apply_filters('string_language', 'english')
+						);
 					}
 				}
 			}

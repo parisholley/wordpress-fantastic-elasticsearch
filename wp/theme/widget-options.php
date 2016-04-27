@@ -148,21 +148,29 @@ class FacetingOptionsWidget extends \WP_Widget {
 	}
 
 	function form( $instance ) {
+		$defaults = array(
+			'async' => false,
+			'asyncReplace' => '',
+			'cssOffset' => '',
+		);
+
+		$instance = array_merge($defaults,$instance);
+
 		?>
 			<p>  
-				<input class="checkbox" type="checkbox" <?php checked( $instance['async'], true ); ?>
+				<input class="checkbox" type="checkbox" <?php checked( isset($instance['async']) ? $instance['async'] : false, true ); ?>
 					id="<?php echo $this->get_field_id( 'async' ); ?>" name="<?php echo $this->get_field_name( 'async' ); ?>" value="1" />   
 				<label for="<?php echo $this->get_field_id( 'async' ); ?>">Update page content asynchronously</label>  
 			</p>  
 			<p>  
 				<label for="<?php echo $this->get_field_id( 'asyncReplace' ); ?>">CSS Selector of the container to copy/replace</label>  
 				<input id="<?php echo $this->get_field_id( 'asyncReplace' ); ?>" name="<?php echo $this->get_field_name( 'asyncReplace' ); ?>"
-					value="<?php echo htmlspecialchars($instance['asyncReplace']); ?>" style="width:100%;" />  
+					value="<?php echo isset($instance['asyncReplace']) ? htmlspecialchars($instance['asyncReplace']) : ''; ?>" style="width:100%;" />  
 			</p> 
 			<p>  
 				<label for="<?php echo $this->get_field_id( 'cssOffset' ); ?>">CSS Selector of item to offset against when scrolling to top (ie: floating header)</label>  
 				<input id="<?php echo $this->get_field_id( 'cssOffset' ); ?>" name="<?php echo $this->get_field_name( 'cssOffset' ); ?>"
-					value="<?php echo htmlspecialchars($instance['cssOffset']); ?>" style="width:100%;" />  
+					value="<?php echo isset($instance['cssOffset']) ? htmlspecialchars($instance['cssOffset']) : ''; ?>" style="width:100%;" />  
 			</p> 
 		<?php
 	}
