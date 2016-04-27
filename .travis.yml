@@ -2,7 +2,7 @@ language: php
 php:
   - 5.5
 services:
-  - elasticsearch
+  - docker
 before_script:
   - docker pull phpunit/phpunit
   - docker pull elasticsearch:2.3
