@@ -363,74 +363,78 @@
 </span><span id="286" class="l"><a href="#286">286: </a>
 </span><span id="287" class="l"><a href="#287">287: </a>            <span class="php-keyword1">if</span> (<span class="php-var">$props</span>[<span class="php-quote">'type'</span>] == <span class="php-quote">'string'</span> &amp;&amp; <span class="php-var">$props</span>[<span class="php-quote">'index'</span>] == <span class="php-quote">'analyzed'</span>) {
 </span><span id="288" class="l"><a href="#288">288: </a>                <span class="php-comment">// provides more accurate searches</span>
-</span><span id="289" class="l"><a href="#289">289: </a>                <span class="php-comment">// TODO: assumes plugin users are in english</span>
-</span><span id="290" class="l"><a href="#290">290: </a>                <span class="php-var">$props</span> = <span class="php-keyword1">array</span>(
-</span><span id="291" class="l"><a href="#291">291: </a>                    <span class="php-quote">'type'</span> =&gt; <span class="php-quote">'multi_field'</span>,
-</span><span id="292" class="l"><a href="#292">292: </a>                    <span class="php-quote">'fields'</span> =&gt; <span class="php-keyword1">array</span>(
-</span><span id="293" class="l"><a href="#293">293: </a>                        <span class="php-var">$field</span> =&gt; <span class="php-var">$props</span>,
-</span><span id="294" class="l"><a href="#294">294: </a>                        <span class="php-quote">'english'</span> =&gt; <span class="php-keyword2">array_merge</span>(<span class="php-var">$props</span>, <span class="php-keyword1">array</span>(
-</span><span id="295" class="l"><a href="#295">295: </a>                            <span class="php-quote">'analyzer'</span> =&gt; <span class="php-quote">'english'</span>
-</span><span id="296" class="l"><a href="#296">296: </a>                        ))
-</span><span id="297" class="l"><a href="#297">297: </a>                    )
-</span><span id="298" class="l"><a href="#298">298: </a>                );
-</span><span id="299" class="l"><a href="#299">299: </a>            }
-</span><span id="300" class="l"><a href="#300">300: </a>
-</span><span id="301" class="l"><a href="#301">301: </a>            <span class="php-comment">// generic filter indexer_map_field| indexer_map_meta | indexer_map_taxonomy</span>
-</span><span id="302" class="l"><a href="#302">302: </a>            <span class="php-var">$props</span> = Config::apply_filters(<span class="php-quote">'indexer_map_'</span> . <span class="php-var">$kind</span>, <span class="php-var">$props</span>, <span class="php-var">$field</span>);
-</span><span id="303" class="l"><a href="#303">303: </a>
-</span><span id="304" class="l"><a href="#304">304: </a>            <span class="php-comment">// also index taxonomy_name field</span>
-</span><span id="305" class="l"><a href="#305">305: </a>            <span class="php-keyword1">if</span> (<span class="php-var">$kind</span> == <span class="php-quote">'taxonomy'</span>) {
-</span><span id="306" class="l"><a href="#306">306: </a>                <span class="php-var">$tax_name_props</span> = <span class="php-keyword1">array</span>(<span class="php-quote">'type'</span> =&gt; <span class="php-quote">'string'</span>);
-</span><span id="307" class="l"><a href="#307">307: </a>                <span class="php-var">$tax_name_props</span> = Config::apply_filters(<span class="php-quote">'indexer_map_taxonomy_name'</span>, <span class="php-var">$tax_name_props</span>, <span class="php-var">$field</span>);
-</span><span id="308" class="l"><a href="#308">308: </a>            }
-</span><span id="309" class="l"><a href="#309">309: </a>
-</span><span id="310" class="l"><a href="#310">310: </a>            <span class="php-var">$properties</span>[<span class="php-var">$field</span>] = <span class="php-var">$props</span>;
-</span><span id="311" class="l"><a href="#311">311: </a>
-</span><span id="312" class="l"><a href="#312">312: </a>            <span class="php-keyword1">if</span> (<span class="php-keyword1">isset</span>(<span class="php-var">$tax_name_props</span>)) {
-</span><span id="313" class="l"><a href="#313">313: </a>                <span class="php-var">$properties</span>[<span class="php-var">$field</span> . <span class="php-quote">'_name'</span>] = <span class="php-var">$tax_name_props</span>;
-</span><span id="314" class="l"><a href="#314">314: </a>            }
-</span><span id="315" class="l"><a href="#315">315: </a>        }
-</span><span id="316" class="l"><a href="#316">316: </a>    }
-</span><span id="317" class="l"><a href="#317">317: </a>
-</span><span id="318" class="l"><a href="#318">318: </a>    <span class="php-comment">/**
-</span></span><span id="319" class="l"><a href="#319">319: </a><span class="php-comment">     * The Elastica\Client object used by F.E.S
-</span></span><span id="320" class="l"><a href="#320">320: </a><span class="php-comment">     *
-</span></span><span id="321" class="l"><a href="#321">321: </a><span class="php-comment">     * @param boolean $write Specifiy whether you are making read-only or write transactions (currently just adjusts timeout values)
-</span></span><span id="322" class="l"><a href="#322">322: </a><span class="php-comment">     *
-</span></span><span id="323" class="l"><a href="#323">323: </a><span class="php-comment">     * @return Elastica\Client
-</span></span><span id="324" class="l"><a href="#324">324: </a><span class="php-comment">     * @internal
-</span></span><span id="325" class="l"><a href="#325">325: </a><span class="php-comment">     **/</span>
-</span><span id="326" class="l"><a href="#326">326: </a>    <span class="php-keyword1">static</span> <span class="php-keyword1">function</span> _client(<span class="php-var">$write</span> = <span class="php-keyword1">false</span>)
-</span><span id="327" class="l"><a href="#327">327: </a>    {
-</span><span id="328" class="l"><a href="#328">328: </a>        <span class="php-var">$settings</span> = <span class="php-keyword1">array</span>(
-</span><span id="329" class="l"><a href="#329">329: </a>            <span class="php-quote">'url'</span> =&gt; Config::option(<span class="php-quote">'server_url'</span>)
-</span><span id="330" class="l"><a href="#330">330: </a>        );
-</span><span id="331" class="l"><a href="#331">331: </a>
-</span><span id="332" class="l"><a href="#332">332: </a>        <span class="php-keyword1">if</span> (<span class="php-var">$write</span>) {
-</span><span id="333" class="l"><a href="#333">333: </a>            <span class="php-var">$settings</span>[<span class="php-quote">'timeout'</span>] = Config::option(<span class="php-quote">'server_timeout_write'</span>) ?: <span class="php-num">300</span>;
-</span><span id="334" class="l"><a href="#334">334: </a>        } <span class="php-keyword1">else</span> {
-</span><span id="335" class="l"><a href="#335">335: </a>            <span class="php-var">$settings</span>[<span class="php-quote">'timeout'</span>] = Config::option(<span class="php-quote">'server_timeout_read'</span>) ?: <span class="php-num">1</span>;
-</span><span id="336" class="l"><a href="#336">336: </a>        }
-</span><span id="337" class="l"><a href="#337">337: </a>
-</span><span id="338" class="l"><a href="#338">338: </a>        <span class="php-keyword1">return</span> <span class="php-keyword1">new</span> \Elastica\Client(<span class="php-var">$settings</span>);
-</span><span id="339" class="l"><a href="#339">339: </a>    }
-</span><span id="340" class="l"><a href="#340">340: </a>
-</span><span id="341" class="l"><a href="#341">341: </a>    <span class="php-comment">/**
-</span></span><span id="342" class="l"><a href="#342">342: </a><span class="php-comment">     * The Elastica\Index object used by F.E.S
-</span></span><span id="343" class="l"><a href="#343">343: </a><span class="php-comment">     *
-</span></span><span id="344" class="l"><a href="#344">344: </a><span class="php-comment">     * @param boolean $write Specifiy whether you are making read-only or write transactions (currently just adjusts timeout values)
-</span></span><span id="345" class="l"><a href="#345">345: </a><span class="php-comment">     *
-</span></span><span id="346" class="l"><a href="#346">346: </a><span class="php-comment">     * @return Elastica\Index
-</span></span><span id="347" class="l"><a href="#347">347: </a><span class="php-comment">     * @internal
-</span></span><span id="348" class="l"><a href="#348">348: </a><span class="php-comment">     **/</span>
-</span><span id="349" class="l"><a href="#349">349: </a>    <span class="php-keyword1">static</span> <span class="php-keyword1">function</span> _index(<span class="php-var">$write</span> = <span class="php-keyword1">false</span>)
-</span><span id="350" class="l"><a href="#350">350: </a>    {
-</span><span id="351" class="l"><a href="#351">351: </a>        <span class="php-keyword1">return</span> self::_client(<span class="php-var">$write</span>)-&gt;getIndex(Config::option(<span class="php-quote">'server_index'</span>));
-</span><span id="352" class="l"><a href="#352">352: </a>    }
-</span><span id="353" class="l"><a href="#353">353: </a>}
-</span><span id="354" class="l"><a href="#354">354: </a>
-</span><span id="355" class="l"><a href="#355">355: </a><span class="xlang">?&gt;</span>
-</span><span id="356" class="l"><a href="#356">356: </a></span></code></pre>
+</span><span id="289" class="l"><a href="#289">289: </a>
+</span><span id="290" class="l"><a href="#290">290: </a>                <span class="php-var">$lang</span> = Config::apply_filters(<span class="php-quote">'string_language'</span>, <span class="php-quote">'english'</span>);
+</span><span id="291" class="l"><a href="#291">291: </a>                <span class="php-var">$props</span> = <span class="php-keyword1">array</span>(
+</span><span id="292" class="l"><a href="#292">292: </a>                    <span class="php-quote">'type'</span> =&gt; <span class="php-quote">'multi_field'</span>,
+</span><span id="293" class="l"><a href="#293">293: </a>                    <span class="php-quote">'fields'</span> =&gt; <span class="php-keyword1">array</span>(
+</span><span id="294" class="l"><a href="#294">294: </a>                        <span class="php-var">$field</span> =&gt; <span class="php-var">$props</span>,
+</span><span id="295" class="l"><a href="#295">295: </a>                        <span class="php-var">$lang</span> =&gt; <span class="php-keyword2">array_merge</span>(<span class="php-var">$props</span>, <span class="php-keyword1">array</span>(
+</span><span id="296" class="l"><a href="#296">296: </a>                            <span class="php-quote">'analyzer'</span> =&gt; <span class="php-var">$lang</span>
+</span><span id="297" class="l"><a href="#297">297: </a>                        ))
+</span><span id="298" class="l"><a href="#298">298: </a>                    )
+</span><span id="299" class="l"><a href="#299">299: </a>                );
+</span><span id="300" class="l"><a href="#300">300: </a>            }
+</span><span id="301" class="l"><a href="#301">301: </a>
+</span><span id="302" class="l"><a href="#302">302: </a>            <span class="php-comment">// generic filter indexer_map_field| indexer_map_meta | indexer_map_taxonomy</span>
+</span><span id="303" class="l"><a href="#303">303: </a>            <span class="php-var">$props</span> = Config::apply_filters(<span class="php-quote">'indexer_map_'</span> . <span class="php-var">$kind</span>, <span class="php-var">$props</span>, <span class="php-var">$field</span>);
+</span><span id="304" class="l"><a href="#304">304: </a>
+</span><span id="305" class="l"><a href="#305">305: </a>            <span class="php-comment">// also index taxonomy_name field</span>
+</span><span id="306" class="l"><a href="#306">306: </a>            <span class="php-keyword1">if</span> (<span class="php-var">$kind</span> == <span class="php-quote">'taxonomy'</span>) {
+</span><span id="307" class="l"><a href="#307">307: </a>                <span class="php-var">$tax_name_props</span> = <span class="php-keyword1">array</span>(<span class="php-quote">'type'</span> =&gt; <span class="php-quote">'string'</span>);
+</span><span id="308" class="l"><a href="#308">308: </a>                <span class="php-var">$tax_name_props</span> = Config::apply_filters(<span class="php-quote">'indexer_map_taxonomy_name'</span>, <span class="php-var">$tax_name_props</span>, <span class="php-var">$field</span>);
+</span><span id="309" class="l"><a href="#309">309: </a>            }
+</span><span id="310" class="l"><a href="#310">310: </a>
+</span><span id="311" class="l"><a href="#311">311: </a>            <span class="php-var">$properties</span>[<span class="php-var">$field</span>] = <span class="php-var">$props</span>;
+</span><span id="312" class="l"><a href="#312">312: </a>
+</span><span id="313" class="l"><a href="#313">313: </a>            <span class="php-keyword1">if</span> (<span class="php-keyword1">isset</span>(<span class="php-var">$tax_name_props</span>)) {
+</span><span id="314" class="l"><a href="#314">314: </a>                <span class="php-var">$properties</span>[<span class="php-var">$field</span> . <span class="php-quote">'_name'</span>] = <span class="php-var">$tax_name_props</span>;
+</span><span id="315" class="l"><a href="#315">315: </a>            }
+</span><span id="316" class="l"><a href="#316">316: </a>        }
+</span><span id="317" class="l"><a href="#317">317: </a>    }
+</span><span id="318" class="l"><a href="#318">318: </a>
+</span><span id="319" class="l"><a href="#319">319: </a>    <span class="php-comment">/**
+</span></span><span id="320" class="l"><a href="#320">320: </a><span class="php-comment">     * The Elastica\Client object used by F.E.S
+</span></span><span id="321" class="l"><a href="#321">321: </a><span class="php-comment">     *
+</span></span><span id="322" class="l"><a href="#322">322: </a><span class="php-comment">     * @param boolean $write Specifiy whether you are making read-only or write transactions (currently just adjusts timeout values)
+</span></span><span id="323" class="l"><a href="#323">323: </a><span class="php-comment">     *
+</span></span><span id="324" class="l"><a href="#324">324: </a><span class="php-comment">     * @return Elastica\Client
+</span></span><span id="325" class="l"><a href="#325">325: </a><span class="php-comment">     * @internal
+</span></span><span id="326" class="l"><a href="#326">326: </a><span class="php-comment">     **/</span>
+</span><span id="327" class="l"><a href="#327">327: </a>    <span class="php-keyword1">static</span> <span class="php-keyword1">function</span> _client(<span class="php-var">$write</span> = <span class="php-keyword1">false</span>)
+</span><span id="328" class="l"><a href="#328">328: </a>    {
+</span><span id="329" class="l"><a href="#329">329: </a>        <span class="php-var">$settings</span> = <span class="php-keyword1">array</span>(
+</span><span id="330" class="l"><a href="#330">330: </a>            <span class="php-quote">'url'</span> =&gt; Config::option(<span class="php-quote">'server_url'</span>)
+</span><span id="331" class="l"><a href="#331">331: </a>        );
+</span><span id="332" class="l"><a href="#332">332: </a>
+</span><span id="333" class="l"><a href="#333">333: </a>        <span class="php-keyword1">if</span> (<span class="php-var">$write</span>) {
+</span><span id="334" class="l"><a href="#334">334: </a>            <span class="php-var">$settings</span>[<span class="php-quote">'timeout'</span>] = Config::option(<span class="php-quote">'server_timeout_write'</span>) ?: <span class="php-num">300</span>;
+</span><span id="335" class="l"><a href="#335">335: </a>        } <span class="php-keyword1">else</span> {
+</span><span id="336" class="l"><a href="#336">336: </a>            <span class="php-var">$settings</span>[<span class="php-quote">'timeout'</span>] = Config::option(<span class="php-quote">'server_timeout_read'</span>) ?: <span class="php-num">1</span>;
+</span><span id="337" class="l"><a href="#337">337: </a>        }
+</span><span id="338" class="l"><a href="#338">338: </a>
+</span><span id="339" class="l"><a href="#339">339: </a>        <span class="php-comment">// Allow custom settings to be passed by users who want to.</span>
+</span><span id="340" class="l"><a href="#340">340: </a>        <span class="php-var">$settings</span> = apply_filters(<span class="php-quote">'indexer_client_settings'</span>, <span class="php-var">$settings</span>);
+</span><span id="341" class="l"><a href="#341">341: </a>
+</span><span id="342" class="l"><a href="#342">342: </a>        <span class="php-keyword1">return</span> <span class="php-keyword1">new</span> \Elastica\Client(<span class="php-var">$settings</span>);
+</span><span id="343" class="l"><a href="#343">343: </a>    }
+</span><span id="344" class="l"><a href="#344">344: </a>
+</span><span id="345" class="l"><a href="#345">345: </a>    <span class="php-comment">/**
+</span></span><span id="346" class="l"><a href="#346">346: </a><span class="php-comment">     * The Elastica\Index object used by F.E.S
+</span></span><span id="347" class="l"><a href="#347">347: </a><span class="php-comment">     *
+</span></span><span id="348" class="l"><a href="#348">348: </a><span class="php-comment">     * @param boolean $write Specifiy whether you are making read-only or write transactions (currently just adjusts timeout values)
+</span></span><span id="349" class="l"><a href="#349">349: </a><span class="php-comment">     *
+</span></span><span id="350" class="l"><a href="#350">350: </a><span class="php-comment">     * @return Elastica\Index
+</span></span><span id="351" class="l"><a href="#351">351: </a><span class="php-comment">     * @internal
+</span></span><span id="352" class="l"><a href="#352">352: </a><span class="php-comment">     **/</span>
+</span><span id="353" class="l"><a href="#353">353: </a>    <span class="php-keyword1">static</span> <span class="php-keyword1">function</span> _index(<span class="php-var">$write</span> = <span class="php-keyword1">false</span>)
+</span><span id="354" class="l"><a href="#354">354: </a>    {
+</span><span id="355" class="l"><a href="#355">355: </a>        <span class="php-keyword1">return</span> self::_client(<span class="php-var">$write</span>)-&gt;getIndex(Config::option(<span class="php-quote">'server_index'</span>));
+</span><span id="356" class="l"><a href="#356">356: </a>    }
+</span><span id="357" class="l"><a href="#357">357: </a>}
+</span><span id="358" class="l"><a href="#358">358: </a>
+</span><span id="359" class="l"><a href="#359">359: </a><span class="xlang">?&gt;</span>
+</span><span id="360" class="l"><a href="#360">360: </a></span></code></pre>
 
 	<div id="footer">
 		 API documentation generated by <a href="http://apigen.org">ApiGen</a>

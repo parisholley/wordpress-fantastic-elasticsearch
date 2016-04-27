@@ -137,7 +137,7 @@
 </span><span id="60" class="l"><a href="#60"> 60: </a>
 </span><span id="61" class="l"><a href="#61"> 61: </a>        <span class="php-var">$numeric</span> = Config::option(<span class="php-quote">'numeric'</span>);
 </span><span id="62" class="l"><a href="#62"> 62: </a>
-</span><span id="63" class="l"><a href="#63"> 63: </a>        <span class="php-keyword1">foreach</span>(Config::fields() <span class="php-keyword1">as</span> <span class="php-var">$field</span>){
+</span><span id="63" class="l"><a href="#63"> 63: </a>        <span class="php-keyword1">foreach</span>(<span class="php-keyword2">array_merge</span>(Config::fields(),Config::meta_fields()) <span class="php-keyword1">as</span> <span class="php-var">$field</span>){
 </span><span id="64" class="l"><a href="#64"> 64: </a>            <span class="php-keyword1">if</span>(<span class="php-keyword1">isset</span>(<span class="php-var">$numeric</span>[<span class="php-var">$field</span>])){
 </span><span id="65" class="l"><a href="#65"> 65: </a>                <span class="php-var">$options</span>[<span class="php-var">$field</span>] = self::<span class="php-keyword2">range</span>(<span class="php-var">$field</span>);
 </span><span id="66" class="l"><a href="#66"> 66: </a>            }
