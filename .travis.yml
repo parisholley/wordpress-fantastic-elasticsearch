@@ -4,6 +4,6 @@ php:
 services:
   - docker
 before_script:
-  - docker pull phpunit/phpunit
   - docker pull elasticsearch:2.3
-  - docker run -d --name elasticsearch -p 127.0.0.1:9200:9200 elasticsearch
+  - docker run -d -p 127.0.0.1:9200:9200 elasticsearch
+  - sleep 15

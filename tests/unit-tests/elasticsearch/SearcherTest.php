@@ -554,8 +554,6 @@ class SearcherTest extends BaseTestCase
 
 		$query = $searcher->_buildQuery('string', $facets);
 
-		print_r($query);
-
 		$this->assertEquals(array(
 			'query' => array(
 				'bool' => array(
