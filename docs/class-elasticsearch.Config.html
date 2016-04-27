@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+
+	<title>Class elasticsearch\Config</title>
+
+	<link rel="stylesheet" href="resources/style.css?e99947befd7bf673c6b43ff75e9e0f170c88a60e">
+
+</head>
+
+<body>
+<div id="left">
+	<div id="menu">
+		<a href="index.html" title="Overview"><span>Overview</span></a>
+
+
+		<div id="groups">
+				<h3>Namespaces</h3>
+			<ul>
+				<li class="active">
+					<a href="namespace-elasticsearch.html">
+						elasticsearch					</a>
+
+						</li>
+			</ul>
+		</div>
+
+		<hr>
+
+
+		<div id="elements">
+			<h3>Classes</h3>
+			<ul>
+				<li class="active"><a href="class-elasticsearch.Config.html">Config</a></li>
+				<li><a href="class-elasticsearch.Defaults.html">Defaults</a></li>
+				<li><a href="class-elasticsearch.Faceting.html">Faceting</a></li>
+				<li><a href="class-elasticsearch.Indexer.html">Indexer</a></li>
+				<li><a href="class-elasticsearch.Searcher.html">Searcher</a></li>
+				<li><a href="class-elasticsearch.Theme.html">Theme</a></li>
+			</ul>
+
+
+
+
+
+		</div>
+	</div>
+</div>
+
+<div id="splitter"></div>
+
+<div id="right">
+<div id="rightInner">
+	<form id="search">
+		<input type="hidden" name="cx" value="">
+		<input type="hidden" name="ie" value="UTF-8">
+		<input type="text" name="q" class="text" placeholder="Search">
+	</form>
+
+	<div id="navigation">
+		<ul>
+			<li>
+				<a href="index.html" title="Overview"><span>Overview</span></a>
+			</li>
+			<li>
+				<a href="namespace-elasticsearch.html" title="Summary of elasticsearch"><span>Namespace</span></a>
+			</li>
+			<li class="active">
+<span>Class</span>			</li>
+		</ul>
+		<ul>
+		</ul>
+		<ul>
+		</ul>
+	</div>
+
+<div id="content" class="class">
+	<h1>Class Config</h1>
+
+
+	<div class="description">
+	<p>This class provides a convenient way of accessing configuration values set through the plugin's admin interface.</p>
+	</div>
+
+
+
+
+
+
+
+
+
+	<div class="info">
+		
+		
+		<b>Namespace:</b> <a href="namespace-elasticsearch.html">elasticsearch</a><br>
+		
+
+				<b>License:</b>
+				<a href="http://opensource.org/licenses/MIT">http://opensource.org/licenses/MIT</a><br>
+				<b>Author:</b>
+				Paris Holley <a href="&#109;&#x61;i&#108;&#x74;&#111;&#58;&#x6d;&#97;&#x69;&#x6c;&#64;&#x70;a&#114;&#x69;&#115;&#104;&#x6f;&#108;&#x6c;&#x65;&#121;&#x2e;&#x63;&#111;&#x6d;">&#x6d;&#97;&#x69;&#x6c;&#64;&#x70;a&#114;&#x69;&#115;&#104;&#x6f;&#108;&#x6c;&#x65;&#121;&#x2e;&#x63;&#111;&#x6d;</a><br>
+				<b>Version:</b>
+				4.0.0<br>
+			<b>Located at</b> <a href="source-class-elasticsearch.Config.html#4-192" title="Go to source code">Config.php</a>
+		<br>
+	</div>
+
+
+
+	<table class="summary methods" id="methods">
+	<caption>Methods summary</caption>
+	<tr data-order="option" id="_option">
+
+		<td class="attributes"><code>
+			 public static
+
+			object
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_option">#</a>
+		<code><a href="source-class-elasticsearch.Config.html#14-27" title="Go to source code">option</a>( <span>string <var>$name</var></span>, <span> <var>$default</var> = <span class="php-keyword1">null</span></span> )</code>
+
+		<div class="description short">
+			<p>Retrieve a specific option from the wordpress database for this plugin. Note: This is cached once per request.</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Retrieve a specific option from the wordpress database for this plugin. Note: This is cached once per request.</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$name</var></dt>
+					<dd>The name of the option</dd>
+					<dt><var>$default</var></dt>
+					<dd></dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					object
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="score" id="_score">
+
+		<td class="attributes"><code>
+			 public static
+
+			integer
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_score">#</a>
+		<code><a href="source-class-elasticsearch.Config.html#29-39" title="Go to source code">score</a>( <span>string <var>$type</var></span>, <span>string <var>$name</var></span> )</code>
+
+		<div class="description short">
+			<p>The score given to a data point that determines the impact on search results. May return null if the setttings have not been saved.</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>The score given to a data point that determines the impact on search results. May return null if the setttings have not been saved.</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$type</var></dt>
+					<dd>The type of wordpress object that is being scored (tax|field)</dd>
+					<dt><var>$name</var></dt>
+					<dd>The slug and/or logical name of that type</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					integer
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="ranges" id="_ranges">
+
+		<td class="attributes"><code>
+			 public static
+
+			array
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_ranges">#</a>
+		<code><a href="source-class-elasticsearch.Config.html#41-87" title="Go to source code">ranges</a>( <span>string <var>$field</var></span> )</code>
+
+		<div class="description short">
+			<p>The numeric ranges that have been defined for a certain field. Example of output:</p>
+
+<pre><span class="php-keyword1">array</span>(
+    <span class="php-quote">'-10'</span> =&gt; <span class="php-keyword1">array</span>(
+        <span class="php-quote">'to'</span> =&gt; <span class="php-num">10</span>
+    ),
+    <span class="php-quote">'10-20'</span> =&gt; <span class="php-keyword1">array</span>(
+        <span class="php-quote">'from'</span> =&gt; <span class="php-num">10</span>,
+        <span class="php-quote">'to'</span> =&gt; <span class="php-num">20</span>
+    )
+)</pre>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>The numeric ranges that have been defined for a certain field. Example of output:</p>
+
+<pre><span class="php-keyword1">array</span>(
+    <span class="php-quote">'-10'</span> =&gt; <span class="php-keyword1">array</span>(
+        <span class="php-quote">'to'</span> =&gt; <span class="php-num">10</span>
+    ),
+    <span class="php-quote">'10-20'</span> =&gt; <span class="php-keyword1">array</span>(
+        <span class="php-quote">'from'</span> =&gt; <span class="php-num">10</span>,
+        <span class="php-quote">'to'</span> =&gt; <span class="php-num">20</span>
+    )
+)</pre>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$field</var></dt>
+					<dd>The field name to lookup</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					array<br>An associative array where the keys represent a slug and values are used for configuration.
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="apply_filters" id="_apply_filters">
+
+		<td class="attributes"><code>
+			 public static
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_apply_filters">#</a>
+		<code><a href="source-class-elasticsearch.Config.html#89-97" title="Go to source code">apply_filters</a>( )</code>
+
+		<div class="description short">
+			<p>Behaves exactly like the wordpress apply_filters method except it prefixes every filter with a convention used by this plugin (ie: 'es_').</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Behaves exactly like the wordpress apply_filters method except it prefixes every filter with a convention used by this plugin (ie: 'es_').</p>
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="fields" id="_fields">
+
+		<td class="attributes"><code>
+			 public static
+
+			string[]
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_fields">#</a>
+		<code><a href="source-class-elasticsearch.Config.html#99-117" title="Go to source code">fields</a>( )</code>
+
+		<div class="description short">
+			<p>A list of a fields that are included when indexing data.</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>A list of a fields that are included when indexing data.</p>
+
+
+
+				<h4>Returns</h4>
+				<div class="list">
+					string[]<br>field names
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="facets" id="_facets">
+
+		<td class="attributes"><code>
+			 public static
+
+			string[]
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_facets">#</a>
+		<code><a href="source-class-elasticsearch.Config.html#119-132" title="Go to source code">facets</a>( )</code>
+
+		<div class="description short">
+			<p>A list of data points that are used for faceting.</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>A list of data points that are used for faceting.</p>
+
+
+
+				<h4>Returns</h4>
+				<div class="list">
+					string[]<br>field and/or association names
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="types" id="_types">
+
+		<td class="attributes"><code>
+			 public static
+
+			string[]
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_types">#</a>
+		<code><a href="source-class-elasticsearch.Config.html#134-149" title="Go to source code">types</a>( )</code>
+
+		<div class="description short">
+			<p>A list of wordpress post types that are used for indexing.</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>A list of wordpress post types that are used for indexing.</p>
+
+
+
+				<h4>Returns</h4>
+				<div class="list">
+					string[]<br>post type slugs
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="taxonomies" id="_taxonomies">
+
+		<td class="attributes"><code>
+			 public static
+
+			string[]
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_taxonomies">#</a>
+		<code><a href="source-class-elasticsearch.Config.html#151-170" title="Go to source code">taxonomies</a>( )</code>
+
+		<div class="description short">
+			<p>A list of taxonomies that are used for indexing.</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>A list of taxonomies that are used for indexing.</p>
+
+
+
+				<h4>Returns</h4>
+				<div class="list">
+					string[]<br>taxonomy slugs
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="meta_fields" id="_meta_fields">
+
+		<td class="attributes"><code>
+			 public static
+
+			string[]
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_meta_fields">#</a>
+		<code><a href="source-class-elasticsearch.Config.html#172-191" title="Go to source code">meta_fields</a>( )</code>
+
+		<div class="description short">
+			<p>A list of custom fields that are used for indexing.</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>A list of custom fields that are used for indexing.</p>
+
+
+
+				<h4>Returns</h4>
+				<div class="list">
+					string[]<br>meta keys custom field names
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	</table>
+
+
+
+
+
+
+
+
+
+
+
+
+	<table class="summary properties" id="properties">
+	<caption>Properties summary</caption>
+	<tr data-order="options" id="$options">
+		<td class="attributes"><code>
+			public static 
+			
+		</code></td>
+
+		<td class="name">
+				<a href="source-class-elasticsearch.Config.html#12" title="Go to source code"><var>$options</var></a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</td>
+		<td class="value">
+			<div>
+				<a href="#$options" class="anchor">#</a>
+				<code><span class="php-keyword1">null</span></code>
+			</div>
+		</td>
+	</tr>
+	</table>
+
+
+
+
+
+
+</div>
+
+	<div id="footer">
+		 API documentation generated by <a href="http://apigen.org">ApiGen</a>
+	</div>
+</div>
+</div>
+<script src="resources/combined.js"></script>
+<script src="elementlist.js"></script>
+</body>
+</html>

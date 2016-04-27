@@ -6,7 +6,7 @@ namespace elasticsearch;
 *
 * @license http://opensource.org/licenses/MIT
 * @author Paris Holley <mail@parisholley.com>
-* @version 2.1.0
+* @version 4.0.0
 **/
 class Theme{
 	private static $selector;

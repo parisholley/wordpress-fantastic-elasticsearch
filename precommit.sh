@@ -1,4 +1,4 @@
-VERSION=3\\.0\\.0
+VERSION=4\\.0\\.0
 
 echo "-- Ensure git is in good state"
 
@@ -7,7 +7,7 @@ git submodule update
 
 echo "-- Updating dependencies"
 
-composer update
+php composer.phar update
 
 echo "-- Executing Tests"
 
@@ -24,9 +24,9 @@ if [ $? -eq 0 ]; then
 
 	echo "-- Generating documentation."
 
-	type apigen >/dev/null 2>&1 || { echo >&2 "ApiGen is not installed."; exit 1; }
+	docker pull herloct/php-apigen
 
-	apigen --source=src/elasticsearch/ --destination=docs
+	docker run -v $(pwd):/app herloct/php-apigen generate -s /app/src/elasticsearch/ -d /app/docs
 
 	echo "-- It is safe to commit! Make sure to commit the docs directory first."
 else
