@@ -75,10 +75,10 @@ class NHP_Options{
 		$this->extra_tabs = apply_filters('nhp-opts-extra-tabs-'.$this->args['opt_name'], $extra_tabs);
 		
 		//set option with defaults
-		add_action('init', array(&$this, '_set_default_options'));
+		$this->_set_default_options();
 		
 		//options page
-		add_action('admin_menu', array(&$this, '_options_page'));
+		$this->_options_page();
 		
 		//register setting
 		add_action('admin_init', array(&$this, '_register_setting'));

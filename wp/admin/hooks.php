@@ -5,6 +5,7 @@ class Hooks
 {
 	function __construct()
 	{
+		add_action('wp_ajax_esreindex', array(&$this, 'reindex'));
 		add_action('save_post', array(&$this, 'save_post'));
 		add_action('delete_post', array(&$this, 'delete_post'));
 		add_action('trash_post', array(&$this, 'delete_post'));
@@ -50,6 +51,18 @@ class Hooks
 		}
 
 		Indexer::delete($post);
+	}
+
+	function reindex(){
+		try{
+			echo Indexer::reindex($_POST['page']);
+		}catch(\Exception $ex){
+			header("HTTP/1.0 500 Internal Server Error");
+
+			echo $ex->getMessage();
+		}
+
+		die();
 	}
 }
 

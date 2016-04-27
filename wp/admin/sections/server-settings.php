@@ -16,7 +16,7 @@ add_action('nhp-opts-options-validate-elasticsearch', function($new, $current){
 		try{
 			$index = $client->getIndex($new['server_index']);
 
-			$status = $index->getStatus()->getResponse()->getData();
+			$status = $index->getStats()->getData();
 		} catch(\Elastica\Exception\ResponseException $ex){
 			// This kind usually means there was an issue with the index not existing, so we'll associate the message to that field.
 			$field = $NHP_Options->sections['server']['fields']['server_index'];

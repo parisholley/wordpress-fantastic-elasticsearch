@@ -6,7 +6,7 @@ namespace elasticsearch;
 *
 * @license http://opensource.org/licenses/MIT
 * @author Paris Holley <mail@parisholley.com>
-* @version 4.0.0
+* @version 4.0.1
 **/
 class Faceting{
 	/**

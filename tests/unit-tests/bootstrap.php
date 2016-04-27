@@ -88,6 +88,10 @@ namespace {
 		return false;
 	}
 
+	function add_option(){
+		
+	}
+
 	function add_settings_field($arg1, $arg2, $callback, $arg4, $arg5, $field){
 		return call_user_func_array($callback, array($field));
 	}

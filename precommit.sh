@@ -1,4 +1,4 @@
-VERSION=4\\.0\\.0
+VERSION=4\\.0\\.1
 
 echo "-- Updating dependencies"
 
@@ -23,7 +23,7 @@ if [ $? -eq 0 ]; then
 
 	docker run -v $(pwd):/app herloct/php-apigen generate -s /app/src/elasticsearch/ -d /app/docs
 
-	echo "-- It is safe to commit! Make sure to commit the docs directory first."
+	echo "-- It is safe to push."
 else
 	echo "-- THE TESTS FAILED, DO NOT COMMIT!"
 fi

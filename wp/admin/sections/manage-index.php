@@ -1,18 +1,6 @@
 <?php
 namespace elasticsearch;
 
-add_action('wp_ajax_esreindex', function(){
-	try{
-		echo Indexer::reindex($_POST['page']);
-	}catch(\Exception $ex){
-		header("HTTP/1.0 500 Internal Server Error");
-
-		echo $ex->getMessage();
-	}
-
-	die();
-});
-
 add_action('admin_head-toplevel_page_elastic_search', function(){
 	wp_enqueue_script('es-indexing', plugins_url( '/manage-index.js', __FILE__ ), array('jquery'));
 
