@@ -1,34 +1,22 @@
-export ARGS=""
-cd `dirname $0`
+docker pull elasticsearch:2.3
 
-echo "Checking for XDebug.";
+docker ps | grep fantastices >/dev/null 2>&1
 
-echo "<?php phpinfo(); ?>" | php | grep "xdebug support => enabled" >/dev/null 2>&1
-XDEBUG=$?
+if [ $? -eq 1 ]; then
+    EXISTING=`docker ps -a | grep fantastices | awk '{print $1}'`
 
-if [ $XDEBUG -eq 1 ]; then
-	echo "Cannot generate code coverage because Xdebug is not installed.";
-else
-	ARGS="--coverage-html ./report"
-fi
+    if [ -z "$EXISTING" ]; then
+        echo "Creating ElasticSearch Container"
+        docker run -d --name fantastices -p 127.0.0.1:9200:9200 elasticsearch
+    else
+        echo "Restarting ElasticSearch Container"
 
-if [ ! -d "work" ]; then
-	mkdir "work"
-fi
-
-cd work
-
-../version.sh "2.3.0"
-
-PASSED=$?
-
-if [ $PASSED -eq 0 ]; then
-	if [ $XDEBUG -eq 0 ]; then
-        echo "Opening Coverage Report."
-        open report/index.html
+        docker start $EXISTING
     fi
 
-    exit 0
+    sleep 15
+else
+    echo "ElasticSearch already running"
 fi
 
-exit 1
+docker run --link fantastices -v $(pwd):/app phpunit/phpunit --configuration=phpunit.xml --coverage-html ./report
