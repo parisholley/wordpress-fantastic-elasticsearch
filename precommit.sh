@@ -1,10 +1,5 @@
 VERSION=4\\.0\\.0
 
-echo "-- Ensure git is in good state"
-
-git submodule init
-git submodule update
-
 echo "-- Updating dependencies"
 
 php composer.phar update

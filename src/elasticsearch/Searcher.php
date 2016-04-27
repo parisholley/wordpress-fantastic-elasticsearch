@@ -35,7 +35,7 @@ class Searcher
 
 		// need to do rethink the signature of the search() method, arg list can't just keep growing
 		return self::_query($args, $pageIndex, $size, $sortByDate);
-	}git ad
+	}
 
 	/**
 	 * @internal
