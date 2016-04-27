@@ -42,6 +42,9 @@ https://github.com/parisholley/wordpress-fantastic-elasticsearch/wiki
 
 == Changelog ==
 
+= 4.0.1 =
+* Fixed bugs in admin
+
 = 4.0.0 =
 * Tested against Wordpress 4.5.1
 * Upgrade Elastica to latest api, this plugin now requires ElasticSearch 2.x
