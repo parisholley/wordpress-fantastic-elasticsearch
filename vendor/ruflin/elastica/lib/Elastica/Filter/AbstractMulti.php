@@ -2,39 +2,54 @@
 
 namespace Elastica\Filter;
 
+trigger_error('Deprecated: Filters are deprecated. Use queries in filter context. See https://www.elastic.co/guide/en/elasticsearch/reference/2.0/query-dsl-filters.html', E_USER_DEPRECATED);
+
 /**
- * Multi Abstract filter object. Should be extended by filter types composed of an array of sub filters
+ * Multi Abstract filter object. Should be extended by filter types composed of an array of sub filters.
  *
- * @category Xodoa
- * @package Elastica
  * @author Nicolas Ruflin <spam@ruflin.com>
+ *
+ * @deprecated Filters are deprecated. Use queries in filter context. See https://www.elastic.co/guide/en/elasticsearch/reference/2.0/query-dsl-filters.html
  */
 abstract class AbstractMulti extends AbstractFilter
 {
     /**
-     * Filters
+     * Filters.
+     *
      * @var array
      */
     protected $_filters = array();
 
     /**
-     * Add filter
+     * @param array $filters
+     */
+    public function __construct(array $filters = array())
+    {
+        if (!empty($filters)) {
+            $this->setFilters($filters);
+        }
+    }
+
+    /**
+     * Add filter.
      *
-     * @param  \Elastica\Filter\AbstractFilter      $filter
-     * @return \Elastica\Filter\AbstractMulti
+     * @param \Elastica\Filter\AbstractFilter $filter
+     *
+     * @return $this
      */
     public function addFilter(AbstractFilter $filter)
     {
-        $this->_filters[] = $filter->toArray();
+        $this->_filters[] = $filter;
 
         return $this;
     }
 
     /**
-     * Set filters
+     * Set filters.
      *
-     * @param  array                               $filters
-     * @return \Elastica\Filter\AbstractMulti
+     * @param array $filters
+     *
+     * @return $this
      */
     public function setFilters(array $filters)
     {
@@ -57,6 +72,8 @@ abstract class AbstractMulti extends AbstractFilter
 
     /**
      * @see \Elastica\Param::toArray()
+     *
+     * @return array
      */
     public function toArray()
     {
@@ -72,6 +89,6 @@ abstract class AbstractMulti extends AbstractFilter
 
         $data[$name] = $filterData;
 
-        return $data;
+        return $this->_convertArrayable($data);
     }
 }

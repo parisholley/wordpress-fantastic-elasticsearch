@@ -8,7 +8,9 @@ use Elastica\Test\Base as BaseTest;
 
 class RequestTest extends BaseTest
 {
-
+    /**
+     * @group unit
+     */
     public function testConstructor()
     {
         $path = 'test';
@@ -25,6 +27,7 @@ class RequestTest extends BaseTest
     }
 
     /**
+     * @group unit
      * @expectedException \Elastica\Exception\InvalidException
      */
     public function testInvalidConnection()
@@ -33,19 +36,25 @@ class RequestTest extends BaseTest
         $request->send();
     }
 
+    /**
+     * @group functional
+     */
     public function testSend()
     {
         $connection = new Connection();
-        $connection->setHost('localhost');
+        $connection->setHost($this->_getHost());
         $connection->setPort('9200');
 
-        $request = new Request('_status', Request::GET, array(), array(), $connection);
+        $request = new Request('_stats', Request::GET, array(), array(), $connection);
 
         $response = $request->send();
 
         $this->assertInstanceOf('Elastica\Response', $response);
     }
 
+    /**
+     * @group unit
+     */
     public function testToString()
     {
         $path = 'test';
@@ -54,7 +63,7 @@ class RequestTest extends BaseTest
         $data = array('key' => 'value');
 
         $connection = new Connection();
-        $connection->setHost('localhost');
+        $connection->setHost($this->_getHost());
         $connection->setPort('9200');
 
         $request = new Request($path, $method, $data, $query, $connection);

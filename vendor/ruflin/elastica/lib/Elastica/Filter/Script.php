@@ -3,29 +3,30 @@
 namespace Elastica\Filter;
 
 use Elastica;
-use Elastica\Query\AbstractQuery;
+
+trigger_error('Deprecated: Filters are deprecated. Use queries in filter context. See https://www.elastic.co/guide/en/elasticsearch/reference/2.0/query-dsl-filters.html', E_USER_DEPRECATED);
 
 /**
- * Script filter
+ * Script filter.
  *
- * @category Xodoa
- * @package Elastica
  * @author Nicolas Ruflin <spam@ruflin.com>
- * @link http://www.elasticsearch.org/guide/reference/query-dsl/script-filter.html
+ *
+ * @link https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-script-filter.html
+ * @deprecated Filters are deprecated. Use queries in filter context. See https://www.elastic.co/guide/en/elasticsearch/reference/2.0/query-dsl-filters.html
  */
 class Script extends AbstractFilter
 {
     /**
-     * Query object
+     * Query object.
      *
      * @var array|\Elastica\Query\AbstractQuery
      */
     protected $_query = null;
 
     /**
-     * Construct script filter
+     * Construct script filter.
      *
-     * @param array|string|\Elastica\Script $script OPTIONAL Script
+     * @param array|string|\Elastica\Script\AbstractScript $script OPTIONAL Script
      */
     public function __construct($script = null)
     {
@@ -35,15 +36,28 @@ class Script extends AbstractFilter
     }
 
     /**
-     * Sets script object
+     * Sets script object.
      *
-     * @param  \Elastica\Script|string|array $script
-     * @return \Elastica\Filter\Script
+     * @param \Elastica\Script\Script|string|array $script
+     *
+     * @return $this
      */
     public function setScript($script)
     {
-        $script = Elastica\Script::create($script);
+        return $this->setParam('script', Elastica\Script\Script::create($script));
+    }
 
-        return $this->setParams($script->toArray());
+    /**
+     * {@inheritdoc}
+     */
+    public function toArray()
+    {
+        $array = parent::toArray();
+
+        if (isset($array['script'])) {
+            $array['script'] = $array['script']['script'];
+        }
+
+        return $array;
     }
 }

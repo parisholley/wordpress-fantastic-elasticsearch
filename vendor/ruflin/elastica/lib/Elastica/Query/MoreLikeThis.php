@@ -2,20 +2,23 @@
 
 namespace Elastica\Query;
 
+use Elastica\Document;
+use Elastica\Exception\DeprecatedException;
+
 /**
- * More Like This query
+ * More Like This query.
  *
- * @category Xodoa
- * @package Elastica
  * @author Raul Martinez, Jr <juneym@gmail.com>
- * @link http://www.elasticsearch.org/guide/reference/query-dsl/mlt-query.html
+ *
+ * @link https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-mlt-query.html
  */
 class MoreLikeThis extends AbstractQuery
 {
     /**
-     * Adds field to mlt query
+     * Set fields to which to restrict the mlt query.
      *
-     * @param  array                            $fields Field names
+     * @param array $fields Field names
+     *
      * @return \Elastica\Query\MoreLikeThis Current object
      */
     public function setFields(array $fields)
@@ -24,23 +27,51 @@ class MoreLikeThis extends AbstractQuery
     }
 
     /**
-     * Set the "like_text" value
+     * Set document ids for the mlt query.
      *
-     * @param  string                           $likeText
-     * @return \Elastica\Query\MoreLikeThis This current object
+     * @param array $ids Document ids
+     *
+     * @deprecated Option "ids" deprecated as of ES 2.0.0-beta1 and will be removed in further Elastica releases. Use "like" instead.
+     
+     * @return \Elastica\Query\MoreLikeThis Current object
      */
-    public function setLikeText($likeText)
+    public function setIds(array $ids)
     {
-        $likeText = trim($likeText);
-
-        return $this->setParam('like_text', $likeText);
+        throw new DeprecatedException('Option "ids" deprecated as of ES 2.0.0-beta1 and will be removed in further Elastica releases. Use "like" instead.');
     }
 
     /**
-     * Set boost
+     * Set the "like" value.
      *
-     * @param  float                            $boost Boost value
-     * @return \Elastica\Query\MoreLikeThis Query object
+     * @param string|Document $like
+     *
+     * @return $this
+     */
+    public function setLike($like)
+    {
+        return $this->setParam('like', $like);
+    }
+
+    /**
+     * Set the "like_text" value.
+     *
+     * @param string $likeText
+     *
+     * @deprecated Option "like_text" deprecated as of ES 2.0.0-beta1 and will be removed at further Elastica releases. Use "like" instead.
+     
+     * @return $this
+     */
+    public function setLikeText($likeText)
+    {
+        throw new DeprecatedException('Option "like_text" deprecated as of ES 2.0.0-beta1 and will be removed in further Elastica releases. Use "like" instead.');
+    }
+
+    /**
+     * Set boost.
+     *
+     * @param float $boost Boost value
+     *
+     * @return $this
      */
     public function setBoost($boost)
     {
@@ -48,10 +79,11 @@ class MoreLikeThis extends AbstractQuery
     }
 
     /**
-     * Set max_query_terms
+     * Set max_query_terms.
      *
-     * @param  int                              $maxQueryTerms Max query terms value
-     * @return \Elastica\Query\MoreLikeThis
+     * @param int $maxQueryTerms Max query terms value
+     *
+     * @return $this
      */
     public function setMaxQueryTerms($maxQueryTerms)
     {
@@ -59,21 +91,25 @@ class MoreLikeThis extends AbstractQuery
     }
 
     /**
-     * Set percent terms to match
+     * Set percent terms to match.
      *
-     * @param  float                            $percentTermsToMatch Percentage
-     * @return \Elastica\Query\MoreLikeThis
+     * @param float $percentTermsToMatch Percentage
+     *
+     * @return $this
+     *
+     * @deprecated Option "percent_terms_to_match" deprecated as of ES 1.5 and will be removed in further Elastica releases. Use "minimum_should_match" instead.
      */
     public function setPercentTermsToMatch($percentTermsToMatch)
     {
-        return $this->setParam('percent_terms_to_match', (float) $percentTermsToMatch);
+        throw new DeprecatedException('Option "percent_terms_to_match" deprecated as of ES 1.5 and will be removed in further Elastica releases. Use "minimum_should_match" instead.');
     }
 
     /**
-     * Set min term frequency
+     * Set min term frequency.
      *
-     * @param  int                              $minTermFreq
-     * @return \Elastica\Query\MoreLikeThis
+     * @param int $minTermFreq
+     *
+     * @return $this
      */
     public function setMinTermFrequency($minTermFreq)
     {
@@ -81,10 +117,11 @@ class MoreLikeThis extends AbstractQuery
     }
 
     /**
-     * set min document frequency
+     * set min document frequency.
      *
-     * @param  int                              $minDocFreq
-     * @return \Elastica\Query\MoreLikeThis
+     * @param int $minDocFreq
+     *
+     * @return $this
      */
     public function setMinDocFrequency($minDocFreq)
     {
@@ -92,10 +129,11 @@ class MoreLikeThis extends AbstractQuery
     }
 
     /**
-     * set max document frequency
+     * set max document frequency.
      *
-     * @param  int                              $maxDocFreq
-     * @return \Elastica\Query\MoreLikeThis
+     * @param int $maxDocFreq
+     *
+     * @return $this
      */
     public function setMaxDocFrequency($maxDocFreq)
     {
@@ -103,10 +141,11 @@ class MoreLikeThis extends AbstractQuery
     }
 
     /**
-     * Set min word length
+     * Set min word length.
      *
-     * @param  int                              $minWordLength
-     * @return \Elastica\Query\MoreLikeThis
+     * @param int $minWordLength
+     *
+     * @return $this
      */
     public function setMinWordLength($minWordLength)
     {
@@ -114,10 +153,11 @@ class MoreLikeThis extends AbstractQuery
     }
 
     /**
-     * Set max word length
+     * Set max word length.
      *
-     * @param  int                              $maxWordLength
-     * @return \Elastica\Query\MoreLikeThis
+     * @param int $maxWordLength
+     *
+     * @return $this
      */
     public function setMaxWordLength($maxWordLength)
     {
@@ -125,11 +165,11 @@ class MoreLikeThis extends AbstractQuery
     }
 
     /**
-     * Set boost terms
+     * Set boost terms.
      *
-     * @param  bool                             $boostTerms
-     * @return \Elastica\Query\MoreLikeThis
-     * @link http://www.elasticsearch.org/guide/reference/query-dsl/mlt-query.html
+     * @param bool $boostTerms
+     *
+     * @return $this
      */
     public function setBoostTerms($boostTerms)
     {
@@ -137,10 +177,11 @@ class MoreLikeThis extends AbstractQuery
     }
 
     /**
-     * Set analyzer
+     * Set analyzer.
      *
-     * @param  string                           $analyzer
-     * @return \Elastica\Query\MoreLikeThis
+     * @param string $analyzer
+     *
+     * @return $this
      */
     public function setAnalyzer($analyzer)
     {
@@ -150,13 +191,47 @@ class MoreLikeThis extends AbstractQuery
     }
 
     /**
-     * Set stop words
+     * Set stop words.
      *
-     * @param  array                            $stopWords
-     * @return \Elastica\Query\MoreLikeThis
+     * @param array $stopWords
+     *
+     * @return $this
      */
     public function setStopWords(array $stopWords)
     {
         return $this->setParam('stop_words', $stopWords);
+    }
+
+    /**
+     * Set minimum_should_match option.
+     *
+     * @param int|string $minimumShouldMatch
+     *
+     * @return $this
+     */
+    public function setMinimumShouldMatch($minimumShouldMatch)
+    {
+        return $this->setParam('minimum_should_match', $minimumShouldMatch);
+    }
+
+    public function toArray()
+    {
+        $array = parent::toArray();
+
+        // If _id is provided, perform MLT on an existing document from the index
+        // If _source is provided, perform MLT on a document provided as an input
+        if (!empty($array['more_like_this']['like']['_id'])) {
+            $doc = $array['more_like_this']['like'];
+            $doc = array_intersect_key($doc, array('_index' => 1, '_type' => 1, '_id' => 1));
+            $array['more_like_this']['like'] = $doc;
+        } elseif (!empty($array['more_like_this']['like']['_source'])) {
+            $doc = $array['more_like_this']['like'];
+            $doc['doc'] = $array['more_like_this']['like']['_source'];
+            unset($doc['_id']);
+            unset($doc['_source']);
+            $array['more_like_this']['like'] = $doc;
+        }
+
+        return $array;
     }
 }

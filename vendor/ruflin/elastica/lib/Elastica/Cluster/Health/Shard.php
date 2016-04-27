@@ -5,23 +5,19 @@ namespace Elastica\Cluster\Health;
 /**
  * Wraps status information for a shard.
  *
- * @package Elastica
  * @author Ray Ward <ray.ward@bigcommerce.com>
- * @link http://www.elasticsearch.org/guide/reference/api/admin-cluster-health.html
+ *
+ * @link https://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-health.html
  */
 class Shard
 {
     /**
-     * The shard index/number.
-     *
-     * @var int
+     * @var int The shard index/number.
      */
     protected $_shardNumber;
 
     /**
-     * The shard health data.
-     *
-     * @var array
+     * @var array The shard health data.
      */
     protected $_data;
 

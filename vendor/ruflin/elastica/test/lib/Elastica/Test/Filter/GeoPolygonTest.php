@@ -6,15 +6,25 @@ use Elastica\Document;
 use Elastica\Filter\GeoPolygon;
 use Elastica\Query;
 use Elastica\Query\MatchAll;
-use Elastica\Test\Base as BaseTest;
+use Elastica\Test\DeprecatedClassBase as BaseTest;
 
 class GeoPolygonTest extends BaseTest
 {
+    /**
+     * @group unit
+     */
+    public function testDeprecated()
+    {
+        $reflection = new \ReflectionClass(new GeoPolygon('location', array(array(16, 16))));
+        $this->assertFileDeprecated($reflection->getFileName(), 'Deprecated: Filters are deprecated. Use queries in filter context. See https://www.elastic.co/guide/en/elasticsearch/reference/2.0/query-dsl-filters.html');
+    }
+
+    /**
+     * @group functional
+     */
     public function testGeoPoint()
     {
-        $client = $this->_getClient();
-        $index = $client->getIndex('test');
-        $index->create(array(), true);
+        $index = $this->_createIndex();
 
         $type = $index->getType('test');
 
@@ -49,7 +59,7 @@ class GeoPolygonTest extends BaseTest
         $geoFilter = new GeoPolygon('location', $points);
 
         $query = new Query(new MatchAll());
-        $query->setFilter($geoFilter);
+        $query->setPostFilter($geoFilter);
         $this->assertEquals(1, $type->search($query)->count());
 
         // Both points should be inside
@@ -58,7 +68,7 @@ class GeoPolygonTest extends BaseTest
         $geoFilter = new GeoPolygon('location', $points);
 
         $query = new Query(new MatchAll());
-        $query->setFilter($geoFilter);
+        $query->setPostFilter($geoFilter);
 
         $this->assertEquals(2, $type->search($query)->count());
     }

@@ -2,10 +2,22 @@
 
 namespace Elastica\Test\Filter;
 
-use Elastica\Test\Base as BaseTest;
+use Elastica\Test\DeprecatedClassBase as BaseTest;
 
 class AbstractTest extends BaseTest
 {
+    /**
+     * @group unit
+     */
+    public function testDeprecated()
+    {
+        $reflection = new \ReflectionClass('Elastica\Filter\AbstractFilter');
+        $this->assertFileDeprecated($reflection->getFileName(), 'Deprecated: Filters are deprecated. Use queries in filter context. See https://www.elastic.co/guide/en/elasticsearch/reference/2.0/query-dsl-filters.html');
+    }
+
+    /**
+     * @group unit
+     */
     public function testSetCached()
     {
         $stubFilter = $this->getStub();
@@ -19,6 +31,9 @@ class AbstractTest extends BaseTest
         $this->assertFalse($arrayFilter['_cache']);
     }
 
+    /**
+     * @group unit
+     */
     public function testSetCachedDefaultValue()
     {
         $stubFilter = $this->getStub();
@@ -28,6 +43,9 @@ class AbstractTest extends BaseTest
         $this->assertTrue($arrayFilter['_cache']);
     }
 
+    /**
+     * @group unit
+     */
     public function testSetCacheKey()
     {
         $stubFilter = $this->getStub();
@@ -40,6 +58,7 @@ class AbstractTest extends BaseTest
     }
 
     /**
+     * @group unit
      * @expectedException \Elastica\Exception\InvalidException
      */
     public function testSetCacheKeyEmptyKey()
@@ -51,6 +70,9 @@ class AbstractTest extends BaseTest
         $stubFilter->setCacheKey($cacheKey);
     }
 
+    /**
+     * @group unit
+     */
     public function testSetName()
     {
         $stubFilter = $this->getStub();

@@ -5,10 +5,22 @@ namespace Elastica\Test\Filter;
 use Elastica\Document;
 use Elastica\Filter\HasParent;
 use Elastica\Query\MatchAll;
-use Elastica\Test\Base as BaseTest;
+use Elastica\Test\DeprecatedClassBase as BaseTest;
 
 class HasParentTest extends BaseTest
 {
+    /**
+     * @group unit
+     */
+    public function testDeprecated()
+    {
+        $reflection = new \ReflectionClass(new HasParent(new MatchAll(), 'test'));
+        $this->assertFileDeprecated($reflection->getFileName(), 'Deprecated: Filters are deprecated. Use queries in filter context. See https://www.elastic.co/guide/en/elasticsearch/reference/2.0/query-dsl-filters.html');
+    }
+
+    /**
+     * @group unit
+     */
     public function testToArray()
     {
         $q = new MatchAll();
@@ -20,35 +32,41 @@ class HasParentTest extends BaseTest
         $expectedArray = array(
             'has_parent' => array(
                 'query' => $q->toArray(),
-                'type' => $type
-            )
-        );
-
-        $this->assertEquals($expectedArray, $filter->toArray());
-    }
-
-    public function testSetScope()
-    {
-        $q = new MatchAll();
-
-        $type = 'test';
-
-        $scope = 'foo';
-
-        $filter = new HasParent($q, $type);
-        $filter->setScope($scope);
-
-        $expectedArray = array(
-            'has_parent' => array(
-                'query' => $q->toArray(),
                 'type' => $type,
-                '_scope' => $scope
-            )
+            ),
         );
 
         $this->assertEquals($expectedArray, $filter->toArray());
     }
 
+    /**
+     * @group functional
+     */
+    public function testSetType()
+    {
+        $index = $this->prepareSearchData();
+
+        $filter = new HasParent(new MatchAll(), 'type_name');
+        $this->assertEquals('type_name', $filter->getParam('type'));
+
+        $filter->setType('new_type_name');
+        $this->assertEquals('new_type_name', $filter->getParam('type'));
+
+        $type = $index->getType('foo');
+        $filter = new HasParent(new MatchAll(), $type);
+        $this->assertEquals('foo', $filter->getParam('type'));
+
+        $type = $index->getType('bar');
+        $filter->setType($type);
+        $this->assertEquals('bar', $filter->getParam('type'));
+
+        $returnValue = $filter->setType('last');
+        $this->assertInstanceOf('Elastica\Filter\HasParent', $returnValue);
+    }
+
+    /**
+     * @group unit
+     */
     public function testFilterInsideHasParent()
     {
         $f = new \Elastica\Filter\MatchAll();
@@ -60,14 +78,16 @@ class HasParentTest extends BaseTest
         $expectedArray = array(
             'has_parent' => array(
                 'filter' => $f->toArray(),
-                'type' => $type
-            )
+                'type' => $type,
+            ),
         );
 
         $this->assertEquals($expectedArray, $filter->toArray());
-
     }
 
+    /**
+     * @group functional
+     */
     public function testFilterInsideHasParentSearch()
     {
         $index = $this->prepareSearchData();
@@ -77,7 +97,7 @@ class HasParentTest extends BaseTest
         $filter = new HasParent($f, 'parent');
 
         $searchQuery = new \Elastica\Query();
-        $searchQuery->setFilter($filter);
+        $searchQuery->setPostFilter($filter);
         $searchResults = $index->search($searchQuery);
 
         $this->assertEquals(1, $searchResults->count());
@@ -88,6 +108,9 @@ class HasParentTest extends BaseTest
         $this->assertEquals($expected, $result);
     }
 
+    /**
+     * @group functional
+     */
     public function testQueryInsideHasParentSearch()
     {
         $index = $this->prepareSearchData();
@@ -97,7 +120,7 @@ class HasParentTest extends BaseTest
         $filter = new HasParent($f, 'parent');
 
         $searchQuery = new \Elastica\Query();
-        $searchQuery->setFilter($filter);
+        $searchQuery->setPostFilter($filter);
         $searchResults = $index->search($searchQuery);
 
         $this->assertEquals(1, $searchResults->count());
@@ -134,6 +157,7 @@ class HasParentTest extends BaseTest
         $childType->addDocument($child2);
 
         $index->refresh();
+
         return $index;
     }
 }

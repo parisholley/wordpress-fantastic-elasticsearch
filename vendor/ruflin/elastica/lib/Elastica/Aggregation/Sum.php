@@ -3,11 +3,10 @@
 namespace Elastica\Aggregation;
 
 /**
- * Class Sum
- * @package Elastica\Aggregation
- * @link http://www.elasticsearch.org/guide/en/elasticsearch/reference/master/search-aggregations-metrics-sum-aggregation.html
+ * Class Sum.
+ *
+ * @link https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-metrics-sum-aggregation.html
  */
 class Sum extends AbstractSimpleAggregation
 {
-
-} 
+}

@@ -6,4 +6,5 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'Elastica\\' => array($vendorDir . '/ruflin/elastica/lib/Elastica'),
 );

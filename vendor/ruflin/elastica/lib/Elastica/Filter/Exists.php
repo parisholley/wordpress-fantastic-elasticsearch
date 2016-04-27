@@ -2,18 +2,20 @@
 
 namespace Elastica\Filter;
 
+trigger_error('Deprecated: Filters are deprecated. Use queries in filter context. See https://www.elastic.co/guide/en/elasticsearch/reference/2.0/query-dsl-filters.html', E_USER_DEPRECATED);
+
 /**
- * Exists query
+ * Exists query.
  *
- * @category Xodoa
- * @package Elastica
  * @author Oleg Cherniy <oleg.cherniy@gmail.com>
- * @link http://www.elasticsearch.org/guide/reference/query-dsl/exists-filter.html
+ *
+ * @link https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-exists-filter.html
+ * @deprecated Filters are deprecated. Use queries in filter context. See https://www.elastic.co/guide/en/elasticsearch/reference/2.0/query-dsl-filters.html
  */
 class Exists extends AbstractFilter
 {
     /**
-     * Construct exists filter
+     * Construct exists filter.
      *
      * @param string $field
      */
@@ -23,10 +25,11 @@ class Exists extends AbstractFilter
     }
 
     /**
-     * Set field
+     * Set field.
      *
-     * @param  string                       $field
-     * @return \Elastica\Filter\Exists
+     * @param string $field
+     *
+     * @return $this
      */
     public function setField($field)
     {

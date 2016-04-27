@@ -6,13 +6,15 @@ use Elastica\Exception\InvalidException;
 use Elastica\Exception\JSONParseException;
 use Elastica\JSON;
 
+trigger_error('This builder is deprecated and will be removed in further Elastica releases. Use new Elastica\QueryBuilder instead.', E_USER_DEPRECATED);
+
 /**
  * Query Builder.
  *
- * @category Xodoa
- * @package Elastica
  * @author Chris Gedrim <chris@gedr.im>
- * @link http://www.elasticsearch.org/
+ *
+ * @link https://www.elastic.co/
+ * @deprecated This builder is deprecated and will be removed in further Elastica releases. Use new Elastica\QueryBuilder instead.
  **/
 class Builder extends AbstractQuery
 {
@@ -28,21 +30,21 @@ class Builder extends AbstractQuery
      *
      * @param string $string JSON encoded string to use as query.
      *
-     * @return \Elastica\Query\Builder
+     * @return self
      */
     public static function factory($string = null)
     {
-        return new Builder($string);
+        return new self($string);
     }
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param string $string JSON encoded string to use as query.
      */
     public function __construct($string = null)
     {
-        if (! $string == null) {
+        if (!$string == null) {
             $this->_string .= substr($string, 1, -1);
         }
     }
@@ -63,18 +65,21 @@ class Builder extends AbstractQuery
     public function toArray()
     {
         try {
-            return JSON::parse($this->__toString());
+            return JSON::parse($input = $this->__toString());
         } catch (JSONParseException $e) {
-            throw new InvalidException('The query produced is invalid');
+            throw new InvalidException(sprintf(
+                'The produced query is not a valid json string : "%s"',
+                $input
+            ));
         }
     }
 
     /**
      * Allow wildcards (*, ?) as the first character in a query.
      *
-     * @param boolean $bool Defaults to true.
+     * @param bool $bool Defaults to true.
      *
-     * @return \Elastica\Query\Builder
+     * @return $this
      */
     public function allowLeadingWildcard($bool = true)
     {
@@ -84,9 +89,9 @@ class Builder extends AbstractQuery
     /**
      * Enable best effort analysis of wildcard terms.
      *
-     * @param boolean $bool Defaults to true.
+     * @param bool $bool Defaults to true.
      *
-     * @return \Elastica\Query\Builder
+     * @return $this
      */
     public function analyzeWildcard($bool = true)
     {
@@ -98,7 +103,7 @@ class Builder extends AbstractQuery
      *
      * @param string $analyzer Analyzer to use.
      *
-     * @return \Elastica\Query\Builder
+     * @return $this
      */
     public function analyzer($analyzer)
     {
@@ -108,9 +113,9 @@ class Builder extends AbstractQuery
     /**
      * Autogenerate phrase queries.
      *
-     * @param boolean $bool Defaults to true.
+     * @param bool $bool Defaults to true.
      *
-     * @return \Elastica\Query\Builder
+     * @return $this
      */
     public function autoGeneratePhraseQueries($bool = true)
     {
@@ -129,7 +134,7 @@ class Builder extends AbstractQuery
      *
      * The occurrence types are: must, should, must_not.
      *
-     * @return \Elastica\Query\Builder
+     * @return $this
      */
     public function bool()
     {
@@ -141,7 +146,7 @@ class Builder extends AbstractQuery
      *
      * Alias of close() for ease of reading in source.
      *
-     * @return \Elastica\Query\Builder
+     * @return $this
      */
     public function boolClose()
     {
@@ -153,7 +158,7 @@ class Builder extends AbstractQuery
      *
      * @param float $boost Defaults to 1.0.
      *
-     * @return \Elastica\Query\Builder
+     * @return $this
      */
     public function boost($boost = 1.0)
     {
@@ -163,7 +168,7 @@ class Builder extends AbstractQuery
     /**
      * Close a previously opened brace.
      *
-     * @return \Elastica\Query\Builder
+     * @return $this
      */
     public function close()
     {
@@ -180,7 +185,7 @@ class Builder extends AbstractQuery
      *
      * Maps to Lucene ConstantScoreQuery.
      *
-     * @return \Elastica\Query\Builder
+     * @return $this
      */
     public function constantScore()
     {
@@ -192,7 +197,7 @@ class Builder extends AbstractQuery
      *
      * Alias of close() for ease of reading in source.
      *
-     * @return \Elastica\Query\Builder
+     * @return $this
      */
     public function constantScoreClose()
     {
@@ -204,7 +209,7 @@ class Builder extends AbstractQuery
      *
      * @param string $field Defaults to _all.
      *
-     * @return \Elastica\Query\Builder
+     * @return $this
      */
     public function defaultField($field = '_all')
     {
@@ -220,7 +225,7 @@ class Builder extends AbstractQuery
      *
      * @param string $operator Defaults to OR.
      *
-     * @return \Elastica\Query\Builder
+     * @return $this
      */
     public function defaultOperator($operator = 'OR')
     {
@@ -235,7 +240,7 @@ class Builder extends AbstractQuery
      * produced by any subquery, plus a tie breaking increment for any additional
      * matching subqueries.
      *
-     * @return \Elastica\Query\Builder
+     * @return $this
      */
     public function disMax()
     {
@@ -247,7 +252,7 @@ class Builder extends AbstractQuery
      *
      * Alias of close() for ease of reading in source.
      *
-     * @return \Elastica\Query\Builder
+     * @return $this
      */
     public function disMaxClose()
     {
@@ -257,9 +262,9 @@ class Builder extends AbstractQuery
     /**
      * Enable position increments in result queries.
      *
-     * @param boolean $bool Defaults to true.
+     * @param bool $bool Defaults to true.
      *
-     * @return \Elastica\Query\Builder
+     * @return $this
      */
     public function enablePositionIncrements($bool = true)
     {
@@ -269,43 +274,13 @@ class Builder extends AbstractQuery
     /**
      * Enables explanation for each hit on how its score was computed.
      *
-     * @param boolean $value Turn on / off explain.
+     * @param bool $value Turn on / off explain.
      *
-     * @return \Elastica\Query\Builder
+     * @return $this
      */
     public function explain($value = true)
     {
         return $this->field('explain', $value);
-    }
-
-    /**
-     * Open 'facets' block.
-     *
-     * Facets provide aggregated data based on a search query.
-     *
-     * In the simple case, a facet can return facet counts for various facet
-     * values for a specific field.
-     *
-     * Elasticsearch supports more advanced facet implementations, such as
-     * statistical or date histogram facets.
-     *
-     * @return \Elastica\Query\Builder
-     */
-    public function facets()
-    {
-        return $this->fieldOpen('facets');
-    }
-
-    /**
-     * Close a facets block.
-     *
-     * Alias of close() for ease of reading in source.
-     *
-     * @return \Elastica\Query\Builder
-     */
-    public function facetsClose()
-    {
-        return $this->close();
     }
 
     /**
@@ -314,12 +289,12 @@ class Builder extends AbstractQuery
      * @param string $name  Field to add.
      * @param mixed  $value Value to set.
      *
-     * @return \Elastica\Query\Builder
+     * @return $this
      */
     public function field($name, $value)
     {
         if (is_bool($value)) {
-            $value = '"'. var_export($value, true) . '"';
+            $value = '"'.var_export($value, true).'"';
         } elseif (is_array($value)) {
             $value = '["'.implode('","', $value).'"]';
         } else {
@@ -348,7 +323,7 @@ class Builder extends AbstractQuery
      *     ->rangeClose()
      *     ->queryClose();
      *
-     * @return \Elastica\Query\Builder
+     * @return $this
      */
     public function fieldClose()
     {
@@ -360,7 +335,7 @@ class Builder extends AbstractQuery
      *
      * @param string $name Field name.
      *
-     * @return \Elastica\Query\Builder
+     * @return $this
      */
     public function fieldOpen($name)
     {
@@ -375,7 +350,7 @@ class Builder extends AbstractQuery
      *
      * @param array $fields Array of fields to return.
      *
-     * @return \Elastica\Query\Builder
+     * @return $this
      */
     public function fields(array $fields)
     {
@@ -393,7 +368,7 @@ class Builder extends AbstractQuery
     /**
      * Open a 'filter' block.
      *
-     * @return \Elastica\Query\Builder
+     * @return $this
      */
     public function filter()
     {
@@ -403,7 +378,7 @@ class Builder extends AbstractQuery
     /**
      * Close a filter block.
      *
-     * @return \Elastica\Query\Builder
+     * @return $this
      */
     public function filterClose()
     {
@@ -413,7 +388,7 @@ class Builder extends AbstractQuery
     /**
      *  Query.
      *
-     * @return \Elastica\Query\Builder
+     * @return $this
      */
     public function filteredQuery()
     {
@@ -425,7 +400,7 @@ class Builder extends AbstractQuery
      *
      * Alias of close() for ease of reading in source.
      *
-     * @return \Elastica\Query\Builder
+     * @return $this
      */
     public function filteredQueryClose()
     {
@@ -435,9 +410,9 @@ class Builder extends AbstractQuery
     /**
      * Set the from parameter (offset).
      *
-     * @param integer $value Result number to start from.
+     * @param int $value Result number to start from.
      *
-     * @return \Elastica\Query\Builder
+     * @return $this
      */
     public function from($value = 0)
     {
@@ -449,7 +424,7 @@ class Builder extends AbstractQuery
      *
      * @param float $value Defaults to 0.5.
      *
-     * @return \Elastica\Query\Builder
+     * @return $this
      */
     public function fuzzyMinSim($value = 0.5)
     {
@@ -459,9 +434,9 @@ class Builder extends AbstractQuery
     /**
      * Set the prefix length for fuzzy queries.
      *
-     * @param integer $value Defaults to 0.
+     * @param int $value Defaults to 0.
      *
-     * @return \Elastica\Query\Builder
+     * @return $this
      */
     public function fuzzyPrefixLength($value = 0)
     {
@@ -475,7 +450,7 @@ class Builder extends AbstractQuery
      *
      * @param mixed $value Value to be gt.
      *
-     * @return \Elastica\Query\Builder
+     * @return $this
      */
     public function gt($value)
     {
@@ -489,7 +464,7 @@ class Builder extends AbstractQuery
      *
      * @param mixed $value Value to be gte to.
      *
-     * @return \Elastica\Query\Builder
+     * @return $this
      */
     public function gte($value)
     {
@@ -499,9 +474,9 @@ class Builder extends AbstractQuery
     /**
      * Automatically lower-case terms of wildcard, prefix, fuzzy, and range queries.
      *
-     * @param boolean $bool Defaults to true.
+     * @param bool $bool Defaults to true.
      *
-     * @return \Elastica\Query\Builder
+     * @return $this
      */
     public function lowercaseExpandedTerms($bool = true)
     {
@@ -515,7 +490,7 @@ class Builder extends AbstractQuery
      *
      * @param mixed $value Value to be lt.
      *
-     * @return \Elastica\Query\Builder
+     * @return $this
      */
     public function lt($value)
     {
@@ -529,7 +504,7 @@ class Builder extends AbstractQuery
      *
      * @param mixed $value Value to be lte to.
      *
-     * @return \Elastica\Query\Builder
+     * @return $this
      */
     public function lte($value)
     {
@@ -545,13 +520,13 @@ class Builder extends AbstractQuery
      *
      * @param float $boost Boost to use.
      *
-     * @return \Elastica\Query\Builder
+     * @return $this
      */
     public function matchAll($boost = null)
     {
         $this->fieldOpen('match_all');
 
-        if ( ! $boost == null && is_numeric($boost)) {
+        if (!$boost == null && is_numeric($boost)) {
             $this->field('boost', (float) $boost);
         }
 
@@ -561,9 +536,9 @@ class Builder extends AbstractQuery
     /**
      * The minimum number of should clauses to match.
      *
-     * @param integer $minimum Minimum number that should match.
+     * @param int $minimum Minimum number that should match.
      *
-     * @return \Elastica\Query\Builder
+     * @return $this
      */
     public function minimumNumberShouldMatch($minimum)
     {
@@ -573,7 +548,7 @@ class Builder extends AbstractQuery
     /**
      * The clause (query) must appear in matching documents.
      *
-     * @return \Elastica\Query\Builder
+     * @return $this
      */
     public function must()
     {
@@ -585,7 +560,7 @@ class Builder extends AbstractQuery
      *
      * Alias of close() for ease of reading in source.
      *
-     * @return \Elastica\Query\Builder
+     * @return $this
      */
     public function mustClose()
     {
@@ -598,7 +573,7 @@ class Builder extends AbstractQuery
      * Note that it is not possible to search on documents that only consists of
      * a must_not clauses.
      *
-     * @return \Elastica\Query\Builder
+     * @return $this
      */
     public function mustNot()
     {
@@ -610,7 +585,7 @@ class Builder extends AbstractQuery
      *
      * Alias of close() for ease of reading in source.
      *
-     * @return \Elastica\Query\Builder
+     * @return $this
      */
     public function mustNotClose()
     {
@@ -620,7 +595,7 @@ class Builder extends AbstractQuery
     /**
      * Add an opening brace.
      *
-     * @return \Elastica\Query\Builder
+     * @return $this
      */
     public function open()
     {
@@ -634,9 +609,9 @@ class Builder extends AbstractQuery
      *
      * If zero, then exact phrase matches are required.
      *
-     * @param integer $value Defaults to 0.
+     * @param int $value Defaults to 0.
      *
-     * @return \Elastica\Query\Builder
+     * @return $this
      */
     public function phraseSlop($value = 0)
     {
@@ -646,7 +621,7 @@ class Builder extends AbstractQuery
     /**
      *  Query.
      *
-     * @return \Elastica\Query\Builder
+     * @return $this
      */
     public function prefix()
     {
@@ -658,7 +633,7 @@ class Builder extends AbstractQuery
      *
      * Alias of close() for ease of reading in source.
      *
-     * @return \Elastica\Query\Builder
+     * @return $this
      */
     public function prefixClose()
     {
@@ -670,7 +645,7 @@ class Builder extends AbstractQuery
      *
      * @param array $queries Array of queries.
      *
-     * @return \Elastica\Query\Builder
+     * @return $this
      */
     public function queries(array $queries)
     {
@@ -688,7 +663,7 @@ class Builder extends AbstractQuery
     /**
      * Open a query block.
      *
-     * @return \Elastica\Query\Builder
+     * @return $this
      */
     public function query()
     {
@@ -700,7 +675,7 @@ class Builder extends AbstractQuery
      *
      * Alias of close() for ease of reading in source.
      *
-     * @return \Elastica\Query\Builder
+     * @return $this
      */
     public function queryClose()
     {
@@ -712,7 +687,7 @@ class Builder extends AbstractQuery
      *
      * A query that uses a query parser in order to parse its content
      *
-     * @return \Elastica\Query\Builder
+     * @return $this
      */
     public function queryString()
     {
@@ -724,7 +699,7 @@ class Builder extends AbstractQuery
      *
      * Alias of close() for ease of reading in source.
      *
-     * @return \Elastica\Query\Builder
+     * @return $this
      */
     public function queryStringClose()
     {
@@ -734,7 +709,7 @@ class Builder extends AbstractQuery
     /**
      * Open a range block.
      *
-     * @return \Elastica\Query\Builder
+     * @return $this
      */
     public function range()
     {
@@ -746,7 +721,7 @@ class Builder extends AbstractQuery
      *
      * Alias of close() for ease of reading in source.
      *
-     * @return \Elastica\Query\Builder
+     * @return $this
      */
     public function rangeClose()
     {
@@ -759,7 +734,7 @@ class Builder extends AbstractQuery
      * A boolean query with no must clauses, one or more should clauses must
      * match a document.
      *
-     * @return \Elastica\Query\Builder
+     * @return $this
      */
     public function should()
     {
@@ -771,7 +746,7 @@ class Builder extends AbstractQuery
      *
      * Alias of close() for ease of reading in source.
      *
-     * @return \Elastica\Query\Builder
+     * @return $this
      */
     public function shouldClose()
     {
@@ -781,9 +756,9 @@ class Builder extends AbstractQuery
     /**
      * Set the size parameter (number of records to return).
      *
-     * @param integer $value Number of records to return.
+     * @param int $value Number of records to return.
      *
-     * @return \Elastica\Query\Builder
+     * @return $this
      */
     public function size($value = 10)
     {
@@ -793,7 +768,7 @@ class Builder extends AbstractQuery
     /**
      * Allows to add one or more sort on specific fields.
      *
-     * @return \Elastica\Query\Builder
+     * @return $this
      */
     public function sort()
     {
@@ -805,7 +780,7 @@ class Builder extends AbstractQuery
      *
      * Alias of close() for ease of reading in source.
      *
-     * @return \Elastica\Query\Builder
+     * @return $this
      */
     public function sortClose()
     {
@@ -815,10 +790,10 @@ class Builder extends AbstractQuery
     /**
      * Add a field to sort on.
      *
-     * @param string  $name    Field to sort.
-     * @param boolean $reverse Reverse direction.
+     * @param string $name    Field to sort.
+     * @param bool   $reverse Reverse direction.
      *
-     * @return \Elastica\Query\Builder
+     * @return $this
      */
     public function sortField($name, $reverse = false)
     {
@@ -831,12 +806,12 @@ class Builder extends AbstractQuery
     }
 
     /**
-     * Sort on multiple fields
+     * Sort on multiple fields.
      *
      * @param array $fields Associative array where the keys are field names to sort on, and the
      *                      values are the sort order: "asc" or "desc"
      *
-     * @return \Elastica\Query\Builder
+     * @return $this
      */
     public function sortFields(array $fields)
     {
@@ -846,7 +821,7 @@ class Builder extends AbstractQuery
             $this->_string .= '{"'.$fieldName.'":"'.$order.'"},';
         }
 
-        $this->_string = rtrim($this->_string, ',') . '],';
+        $this->_string = rtrim($this->_string, ',').'],';
 
         return $this;
     }
@@ -858,7 +833,7 @@ class Builder extends AbstractQuery
      *
      * The term query maps to Lucene TermQuery.
      *
-     * @return \Elastica\Query\Builder
+     * @return $this
      */
     public function term()
     {
@@ -870,7 +845,7 @@ class Builder extends AbstractQuery
      *
      * Alias of close() for ease of reading in source.
      *
-     * @return \Elastica\Query\Builder
+     * @return $this
      */
     public function termClose()
     {
@@ -880,7 +855,7 @@ class Builder extends AbstractQuery
     /**
      * Open a 'text_phrase' block.
      *
-     * @return \Elastica\Query\Builder
+     * @return $this
      */
     public function textPhrase()
     {
@@ -890,7 +865,7 @@ class Builder extends AbstractQuery
     /**
      * Close a 'text_phrase' block.
      *
-     * @return \Elastica\Query\Builder
+     * @return $this
      */
     public function textPhraseClose()
     {
@@ -902,7 +877,7 @@ class Builder extends AbstractQuery
      *
      * @param float $multiplier Multiplier to use.
      *
-     * @return \Elastica\Query\Builder
+     * @return $this
      */
     public function tieBreakerMultiplier($multiplier)
     {
@@ -912,7 +887,7 @@ class Builder extends AbstractQuery
     /**
      *  Query.
      *
-     * @return \Elastica\Query\Builder
+     * @return $this
      */
     public function wildcard()
     {
@@ -924,7 +899,7 @@ class Builder extends AbstractQuery
      *
      * Alias of close() for ease of reading in source.
      *
-     * @return \Elastica\Query\Builder
+     * @return $this
      */
     public function wildcardClose()
     {

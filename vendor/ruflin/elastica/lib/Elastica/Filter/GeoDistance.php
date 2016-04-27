@@ -2,29 +2,33 @@
 
 namespace Elastica\Filter;
 
+trigger_error('Deprecated: Filters are deprecated. Use queries in filter context. See https://www.elastic.co/guide/en/elasticsearch/reference/2.0/query-dsl-filters.html', E_USER_DEPRECATED);
+
 /**
- * Geo distance filter
+ * Geo distance filter.
  *
- * @category Xodoa
- * @package Elastica
  * @author Nicolas Ruflin <spam@ruflin.com>
- * @link http://www.elasticsearch.org/guide/reference/query-dsl/geo-distance-filter.html
+ *
+ * @link https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-geo-distance-filter.html
+ * @deprecated Filters are deprecated. Use queries in filter context. See https://www.elastic.co/guide/en/elasticsearch/reference/2.0/query-dsl-filters.html
  */
 class GeoDistance extends AbstractGeoDistance
 {
     const DISTANCE_TYPE_ARC = 'arc';
     const DISTANCE_TYPE_PLANE = 'plane';
+    const DISTANCE_TYPE_SLOPPY_ARC = 'sloppy_arc';
 
     const OPTIMIZE_BBOX_MEMORY = 'memory';
     const OPTIMIZE_BBOX_INDEXED = 'indexed';
     const OPTIMIZE_BBOX_NONE = 'none';
 
     /**
-     * Create GeoDistance object
+     * Create GeoDistance object.
      *
-     * @param  string                              $key      Key
-     * @param  array|string                        $location Location as array or geohash: array('lat' => 48.86, 'lon' => 2.35) OR 'drm3btev3e86'
-     * @param  string                              $distance Distance
+     * @param string       $key      Key
+     * @param array|string $location Location as array or geohash: array('lat' => 48.86, 'lon' => 2.35) OR 'drm3btev3e86'
+     * @param string       $distance Distance
+     *
      * @throws \Elastica\Exception\InvalidException
      */
     public function __construct($key, $location, $distance)
@@ -35,8 +39,9 @@ class GeoDistance extends AbstractGeoDistance
     }
 
     /**
-     * @param  string                            $distance
-     * @return \Elastica\Filter\GeoDistance current filter
+     * @param string $distance
+     *
+     * @return $this
      */
     public function setDistance($distance)
     {
@@ -46,10 +51,11 @@ class GeoDistance extends AbstractGeoDistance
     }
 
     /**
-     * See DISTANCE_TYPE_* constants
+     * See DISTANCE_TYPE_* constants.
      *
-     * @param  string                            $distanceType
-     * @return \Elastica\Filter\GeoDistance current filter
+     * @param string $distanceType
+     *
+     * @return $this
      */
     public function setDistanceType($distanceType)
     {
@@ -59,10 +65,11 @@ class GeoDistance extends AbstractGeoDistance
     }
 
     /**
-     * See OPTIMIZE_BBOX_* constants
+     * See OPTIMIZE_BBOX_* constants.
      *
-     * @param  string                            $optimizeBbox
-     * @return \Elastica\Filter\GeoDistance current filter
+     * @param string $optimizeBbox
+     *
+     * @return $this
      */
     public function setOptimizeBbox($optimizeBbox)
     {

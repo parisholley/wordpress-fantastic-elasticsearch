@@ -1,32 +1,32 @@
 <?php
 
 namespace Elastica\Query;
+
 use Elastica\Type;
 
 /**
- * Ids Query
+ * Ids Query.
  *
- * @category Xodoa
- * @package Elastica
  * @author Lee Parker
  * @author Nicolas Ruflin <spam@ruflin.com>
  * @author Tim Rupp
- * @link http://www.elasticsearch.org/guide/reference/query-dsl/ids-query.html
+ *
+ * @link https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-ids-query.html
  */
 class Ids extends AbstractQuery
 {
     /**
-     * Params
+     * Params.
      *
      * @var array Params
      */
     protected $_params = array();
 
     /**
-     * Creates filter object
+     * Creates filter object.
      *
      * @param string|\Elastica\Type $type Type to filter on
-     * @param array                $ids  List of ids
+     * @param array                 $ids  List of ids
      */
     public function __construct($type = null, array $ids = array())
     {
@@ -35,10 +35,11 @@ class Ids extends AbstractQuery
     }
 
     /**
-     * Adds one more filter to the and filter
+     * Adds one more filter to the and filter.
      *
-     * @param  string                  $id Adds id to filter
-     * @return \Elastica\Query\Ids Current object
+     * @param string $id Adds id to filter
+     *
+     * @return $this
      */
     public function addId($id)
     {
@@ -48,10 +49,11 @@ class Ids extends AbstractQuery
     }
 
     /**
-     * Adds one more type to query
+     * Adds one more type to query.
      *
-     * @param  string|\Elastica\Type    $type Type name or object
-     * @return \Elastica\Query\Ids Current object
+     * @param string|\Elastica\Type $type Type name or object
+     *
+     * @return $this
      */
     public function addType($type)
     {
@@ -68,10 +70,11 @@ class Ids extends AbstractQuery
     }
 
     /**
-     * Set type
+     * Set type.
      *
-     * @param  string|\Elastica\Type $type Type name or object
-     * @return \Elastica\Query\Ids   Current object
+     * @param string|\Elastica\Type $type Type name or object
+     *
+     * @return $this
      */
     public function setType($type)
     {
@@ -88,10 +91,11 @@ class Ids extends AbstractQuery
     }
 
     /**
-     * Sets the ids to filter
+     * Sets the ids to filter.
      *
-     * @param  array|string            $ids List of ids
-     * @return \Elastica\Query\Ids Current object
+     * @param array|string $ids List of ids
+     *
+     * @return $this
      */
     public function setIds($ids)
     {
@@ -105,9 +109,10 @@ class Ids extends AbstractQuery
     }
 
     /**
-     * Converts filter to array
+     * Converts filter to array.
      *
      * @see \Elastica\Query\AbstractQuery::toArray()
+     *
      * @return array Query array
      */
     public function toArray()

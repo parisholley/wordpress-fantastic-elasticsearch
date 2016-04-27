@@ -4,22 +4,23 @@ namespace Elastica\Filter;
 
 use Elastica\Exception\InvalidException;
 
+trigger_error('Deprecated: Filters are deprecated. Use queries in filter context. See https://www.elastic.co/guide/en/elasticsearch/reference/2.0/query-dsl-filters.html', E_USER_DEPRECATED);
+
 /**
- * Geo distance filter
+ * Geo distance filter.
  *
- * @category Xodoa
- * @package Elastica
  * @author Nicolas Ruflin <spam@ruflin.com>
- * @link http://www.elasticsearch.org/guide/reference/query-dsl/geo-distance-filter.html
+ *
+ * @link https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-geo-distance-filter.html
+ * @deprecated Filters are deprecated. Use queries in filter context. See https://www.elastic.co/guide/en/elasticsearch/reference/2.0/query-dsl-filters.html
  */
 abstract class AbstractGeoDistance extends AbstractFilter
 {
-
     const LOCATION_TYPE_GEOHASH = 'geohash';
     const LOCATION_TYPE_LATLON = 'latlon';
 
     /**
-     * Location type
+     * Location type.
      *
      * Decides if this filter uses latitude/longitude or geohash for the location.
      * Values are "latlon" or "geohash".
@@ -29,38 +30,39 @@ abstract class AbstractGeoDistance extends AbstractFilter
     protected $_locationType = null;
 
     /**
-     * Key
+     * Key.
      *
      * @var string
      */
     protected $_key = null;
 
     /**
-     * Latitude
+     * Latitude.
      *
      * @var float
      */
     protected $_latitude = null;
 
     /**
-     * Longitude
+     * Longitude.
      *
      * @var float
      */
     protected $_longitude = null;
 
     /**
-     * Geohash
+     * Geohash.
      *
      * @var string
      */
     protected $_geohash = null;
 
     /**
-     * Create GeoDistance object
+     * Create GeoDistance object.
      *
-     * @param  string                              $key      Key
-     * @param  array|string                        $location Location as array or geohash: array('lat' => 48.86, 'lon' => 2.35) OR 'drm3btev3e86'
+     * @param string       $key      Key
+     * @param array|string $location Location as array or geohash: array('lat' => 48.86, 'lon' => 2.35) OR 'drm3btev3e86'
+     *
      * @internal param string $distance Distance
      */
     public function __construct($key, $location)
@@ -71,8 +73,9 @@ abstract class AbstractGeoDistance extends AbstractFilter
     }
 
     /**
-     * @param  string                                    $key
-     * @return \Elastica\Filter\AbstractGeoDistance current filter
+     * @param string $key
+     *
+     * @return $this
      */
     public function setKey($key)
     {
@@ -82,9 +85,11 @@ abstract class AbstractGeoDistance extends AbstractFilter
     }
 
     /**
-     * @param  array|string                              $location
-     * @return \Elastica\Filter\AbstractGeoDistance
+     * @param array|string $location
+     *
      * @throws \Elastica\Exception\InvalidException
+     *
+     * @return $this
      */
     public function setLocation($location)
     {
@@ -113,8 +118,9 @@ abstract class AbstractGeoDistance extends AbstractFilter
     }
 
     /**
-     * @param  float                                     $latitude
-     * @return \Elastica\Filter\AbstractGeoDistance current filter
+     * @param float $latitude
+     *
+     * @return $this
      */
     public function setLatitude($latitude)
     {
@@ -125,8 +131,9 @@ abstract class AbstractGeoDistance extends AbstractFilter
     }
 
     /**
-     * @param  float                                     $longitude
-     * @return \Elastica\Filter\AbstractGeoDistance current filter
+     * @param float $longitude
+     *
+     * @return $this
      */
     public function setLongitude($longitude)
     {
@@ -137,8 +144,9 @@ abstract class AbstractGeoDistance extends AbstractFilter
     }
 
     /**
-     * @param  string                                    $geohash
-     * @return \Elastica\Filter\AbstractGeoDistance current filter
+     * @param string $geohash
+     *
+     * @return $this
      */
     public function setGeohash($geohash)
     {
@@ -149,8 +157,9 @@ abstract class AbstractGeoDistance extends AbstractFilter
     }
 
     /**
-     * @return array|string
      * @throws \Elastica\Exception\InvalidException
+     *
+     * @return array|string
      */
     protected function _getLocationData()
     {
@@ -179,7 +188,10 @@ abstract class AbstractGeoDistance extends AbstractFilter
 
     /**
      * @see \Elastica\Param::toArray()
+     *
      * @throws \Elastica\Exception\InvalidException
+     *
+     * @return array
      */
     public function toArray()
     {

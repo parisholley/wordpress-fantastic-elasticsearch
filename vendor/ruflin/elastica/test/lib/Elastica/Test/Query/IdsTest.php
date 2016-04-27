@@ -11,11 +11,11 @@ class IdsTest extends BaseTest
     protected $_index;
     protected $_type;
 
-    public function setUp()
+    protected function setUp()
     {
-        $client = $this->_getClient();
-        $index = $client->getIndex('test');
-        $index->create(array(), true);
+        parent::setUp();
+
+        $index = $this->_createIndex();
 
         $type1 = $index->getType('helloworld1');
         $type2 = $index->getType('helloworld2');
@@ -38,13 +38,9 @@ class IdsTest extends BaseTest
         $this->_index = $index;
     }
 
-    public function tearDown()
-    {
-        $client = $this->_getClient();
-        $index = $client->getIndex('test');
-        $index->delete();
-    }
-
+    /**
+     * @group functional
+     */
     public function testSetIdsSearchSingle()
     {
         $query = new Ids();
@@ -55,6 +51,9 @@ class IdsTest extends BaseTest
         $this->assertEquals(1, $resultSet->count());
     }
 
+    /**
+     * @group functional
+     */
     public function testSetIdsSearchArray()
     {
         $query = new Ids();
@@ -65,6 +64,9 @@ class IdsTest extends BaseTest
         $this->assertEquals(2, $resultSet->count());
     }
 
+    /**
+     * @group functional
+     */
     public function testAddIdsSearchSingle()
     {
         $query = new Ids();
@@ -75,6 +77,9 @@ class IdsTest extends BaseTest
         $this->assertEquals(1, $resultSet->count());
     }
 
+    /**
+     * @group functional
+     */
     public function testComboIdsSearchArray()
     {
         $query = new Ids();
@@ -87,6 +92,9 @@ class IdsTest extends BaseTest
         $this->assertEquals(3, $resultSet->count());
     }
 
+    /**
+     * @group functional
+     */
     public function testSetTypeSingleSearchSingle()
     {
         $query = new Ids();
@@ -99,6 +107,9 @@ class IdsTest extends BaseTest
         $this->assertEquals(1, $resultSet->count());
     }
 
+    /**
+     * @group functional
+     */
     public function testSetTypeSingleSearchArray()
     {
         $query = new Ids();
@@ -111,6 +122,9 @@ class IdsTest extends BaseTest
         $this->assertEquals(2, $resultSet->count());
     }
 
+    /**
+     * @group functional
+     */
     public function testSetTypeSingleSearchSingleDocInOtherType()
     {
         $query = new Ids();
@@ -125,6 +139,9 @@ class IdsTest extends BaseTest
         $this->assertEquals(0, $resultSet->count());
     }
 
+    /**
+     * @group functional
+     */
     public function testSetTypeSingleSearchArrayDocInOtherType()
     {
         $query = new Ids();
@@ -139,6 +156,9 @@ class IdsTest extends BaseTest
         $this->assertEquals(1, $resultSet->count());
     }
 
+    /**
+     * @group functional
+     */
     public function testSetTypeArraySearchArray()
     {
         $query = new Ids();
@@ -151,6 +171,9 @@ class IdsTest extends BaseTest
         $this->assertEquals(2, $resultSet->count());
     }
 
+    /**
+     * @group functional
+     */
     public function testSetTypeArraySearchSingle()
     {
         $query = new Ids();

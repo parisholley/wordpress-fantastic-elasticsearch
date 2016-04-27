@@ -8,7 +8,9 @@ use Elastica\Test\Base as BaseTest;
 
 class ConnectionTest extends BaseTest
 {
-
+    /**
+     * @group unit
+     */
     public function testEmptyConstructor()
     {
         $connection = new Connection();
@@ -17,10 +19,14 @@ class ConnectionTest extends BaseTest
         $this->assertEquals(Connection::DEFAULT_TRANSPORT, $connection->getTransport());
         $this->assertInstanceOf('Elastica\Transport\AbstractTransport', $connection->getTransportObject());
         $this->assertEquals(Connection::TIMEOUT, $connection->getTimeout());
+        $this->assertEquals(Connection::CONNECT_TIMEOUT, $connection->getConnectTimeout());
         $this->assertEquals(array(), $connection->getConfig());
         $this->assertTrue($connection->isEnabled());
     }
 
+    /**
+     * @group unit
+     */
     public function testEnabledDisable()
     {
         $connection = new Connection();
@@ -32,19 +38,23 @@ class ConnectionTest extends BaseTest
     }
 
     /**
+     * @group unit
      * @expectedException \Elastica\Exception\ConnectionException
      */
     public function testInvalidConnection()
     {
         $connection = new Connection(array('port' => 9999));
 
-        $request = new Request('_status', Request::GET);
+        $request = new Request('_stats', Request::GET);
         $request->setConnection($connection);
 
         // Throws exception because no valid connection
         $request->send();
     }
 
+    /**
+     * @group unit
+     */
     public function testCreate()
     {
         $connection = Connection::create();
@@ -60,6 +70,7 @@ class ConnectionTest extends BaseTest
     }
 
     /**
+     * @group unit
      * @expectedException \Elastica\Exception\InvalidException
      * @expectedException \Elastica\Exception\InvalidException
      */
@@ -68,6 +79,9 @@ class ConnectionTest extends BaseTest
         Connection::create('test');
     }
 
+    /**
+     * @group unit
+     */
     public function testGetConfig()
     {
         $url = 'test';
@@ -76,6 +90,9 @@ class ConnectionTest extends BaseTest
         $this->assertEquals($url, $connection->getConfig('url'));
     }
 
+    /**
+     * @group unit
+     */
     public function testGetConfigWithArrayUsedForTransport()
     {
         $connection = new Connection(array('transport' => array('type' => 'Http')));
@@ -83,6 +100,7 @@ class ConnectionTest extends BaseTest
     }
 
     /**
+     * @group unit
      * @expectedException Elastica\Exception\InvalidException
      * @expectedExceptionMessage Invalid transport
      */
@@ -93,11 +111,67 @@ class ConnectionTest extends BaseTest
     }
 
     /**
+     * @group unit
      * @expectedException \Elastica\Exception\InvalidException
      */
     public function testGetConfigInvalidValue()
     {
         $connection = new Connection();
         $connection->getConfig('url');
+    }
+
+    /**
+     * @group unit
+     */
+    public function testCompression()
+    {
+        $connection = new Connection();
+
+        $this->assertFalse($connection->hasCompression());
+        $connection->setCompression(true);
+        $this->assertTrue($connection->hasCompression());
+    }
+
+    /**
+     * @group unit
+     */
+    public function testCompressionDefaultWithClient()
+    {
+        $client = new \Elastica\Client();
+        $connection = $client->getConnection();
+        $this->assertFalse($connection->hasCompression());
+    }
+
+    /**
+     * @group unit
+     */
+    public function testCompressionEnabledWithClient()
+    {
+        $client = new \Elastica\Client(array('connections' => array(array('compression' => true))));
+        $connection = $client->getConnection();
+
+        $this->assertTrue($connection->hasCompression());
+    }
+
+    /**
+     * @group unit
+     */
+    public function testUsernameFromClient()
+    {
+        $username = 'foo';
+        $client = new \Elastica\Client(array('username' => $username));
+
+        $this->assertEquals($username, $client->getConnection()->getUsername('username'));
+    }
+
+    /**
+     * @group unit
+     */
+    public function testPasswordFromClient()
+    {
+        $password = 'bar';
+        $client = new \Elastica\Client(array('password' => $password));
+
+        $this->assertEquals($password, $client->getConnection()->getPassword('password'));
     }
 }

@@ -4,21 +4,24 @@ namespace Elastica\Filter;
 
 use Elastica\Query\AbstractQuery;
 
+trigger_error('Deprecated: Filters are deprecated. Use queries in filter context. See https://www.elastic.co/guide/en/elasticsearch/reference/2.0/query-dsl-filters.html', E_USER_DEPRECATED);
+
 /**
- * Nested filter
+ * Nested filter.
  *
- * @category Xodoa
- * @package Elastica
  * @author Nicolas Ruflin <spam@ruflin.com>
- * @link http://www.elasticsearch.org/guide/reference/query-dsl/nested-filter.html
+ *
+ * @link http://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-nested-filter.html
+ * @deprecated Filters are deprecated. Use queries in filter context. See https://www.elastic.co/guide/en/elasticsearch/reference/2.0/query-dsl-filters.html
  */
 class Nested extends AbstractFilter
 {
     /**
-     * Adds field to mlt filter
+     * Adds field to mlt filter.
      *
-     * @param  string                       $path Nested object path
-     * @return \Elastica\Filter\Nested
+     * @param string $path Nested object path
+     *
+     * @return $this
      */
     public function setPath($path)
     {
@@ -26,35 +29,38 @@ class Nested extends AbstractFilter
     }
 
     /**
-     * Sets nested query
+     * Sets nested query.
      *
-     * @param  \Elastica\Query\AbstractQuery $query
-     * @return \Elastica\Filter\Nested
+     * @param \Elastica\Query\AbstractQuery $query
+     *
+     * @return $this
      */
     public function setQuery(AbstractQuery $query)
     {
-        return $this->setParam('query', $query->toArray());
+        return $this->setParam('query', $query);
     }
 
     /**
-     * Sets nested filter
+     * Sets nested filter.
      *
-     * @param  \Elastica\Filter\AbstractFilter $filter
-     * @return \Elastica\Filter\Nested
+     * @param \Elastica\Filter\AbstractFilter $filter
+     *
+     * @return $this
      */
     public function setFilter(AbstractFilter $filter)
     {
-        return $this->setParam('filter', $filter->toArray());
+        return $this->setParam('filter', $filter);
     }
 
     /**
-     * Set score mode
+     * Set join option.
      *
-     * @param  string                       $scoreMode Options: avg, total, max and none.
-     * @return \Elastica\Filter\Nested
+     * @param bool $join
+     *
+     * @return $this
      */
-    public function setScoreMode($scoreMode)
+    public function setJoin($join)
     {
-        return $this->setParam('score_mode', $scoreMode);
+        return $this->setParam('join', (bool) $join);
     }
 }

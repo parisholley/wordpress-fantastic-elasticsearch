@@ -3,17 +3,16 @@
 namespace Elastica\Query;
 
 /**
- * Match all query. Returns all results
+ * Match all query. Returns all results.
  *
- * @category Xodoa
- * @package Elastica
  * @author Nicolas Ruflin <spam@ruflin.com>
- * @link http://www.elasticsearch.org/guide/reference/query-dsl/match-all-query.html
+ *
+ * @link https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-match-all-query.html
  */
 class MatchAll extends AbstractQuery
 {
     /**
-     * Creates match all query
+     * Creates match all query.
      */
     public function __construct()
     {

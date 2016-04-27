@@ -5,24 +5,27 @@ namespace Elastica\Filter;
 use Elastica\Exception\InvalidException;
 use Elastica\Query\AbstractQuery;
 
+trigger_error('Deprecated: Filters are deprecated. Use queries in filter context. See https://www.elastic.co/guide/en/elasticsearch/reference/2.0/query-dsl-filters.html', E_USER_DEPRECATED);
+
 /**
- * Query filter
+ * Query filter.
  *
- * @category Xodoa
- * @package Elastica
  * @author Nicolas Ruflin <spam@ruflin.com>
- * @link http://www.elasticsearch.org/guide/reference/query-dsl/query-filter.html
+ *
+ * @link https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-filter.html
+ * @deprecated Filters are deprecated. Use queries in filter context. See https://www.elastic.co/guide/en/elasticsearch/reference/2.0/query-dsl-filters.html
  */
 class Query extends AbstractFilter
 {
     /**
-     * Query
+     * Query.
+     *
      * @var array
      */
     protected $_query;
 
     /**
-     * Construct query filter
+     * Construct query filter.
      *
      * @param array|\Elastica\Query\AbstractQuery $query
      */
@@ -34,20 +37,18 @@ class Query extends AbstractFilter
     }
 
     /**
-     * Set query
+     * Set query.
      *
-     * @param  array|\Elastica\Query\AbstractQuery  $query
-     * @return \Elastica\Filter\Query         Query object
-     * @throws \Elastica\Exception\InvalidException Invalid param
+     * @param array|\Elastica\Query\AbstractQuery $query
+     *
+     * @throws \Elastica\Exception\InvalidException If parameter is invalid
+     *
+     * @return $this
      */
     public function setQuery($query)
     {
-        if (!$query instanceof AbstractQuery && ! is_array($query)) {
+        if (!$query instanceof AbstractQuery && !is_array($query)) {
             throw new InvalidException('expected an array or instance of Elastica\Query\AbstractQuery');
-        }
-
-        if ($query instanceof AbstractQuery) {
-            $query = $query->toArray();
         }
 
         $this->_query = $query;
@@ -85,6 +86,6 @@ class Query extends AbstractFilter
 
         $data[$name] = $filterData;
 
-        return $data;
+        return $this->_convertArrayable($data);
     }
 }

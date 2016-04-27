@@ -4,22 +4,25 @@ namespace Elastica\Test\Exception;
 
 use Elastica\Document;
 use Elastica\Exception\PartialShardFailureException;
+use Elastica\JSON;
 use Elastica\Query;
 use Elastica\ResultSet;
-use Elastica\Test\Base as BaseTest;
 
-class PartialShardFailureExceptionTest extends BaseTest
+class PartialShardFailureExceptionTest extends AbstractExceptionTest
 {
-
+    /**
+     * @group functional
+     */
     public function testPartialFailure()
     {
+        $this->_checkScriptInlineSetting();
         $client = $this->_getClient();
         $index = $client->getIndex('elastica_partial_failure');
         $index->create(array(
             'index' => array(
-                'number_of_shards'   => 5,
-                'number_of_replicas' => 0
-            )
+                'number_of_shards' => 5,
+                'number_of_replicas' => 0,
+            ),
         ), true);
 
         $type = $index->getType('folks');
@@ -49,7 +52,10 @@ class PartialShardFailureExceptionTest extends BaseTest
         } catch (PartialShardFailureException $e) {
             $resultSet = new ResultSet($e->getResponse(), $query);
             $this->assertEquals(0, count($resultSet->getResults()));
+
+            $message = JSON::parse($e->getMessage());
+            $this->assertTrue(isset($message['failures']), 'Failures are absent');
+            $this->assertGreaterThan(0, count($message['failures']), 'Failures are empty');
         }
     }
-
 }

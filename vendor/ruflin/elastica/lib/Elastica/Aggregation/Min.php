@@ -3,11 +3,10 @@
 namespace Elastica\Aggregation;
 
 /**
- * Class Min
- * @package Elastica\Aggregation
- * @link http://www.elasticsearch.org/guide/en/elasticsearch/reference/master/search-aggregations-metrics-min-aggregation.html
+ * Class Min.
+ *
+ * @link https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-metrics-min-aggregation.html
  */
 class Min extends AbstractSimpleAggregation
 {
-
-} 
+}

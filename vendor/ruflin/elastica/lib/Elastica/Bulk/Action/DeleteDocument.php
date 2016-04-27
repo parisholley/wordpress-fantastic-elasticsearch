@@ -13,6 +13,7 @@ class DeleteDocument extends AbstractDocument
 
     /**
      * @param \Elastica\AbstractUpdateAction $action
+     *
      * @return array
      */
     protected function _getMetadata(AbstractUpdateAction $action)
@@ -24,7 +25,7 @@ class DeleteDocument extends AbstractDocument
             'version',
             'version_type',
             'routing',
-            'parent'
+            'parent',
         );
         $metadata = $action->getOptions($params, true);
 

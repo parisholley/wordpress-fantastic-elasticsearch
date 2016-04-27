@@ -2,13 +2,14 @@
 
 namespace Elastica\Test;
 
-use Elastica\Client;
 use Elastica\Node;
 use Elastica\Test\Base as BaseTest;
 
 class NodeTest extends BaseTest
 {
-
+    /**
+     * @group functional
+     */
     public function testCreateNode()
     {
         $client = $this->_getClient();
@@ -19,6 +20,9 @@ class NodeTest extends BaseTest
         $this->assertInstanceOf('Elastica\Node', $node);
     }
 
+    /**
+     * @group functional
+     */
     public function testGetInfo()
     {
         $client = $this->_getClient();
@@ -32,6 +36,9 @@ class NodeTest extends BaseTest
         $this->assertInstanceOf('Elastica\Node\Info', $info);
     }
 
+    /**
+     * @group functional
+     */
     public function testGetStats()
     {
         $client = $this->_getClient();
@@ -46,39 +53,29 @@ class NodeTest extends BaseTest
     }
 
     /**
-     * Shuts one of two nodes down (if two available)
+     * @group functional
      */
-    public function testShutdown()
+    public function testGetName()
     {
-        $this->markTestSkipped('At least two nodes have to be running, because 1 node is shutdown');
         $client = $this->_getClient();
+
         $nodes = $client->getCluster()->getNodes();
+        // At least 1 instance must exist
+        $this->assertGreaterThan(0, $nodes);
 
-        $count = count($nodes);
-        if ($count < 2) {
-            $this->markTestSkipped('At least two nodes have to be running, because 1 node is shutdown');
+        $data = $client->request('/_nodes')->getData();
+        $rawNodes = $data['nodes'];
+
+        foreach ($nodes as $node) {
+            $this->assertEquals($rawNodes[$node->getId()]['name'], $node->getName());
         }
+    }
 
-           // Store node info of node with port 9200 for later
-        foreach ($nodes as $key => $node) {
-            if ($node->getInfo()->getPort() == 9200) {
-                $info = $node->getInfo();
-                unset($nodes[$key]);
-            }
-        }
-
-        // Select one of the not port 9200 nodes and shut it down
-        $node = array_shift($nodes);
-        $node->shutdown('2s');
-
-        // Wait until node is shutdown
-        sleep(5);
-
-        // Use still existing node
-        $client = new Client(array('host' => $info->getIp(), 'port' => $info->getPort()));
-        $names = $client->getCluster()->getNodeNames();
-
-        // One node less ...
-        $this->assertEquals($count - 1, count($names));
+    /**
+     * @group functional
+     */
+    public function testGetId()
+    {
+        $node = new Node('Elastica', $this->_getClient());
     }
 }

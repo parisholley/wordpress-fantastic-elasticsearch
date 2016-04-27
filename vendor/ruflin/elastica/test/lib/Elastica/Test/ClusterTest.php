@@ -2,25 +2,36 @@
 
 namespace Elastica\Test;
 
-use Elastica\Client;
 use Elastica\Cluster;
 use Elastica\Test\Base as BaseTest;
 
 class ClusterTest extends BaseTest
 {
-
+    /**
+     * @group functional
+     */
     public function testGetNodeNames()
     {
         $client = $this->_getClient();
+        $data = $client->request('/')->getData();
 
         $cluster = new Cluster($client);
 
-        $names = $cluster->getNodeNames();
+        $data = $client->request('/_nodes')->getData();
+        $rawNodes = $data['nodes'];
 
-        $this->assertInternalType('array', $names);
-        $this->assertGreaterThan(0, count($names));
+        $rawNodeNames = array();
+
+        foreach ($rawNodes as $rawNode) {
+            $rawNodeNames[] = $rawNode['name'];
+        }
+
+        $this->assertEquals($rawNodeNames, $cluster->getNodeNames());
     }
 
+    /**
+     * @group functional
+     */
     public function testGetNodes()
     {
         $client = $this->_getClient();
@@ -35,6 +46,9 @@ class ClusterTest extends BaseTest
         $this->assertGreaterThan(0, count($nodes));
     }
 
+    /**
+     * @group functional
+     */
     public function testGetState()
     {
         $client = $this->_getClient();
@@ -44,28 +58,14 @@ class ClusterTest extends BaseTest
     }
 
     /**
-     * @expectedException \Elastica\Exception\ConnectionException
+     * @group functional
      */
-    public function testShutdown()
-    {
-        $this->markTestSkipped('This test shuts down the cluster which means the following tests would not work');
-        $client = $this->_getClient();
-        $cluster = $client->getCluster();
-
-        $cluster->shutdown('2s');
-
-        sleep(5);
-
-        $client->getStatus();
-    }
-
     public function testGetIndexNames()
     {
         $client = $this->_getClient();
         $cluster = $client->getCluster();
 
-        $indexName = 'elastica_test999';
-        $index = $this->_createIndex($indexName);
+        $index = $this->_createIndex();
         $index->delete();
         $cluster->refresh();
 
@@ -73,7 +73,7 @@ class ClusterTest extends BaseTest
         $indexNames = $cluster->getIndexNames();
         $this->assertNotContains($index->getName(), $indexNames);
 
-        $index = $this->_createIndex($indexName);
+        $index = $this->_createIndex();
         $cluster->refresh();
 
         // Now index should exist
@@ -81,6 +81,9 @@ class ClusterTest extends BaseTest
         $this->assertContains($index->getname(), $indexNames);
     }
 
+    /**
+     * @group functional
+     */
     public function testGetHealth()
     {
         $client = $this->_getClient();

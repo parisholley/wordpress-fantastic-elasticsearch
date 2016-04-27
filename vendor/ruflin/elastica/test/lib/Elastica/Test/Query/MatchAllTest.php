@@ -9,6 +9,9 @@ use Elastica\Test\Base as BaseTest;
 
 class MatchAllTest extends BaseTest
 {
+    /**
+     * @group unit
+     */
     public function testToArray()
     {
         $query = new MatchAll();
@@ -18,10 +21,13 @@ class MatchAllTest extends BaseTest
         $this->assertEquals($expectedArray, $query->toArray());
     }
 
+    /**
+     * @group functional
+     */
     public function testMatchAllIndicesTypes()
     {
-        $index1 = $this->_createIndex('test1');
-        $index2 = $this->_createIndex('test2');
+        $index1 = $this->_createIndex();
+        $index2 = $this->_createIndex();
 
         $client = $index1->getClient();
 

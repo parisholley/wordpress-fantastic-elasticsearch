@@ -3,25 +3,23 @@
 namespace Elastica;
 
 /**
- * Elastica result item
+ * Elastica result item.
  *
  * Stores all information from a result
  *
- * @category Xodoa
- * @package Elastica
  * @author Nicolas Ruflin <spam@ruflin.com>
  */
 class Result
 {
     /**
-     * Hit array
+     * Hit array.
      *
      * @var array Hit array
      */
     protected $_hit = array();
 
     /**
-     * Constructs a single results object
+     * Constructs a single results object.
      *
      * @param array $hit Hit data
      */
@@ -31,14 +29,15 @@ class Result
     }
 
     /**
-     * Returns a param from the result hit array
+     * Returns a param from the result hit array.
      *
      * This function can be used to retrieve all data for which a specific
      * function doesn't exist.
      * If the param does not exist, an empty array is returned
      *
-     * @param  string $name Param name
-     * @return array  Result data
+     * @param string $name Param name
+     *
+     * @return array Result data
      */
     public function getParam($name)
     {
@@ -50,18 +49,19 @@ class Result
     }
 
     /**
-     * Test if a param from the result hit is set
+     * Test if a param from the result hit is set.
      *
-     * @param  string  $name Param name to test
-     * @return boolean True if the param is set, false otherwise
+     * @param string $name Param name to test
+     *
+     * @return bool True if the param is set, false otherwise
      */
     public function hasParam($name)
     {
         return isset($this->_hit[$name]);
-    }    
-    
+    }
+
     /**
-     * Returns the hit id
+     * Returns the hit id.
      *
      * @return string Hit id
      */
@@ -71,7 +71,7 @@ class Result
     }
 
     /**
-     * Returns the type of the result
+     * Returns the type of the result.
      *
      * @return string Result type
      */
@@ -81,7 +81,7 @@ class Result
     }
 
     /**
-     * Returns list of fields
+     * Returns list of fields.
      *
      * @return array Fields list
      */
@@ -91,17 +91,17 @@ class Result
     }
 
     /**
-     * Returns whether result has fields
-     * 
+     * Returns whether result has fields.
+     *
      * @return bool
      */
     public function hasFields()
     {
         return $this->hasParam('fields');
-    }    
-    
+    }
+
     /**
-     * Returns the index name of the result
+     * Returns the index name of the result.
      *
      * @return string Index name
      */
@@ -111,7 +111,7 @@ class Result
     }
 
     /**
-     * Returns the score of the result
+     * Returns the score of the result.
      *
      * @return float Result score
      */
@@ -121,7 +121,7 @@ class Result
     }
 
     /**
-     * Returns the raw hit array
+     * Returns the raw hit array.
      *
      * @return array Hit array
      */
@@ -131,7 +131,7 @@ class Result
     }
 
     /**
-     * Returns the version information from the hit
+     * Returns the version information from the hit.
      *
      * @return string|int Document version
      */
@@ -141,9 +141,9 @@ class Result
     }
 
     /**
-     * Returns result data
+     * Returns result data.
      *
-     * Checks for partial result data with getFields, falls back to getSource
+     * Checks for partial result data with getFields, falls back to getSource or both
      *
      * @return array Result data array
      */
@@ -151,13 +151,15 @@ class Result
     {
         if (isset($this->_hit['fields']) && !isset($this->_hit['_source'])) {
             return $this->getFields();
+        } elseif (isset($this->_hit['fields']) && isset($this->_hit['_source'])) {
+            return array_merge($this->getFields(), $this->getSource());
         }
 
         return $this->getSource();
     }
 
     /**
-     * Returns the result source
+     * Returns the result source.
      *
      * @return array Source data array
      */
@@ -167,7 +169,7 @@ class Result
     }
 
     /**
-     * Returns result data
+     * Returns result data.
      *
      * @return array Result data array
      */
@@ -187,12 +189,40 @@ class Result
     }
 
     /**
-     * Magic function to directly access keys inside the result
+     * Returns Document.
+     * 
+     * @return \Elastica\Document
+     */
+    public function getDocument()
+    {
+        $doc = new \Elastica\Document();
+        $doc->setData($this->getSource());
+        $hit = $this->getHit();
+        if ($this->hasParam('_source')) {
+            unset($hit['_source']);
+        }
+        if ($this->hasParam('_explanation')) {
+            unset($hit['_explanation']);
+        }
+        if ($this->hasParam('highlight')) {
+            unset($hit['highlight']);
+        }
+        if ($this->hasParam('_score')) {
+            unset($hit['_score']);
+        }
+        $doc->setParams($hit);
+
+        return $doc;
+    }
+
+    /**
+     * Magic function to directly access keys inside the result.
      *
      * Returns null if key does not exist
      *
-     * @param  string $key Key name
-     * @return mixed  Key value
+     * @param string $key Key name
+     *
+     * @return mixed Key value
      */
     public function __get($key)
     {
@@ -200,11 +230,12 @@ class Result
 
         return array_key_exists($key, $source) ? $source[$key] : null;
     }
-    
+
     /**
-     * Magic function to support isset() calls
+     * Magic function to support isset() calls.
      *
      * @param string $key Key name
+     *
      * @return bool
      */
     public function __isset($key)

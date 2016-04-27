@@ -5,21 +5,24 @@ namespace Elastica\Filter;
 use Elastica\Exception\InvalidException;
 use Elastica\Param;
 
+trigger_error('Deprecated: Filters are deprecated. Use queries in filter context. See https://www.elastic.co/guide/en/elasticsearch/reference/2.0/query-dsl-filters.html', E_USER_DEPRECATED);
+
 /**
- * Abstract filter object. Should be extended by all filter types
+ * Abstract filter object. Should be extended by all filter types.
  *
- * @category Xodoa
- * @package Elastica
  * @author Nicolas Ruflin <spam@ruflin.com>
- * @link http://www.elasticsearch.org/guide/reference/query-dsl/
+ *
+ * @link https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-filters.html
+ * @deprecated Filters are deprecated. Use queries in filter context. See https://www.elastic.co/guide/en/elasticsearch/reference/2.0/query-dsl-filters.html
  */
 abstract class AbstractFilter extends Param
 {
     /**
-     * Sets the filter cache
+     * Sets the filter cache.
      *
-     * @param  boolean                        $cached Cached
-     * @return \Elastica\Filter\AbstractFilter
+     * @param bool $cached Cached
+     *
+     * @return $this
      */
     public function setCached($cached = true)
     {
@@ -27,11 +30,13 @@ abstract class AbstractFilter extends Param
     }
 
     /**
-     * Sets the filter cache key
+     * Sets the filter cache key.
      *
-     * @param  string                              $cacheKey Cache key
-     * @throws \Elastica\Exception\InvalidException
-     * @return \Elastica\Filter\AbstractFilter
+     * @param string $cacheKey Cache key
+     *
+     * @throws \Elastica\Exception\InvalidException If given key is empty
+     *
+     * @return $this
      */
     public function setCacheKey($cacheKey)
     {
@@ -45,10 +50,11 @@ abstract class AbstractFilter extends Param
     }
 
     /**
-     * Sets the filter name
+     * Sets the filter name.
      *
-     * @param  string                         $name Name
-     * @return \Elastica\Filter\AbstractFilter
+     * @param string $name Name
+     *
+     * @return $this
      */
     public function setName($name)
     {
