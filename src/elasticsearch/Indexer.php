@@ -275,7 +275,7 @@ class Indexer
 			// detect special field type
 			if (isset($numeric[$field])) {
 				$props['type'] = 'float';
-			} elseif (isset($notanalyzed[$field]) || $kind == 'taxonomy') {
+			} elseif (isset($notanalyzed[$field]) || $kind == 'taxonomy' || $field == 'post_type') {
 				$props['index'] = 'not_analyzed';
 			} elseif ($field == 'post_date') {
 				$props['type'] = 'date';
