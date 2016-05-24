@@ -12,10 +12,13 @@ abstract class AbstractArchive{
 	function __construct(){
 		add_action('pre_get_posts', array(&$this, 'do_search'), 100);
 		add_action('the_posts', array(&$this, 'process_search'));
+		add_filter('elasticsearch_should_query_' . $this->get_filter_name(),array($this,'filter_singular_query'),10,2);
+		add_filter('elasticsearch_should_query_' . $this->get_filter_name(),array($this,'filter_frontend_main_query'),20,2);
 	}
 
 	function do_search($wp_query){
-		if(!$wp_query->is_main_query() || is_admin() || $this->attempted){
+
+		if ( !Config::apply_filters('should_query_' . $this->get_filter_name(),true,$wp_query)) {
 			return;
 		}
 
@@ -73,6 +76,28 @@ abstract class AbstractArchive{
 
 	function sort_posts($a, $b){
 		return array_search($b->ID, $this->ids) > array_search($a->ID, $this->ids) ? -1 : 1;
+	}
+
+
+	function filter_frontend_main_query($allowed,$wp_query)	{
+		return $allowed && $wp_query->is_main_query() && !is_admin();
+	}
+
+	function filter_singular_query($allowed,$wp_query) {
+		return $allowed && !$this->attempted;
+	}
+
+	/**
+	 * Removes any namespaces and transforms the class name into lowercase for use in filters
+	 * 
+	 * @return string
+	 */
+	function get_filter_name() {
+		$class = trim(get_class($this), '\\');
+		if ($last_separator = strrpos($class, '\\')) {
+			$class = substr($class, $last_separator + 1);
+		}
+		return strtolower($class);
 	}
 
 	abstract function facets($wp_query, $existing);
