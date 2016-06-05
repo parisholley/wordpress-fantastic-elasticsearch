@@ -38,7 +38,7 @@ class Config
 		$custom = [];
 
 		foreach (self::facets() as $field) {
-			if (!in_array($field, $fields) && !in_array($field, self::taxonomies())) {
+			if (!in_array($field, self::fields()) && !in_array($field, self::taxonomies())) {
 				$custom[] = $field;
 			}
 		}

@@ -167,6 +167,7 @@ class Searcher
 			self::_filterBySelectedFacets('post_type', $facets, 'term', $musts, $filters);
 		}
 
+		// TODO: write test
 		self::_searchField(Config::customFacets(), 'custom', $exclude, $search, $facets, $musts, $filters, $scored, $numeric);
 
 		if (count($filters) > 0) {
@@ -301,6 +302,9 @@ class Searcher
 
 					self::_filterBySelectedFacets($field, $facets, 'range', $musts, $filters, $transformed);
 				}
+			} else if ($type == 'custom') {
+				// TODO: write test
+				self::_filterBySelectedFacets($field, $facets, 'term', $musts, $filters);
 			}
 		}
 	}
