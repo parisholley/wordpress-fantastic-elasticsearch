@@ -74,10 +74,8 @@ class Faceting
 			}
 		}
 
-		foreach (Config::facets() as $field) {
-			if (!in_array($field, $fields) && !in_array($field, Config::taxonomies())) {
-				$options[$field] = self::custom($field);
-			}
+		foreach (Config::customFacets() as $field) {
+			$options[$field] = self::custom($field);
 		}
 
 		foreach ($options as $name => &$field) {

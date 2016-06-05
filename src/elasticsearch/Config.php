@@ -29,6 +29,24 @@ class Config
 	}
 
 	/**
+	 * Identifies facets that were defined by user but do not follow standard format.
+	 *
+	 * @return array An array of strings that represent mapped fields
+	 **/
+	static function customFacets()
+	{
+		$custom = [];
+
+		foreach (self::facets() as $field) {
+			if (!in_array($field, $fields) && !in_array($field, self::taxonomies())) {
+				$custom[] = $field;
+			}
+		}
+
+		return self::apply_filters('config_custom_facets', $custom);
+	}
+
+	/**
 	 * The score given to a data point that determines the impact on search results. May return null if the setttings have not been saved.
 	 *
 	 * @param string $type The type of wordpress object that is being scored (tax|field)
