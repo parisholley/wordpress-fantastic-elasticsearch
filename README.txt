@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=paris
 Tags: search,performance,elastic search,elastic,elasticsearch,facet,faceting,faceted search
 Requires at least: 3.5
 Tested up to: 4.5.1
-Stable tag: 4.0.4
+Stable tag: 4.0.5
 
 Improve wordpress search performance/accuracy and enable faceted search by leveraging an ElasticSearch server.
 
@@ -41,6 +41,9 @@ https://github.com/parisholley/wordpress-fantastic-elasticsearch/wiki
 4. Wipe and re-index data is available if needed
 
 == Changelog ==
+
+= 4.0.5 =
+* bug fix
 
 = 4.0.4 =
 * Support for using facet API when providing custom data
