@@ -62,6 +62,7 @@ class Searcher
 					$query->addSort('_score');
 				}
 			}
+
 			$search = Config::apply_filters('searcher_search', $search, $query);
 
 			$results = $search->search($query);
@@ -167,11 +168,12 @@ class Searcher
 			self::_filterBySelectedFacets('post_type', $facets, 'term', $musts, $filters);
 		}
 
-		// TODO: write test
 		self::_searchField(Config::customFacets(), 'custom', $exclude, $search, $facets, $musts, $filters, $scored, $numeric);
 
+		$multiple = array();
+
 		if (count($filters) > 0) {
-			$args['filter']['bool']['should'] = $filters;
+			$args['filter']['bool'] = self::_filtersToBoolean($filters);
 		}
 
 		if (count($musts) > 0) {
@@ -209,14 +211,16 @@ class Searcher
 				$applicable = array();
 
 				foreach ($filters as $filter) {
-					if (isset($filter['term']) && !in_array($facet, array_keys($filter['term']))) {
+					$terms = array_keys($filter['term']);
+
+					if (isset($filter['term']) && !in_array($facet, $terms)) {
 						// do not filter on itself when using OR
 						$applicable[] = $filter;
 					}
 				}
 
 				if (count($applicable) > 0) {
-					$args['aggs'][$facet]['filter']['bool']['should'] = $applicable;
+					$args['aggs'][$facet]['filter']['bool'] = self::_filtersToBoolean($applicable);
 				}
 			}
 		}
@@ -226,8 +230,16 @@ class Searcher
 				$ranges = Config::ranges($facet);
 
 				if (count($ranges) > 0) {
+					$filter = array('bool' => array('must' => array()));
+
+					if (isset($args['aggs'][$facet]['filter'])) {
+						$filter = $args['aggs'][$facet]['filter'];
+					}
+
+					$filter['bool']['must'][] = $blogfilter;
+
 					$args['aggs'][$facet] = array(
-						'filter' => array('bool' => array('must' => $blogfilter)),
+						'filter' => $filter,
 						'aggs' => array(
 							"range" => array(
 								'range' => array(
@@ -303,10 +315,41 @@ class Searcher
 					self::_filterBySelectedFacets($field, $facets, 'range', $musts, $filters, $transformed);
 				}
 			} else if ($type == 'custom') {
-				// TODO: write test
 				self::_filterBySelectedFacets($field, $facets, 'term', $musts, $filters);
 			}
 		}
+	}
+
+	public static function _filtersToBoolean($filters)
+	{
+		$types = array();
+
+		$bool = array();
+
+		foreach ($filters as $filter) {
+			// is this a safe assumption?
+			$type = array_keys($filter[array_keys($filter)[0]])[0];
+
+			if (!isset($types[$type])) {
+				$types[$type] = array();
+			}
+
+			$types[$type][] = $filter;
+		}
+
+		foreach ($types as $slug => $type) {
+			if (count($type) == 1) {
+				$bool['should'][] = $type;
+			} else {
+				$multiple[] = $slug;
+
+				$bool['should'][] = array('bool' => array('should' => $type));
+			}
+		}
+
+		$bool['minimum_should_match'] = count($bool['should']);
+
+		return $bool;
 	}
 
 	/**
@@ -315,8 +358,6 @@ class Searcher
 	public static function _filterBySelectedFacets($name, $facets, $type, &$musts, &$filters, $translate = array())
 	{
 		if (isset($facets[$name])) {
-			$output = &$musts;
-
 			$facets = $facets[$name];
 
 			if (!is_array($facets)) {
@@ -327,6 +368,8 @@ class Searcher
 				if (is_string($operation) && $operation == 'or') {
 					// use filters so faceting isn't affecting, allowing the user to select more "or" options
 					$output = &$filters;
+				} else {
+					$output = &$musts;
 				}
 
 				if (is_array($facet)) {

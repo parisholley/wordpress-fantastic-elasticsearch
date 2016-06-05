@@ -23,12 +23,10 @@ class Taxonomy extends AbstractArchive
 		}
 
 		if (!$taxType) {
-			return;
+			return $args;
 		}
 
-		if (!isset($args[$taxType])) {
-			$args[$taxType]['and'][] = $taxValue;
-		}
+		$args[$taxType]['and'][] = $taxValue;
 
 		return $args;
 	}

@@ -44,6 +44,8 @@ https://github.com/parisholley/wordpress-fantastic-elasticsearch/wiki
 
 = 4.0.6 =
 * allow custom facets to be filtered when searching
+* allow child taxonomies to be faceted when on taxonomy page
+* allow or faceting to filter counts on unrelated facets for a more intuitive interface
 
 = 4.0.5 =
 * bug fix
