@@ -130,14 +130,16 @@ class Indexer
 	{
 		$index = self::_index(false);
 
-		foreach (Config::types() as $type) {
-			$type = $index->getType($type);
+		foreach (Config::types() as $postType) {
+			$type = $index->getType($postType);
 
 			$properties = array();
 
 			self::_map_values($properties, $type, Config::taxonomies(), 'taxonomy');
 			self::_map_values($properties, $type, Config::fields(), 'field');
 			self::_map_values($properties, $type, Config::meta_fields(), 'meta');
+
+			$properties = Config::apply_filters('indexer_map', $properties, $postType);
 
 			$mapping = new \Elastica\Type\Mapping($type, $properties);
 			$mapping->send();
@@ -236,7 +238,9 @@ class Indexer
 					$document[$tax . '_name'][] = $term->name;
 				}
 
-				if (isset($term->parent) && $term->parent) {
+				$doParents = Config::apply_filters('indexer_tax_values_parent', true, $tax);
+
+				if (isset($term->parent) && $term->parent && $doParents) {
 					$parent = get_term($term->parent, $tax);
 
 					while ($parent != null) {

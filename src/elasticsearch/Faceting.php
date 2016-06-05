@@ -2,55 +2,55 @@
 namespace elasticsearch;
 
 /**
-* This class provides numerous helper methods for working with facet information returned from elastic search results.
-*
-* @license http://opensource.org/licenses/MIT
-* @author Paris Holley <mail@parisholley.com>
-* @version 4.0.1
-**/
+ * This class provides numerous helper methods for working with facet information returned from elastic search results.
+ *
+ * @license http://opensource.org/licenses/MIT
+ * @author Paris Holley <mail@parisholley.com>
+ * @version 4.0.1
+ **/
 class Faceting{
 	/**
-	* A convenient method that aggregates the results of all the other methods in the class. Example of output:
-	*
-	* <code>
-	* 	array(
-	*		// the keys are names of fields and/or taxonomies
-	* 		'taxonomy' => array(
-	* 			'available' => array(
-	* 				'taxonomy1'	=> array(
-	* 					'count'	=> 10,
-	* 					'slug'	=> 'taxonomy1',
-	* 					'name'	=> 'Taxonomy One',
-	* 					'font'	=> 24
-	* 				)
-	* 			),
-	* 			'selected' => array(
-	* 				'taxonomy2'	=> array(
-	* 					'slug'	=> 'taxonomy2',
-	* 					'name'	=> 'Taxonomy Two'
-	* 				)
-	* 			),
-	* 			'total' => 10
-	* 		),
-	* 		'rating' => array(
-	* 			'available' => array(
-	* 				'10-20' => array(
-	* 					'count'	=> 4,
-	* 					'slug'	=> '10-20',
-	* 					'to'	=> 20,
-	* 					'from'	=> 10
-	* 				)			
-	* 			),
-	* 			'total' => 4
-	* 		)
-	* 	)
-	* </code>
-	* 
-	* @param string $minFont The minimum font size to use for display in a tag cloud (defaults to : 12)
-	* @param string $maxFont The maximum font size to use for display in a tag cloud (defaults to : 24)
-	* 
-	* @return array An associative array where the keys represent the data point with a list of selected and/or available options.
-	**/
+	 * A convenient method that aggregates the results of all the other methods in the class. Example of output:
+	 *
+	 * <code>
+	 * 	array(
+	 *		// the keys are names of fields and/or taxonomies
+	 * 		'taxonomy' => array(
+	 * 			'available' => array(
+	 * 				'taxonomy1'	=> array(
+	 * 					'count'	=> 10,
+	 * 					'slug'	=> 'taxonomy1',
+	 * 					'name'	=> 'Taxonomy One',
+	 * 					'font'	=> 24
+	 * 				)
+	 * 			),
+	 * 			'selected' => array(
+	 * 				'taxonomy2'	=> array(
+	 * 					'slug'	=> 'taxonomy2',
+	 * 					'name'	=> 'Taxonomy Two'
+	 * 				)
+	 * 			),
+	 * 			'total' => 10
+	 * 		),
+	 * 		'rating' => array(
+	 * 			'available' => array(
+	 * 				'10-20' => array(
+	 * 					'count'	=> 4,
+	 * 					'slug'	=> '10-20',
+	 * 					'to'	=> 20,
+	 * 					'from'	=> 10
+	 * 				)
+	 * 			),
+	 * 			'total' => 4
+	 * 		)
+	 * 	)
+	 * </code>
+	 *
+	 * @param string $minFont The minimum font size to use for display in a tag cloud (defaults to : 12)
+	 * @param string $maxFont The maximum font size to use for display in a tag cloud (defaults to : 24)
+	 *
+	 * @return array An associative array where the keys represent the data point with a list of selected and/or available options.
+	 **/
 	static function all($minFont = 12, $maxFont = 24){
 		$options = array();
 
@@ -60,7 +60,9 @@ class Faceting{
 
 		$numeric = Config::option('numeric');
 
-		foreach(array_merge(Config::fields(),Config::meta_fields()) as $field){
+		$fields = array_merge(Config::fields(),Config::meta_fields());
+
+		foreach($fields as $field){
 			if(isset($numeric[$field])){
 				$options[$field] = self::range($field);
 			}
@@ -68,6 +70,12 @@ class Faceting{
 			if($field == 'post_type'){
 				$options['post_type'] = self::types(Config::types());
 			}
+		}
+
+		$custom = array_diff(Config::facets(), array_merge($fields, Config::taxonomies()));
+
+		foreach($custom as $field){
+			$options[$field] = self::custom($field);
 		}
 
 		foreach($options as $name => &$field){
@@ -82,32 +90,32 @@ class Faceting{
 	}
 
 	/**
-	* Analyse query parameters for range slugs and determine which facets are selected vs. which are available for the given field. Example of output:
-	* 
-	* <code>
-	* 	array(
-	* 		'available' => array(
-	* 			'10-20' => array(
-	* 				'count'	=> 4,
-	* 				'slug'	=> '10-20',
-	* 				'to'	=> 20,
-	* 				'from'	=> 10
-	* 			)			
-	* 		),
-	* 		'selected' => array(
-	* 			'-20' => array(
-	* 				'slug'	=> '-20',
-	* 				'to'	=> 20
-	* 			)			
-	* 		),
-	* 		'total' => 4
-	* 	)
-	* 	</code>
-	* 
-	* @param string $field The field to determine range facet information about
-	*
-	* @return array An associative array based on example provided
-	**/
+	 * Analyse query parameters for range slugs and determine which facets are selected vs. which are available for the given field. Example of output:
+	 *
+	 * <code>
+	 * 	array(
+	 * 		'available' => array(
+	 * 			'10-20' => array(
+	 * 				'count'	=> 4,
+	 * 				'slug'	=> '10-20',
+	 * 				'to'	=> 20,
+	 * 				'from'	=> 10
+	 * 			)
+	 * 		),
+	 * 		'selected' => array(
+	 * 			'-20' => array(
+	 * 				'slug'	=> '-20',
+	 * 				'to'	=> 20
+	 * 			)
+	 * 		),
+	 * 		'total' => 4
+	 * 	)
+	 * 	</code>
+	 *
+	 * @param string $field The field to determine range facet information about
+	 *
+	 * @return array An associative array based on example provided
+	 **/
 	static function range($field){
 		return self::_buildFacetResult($field, Config::ranges($field), function($slug, $range, $facet){
 			$split = explode('-', $slug);
@@ -122,32 +130,32 @@ class Faceting{
 	}
 
 	/**
-	* Analyse query parameters for taxonomoy slugs and determine which facets are selected vs. which are available for the given field. Example of output:
-	* 
-	* <code>
-	* 	array(
-	* 		'available' => array(
-	* 			'taxonomy1' => array(
-	* 				'count' => 10,
-	* 				'slug'	=> 'taxonomy1',
-	* 				'name'	=> 'Taxonomy One',
-	* 				'font'	=> 24
-	* 			)
-	* 		),
-	* 		'selected' => array(
-	* 			'taxonomy2'	=> array(
-	* 				'slug'	=> 'taxonomy2',
-	* 				'name'	=> 'Taxonomy Two'
-	* 			)
-	* 		),
-	* 		'total' => 10
-	* 	)
- 	* 	</code>
-	* 
-	* @param string $field The taxonomy type to retrieve facet information about
-	* 
-	* @return array An associative array based on example provided
-	**/
+	 * Analyse query parameters for taxonomoy slugs and determine which facets are selected vs. which are available for the given field. Example of output:
+	 *
+	 * <code>
+	 * 	array(
+	 * 		'available' => array(
+	 * 			'taxonomy1' => array(
+	 * 				'count' => 10,
+	 * 				'slug'	=> 'taxonomy1',
+	 * 				'name'	=> 'Taxonomy One',
+	 * 				'font'	=> 24
+	 * 			)
+	 * 		),
+	 * 		'selected' => array(
+	 * 			'taxonomy2'	=> array(
+	 * 				'slug'	=> 'taxonomy2',
+	 * 				'name'	=> 'Taxonomy Two'
+	 * 			)
+	 * 		),
+	 * 		'total' => 10
+	 * 	)
+	 * 	</code>
+	 *
+	 * @param string $field The taxonomy type to retrieve facet information about
+	 *
+	 * @return array An associative array based on example provided
+	 **/
 	static function taxonomy($tax){
 		return self::_buildFacetResult($tax, get_terms($tax), function($key, $term){
 			return array(
@@ -158,32 +166,71 @@ class Faceting{
 	}
 
 	/**
-	* Gather post type facet information for the provided post types. Example of output:
-	* 
-	* <code>
-	* 	array(
-	* 		'available' => array(
-	* 			'post' => array(
-	* 				'count' => 10,
-	* 				'slug'	=> 'post',
-	* 				'name'	=> 'Posts',
-	* 				'font'	=> 24
-	* 			)
-	* 		),
-	* 		'selected' => array(
-	* 			'custom_post_type'	=> array(
-	* 				'slug'	=> 'cpt',
-	* 				'name'	=> 'Customs'
-	* 			)
-	* 		),
-	* 		'total' => 10
-	* 	)
- 	* 	</code>
-	* 
-	* @param string $field The post types that were configured for indexing
-	* 
-	* @return array An associative array based on example provided
-	**/
+	 * Gather facet information for custom fields that were indexes. Example of output:
+	 *
+	 * <code>
+	 * 	array(
+	 * 		'available' => array(
+	 * 			'key1' => array(
+	 * 				'count' => 4,
+	 * 				'value'	=> 'value1'
+	 * 			)
+	 * 		),
+	 * 		'selected' => array(
+	 * 			'key2' => array(
+	 * 				'count' => 6,
+	 * 				'value'	=> 'value2'
+	 * 			)
+	 * 		),
+	 * 		'total' => 10
+	 * 	)
+	 * 	</code>
+	 *
+	 * @param string $field Field to lookup in faceting data
+	 *
+	 * @return array An associative array based on example provided
+	 **/
+	static function custom($field){
+		global $wp_query;
+
+		$data = isset($wp_query->facets[$field])  ? $wp_query->facets[$field] : array();
+
+		return self::_buildFacetResult($field, $data, function($value) use ($field){
+			$return = array(
+				'slug' => $value
+			);
+
+			return Config::apply_filters('faceting_custom', $return, $field);
+		});
+	}
+
+	/**
+	 * Gather post type facet information for the provided post types. Example of output:
+	 *
+	 * <code>
+	 * 	array(
+	 * 		'available' => array(
+	 * 			'post' => array(
+	 * 				'count' => 10,
+	 * 				'slug'	=> 'post',
+	 * 				'name'	=> 'Posts',
+	 * 				'font'	=> 24
+	 * 			)
+	 * 		),
+	 * 		'selected' => array(
+	 * 			'custom_post_type'	=> array(
+	 * 				'slug'	=> 'cpt',
+	 * 				'name'	=> 'Customs'
+	 * 			)
+	 * 		),
+	 * 		'total' => 10
+	 * 	)
+	 * 	</code>
+	 *
+	 * @param string $field The post types that were configured for indexing
+	 *
+	 * @return array An associative array based on example provided
+	 **/
 	static function types($types){
 		return self::_buildFacetResult('post_type', $types, function($key, $value){
 			$type = get_post_type_object($value);
@@ -196,35 +243,35 @@ class Faceting{
 	}
 
 	/**
-	* Will calculate a font size based on the total number of results for the given item in a collection of items. Example of output:
-	* 
-	* <code>
-	* 	array(
-	* 		'available' => array(
-	* 			'taxonomy1' => array(
-	* 				'count' => 10,
-	* 				'slug'	=> 'taxonomy1',
-	* 				'name'	=> 'Taxonomy One',
-	* 				'font'	=> 24
-	* 			)
-	* 		),
-	* 		'selected' => array(
-	* 			'taxonomy2' => array(
-	* 				'slug'	=> 'taxonomy2',
-	* 				'name'	=> 'Taxonomy Two'
-	* 			)
-	* 		),
-	* 		'total' => 10
-	* 	)
- 	* </code>
-	* 
-	* @param array $items An array of arrays that contain a key called 'count'
-	* @param array $item An item out of the array that you wish to calculate a font size
-	* @param string $minFont The minimum font size to use for display in a tag cloud (defaults to : 12)
-	* @param string $maxFont The maximum font size to use for display in a tag cloud (defaults to : 24)
-	* 
-	* @return integer The calculated font size
-	**/
+	 * Will calculate a font size based on the total number of results for the given item in a collection of items. Example of output:
+	 *
+	 * <code>
+	 * 	array(
+	 * 		'available' => array(
+	 * 			'taxonomy1' => array(
+	 * 				'count' => 10,
+	 * 				'slug'	=> 'taxonomy1',
+	 * 				'name'	=> 'Taxonomy One',
+	 * 				'font'	=> 24
+	 * 			)
+	 * 		),
+	 * 		'selected' => array(
+	 * 			'taxonomy2' => array(
+	 * 				'slug'	=> 'taxonomy2',
+	 * 				'name'	=> 'Taxonomy Two'
+	 * 			)
+	 * 		),
+	 * 		'total' => 10
+	 * 	)
+	 * </code>
+	 *
+	 * @param array $items An array of arrays that contain a key called 'count'
+	 * @param array $item An item out of the array that you wish to calculate a font size
+	 * @param string $minFont The minimum font size to use for display in a tag cloud (defaults to : 12)
+	 * @param string $maxFont The maximum font size to use for display in a tag cloud (defaults to : 24)
+	 *
+	 * @return integer The calculated font size
+	 **/
 	static function cloud($items, $item, $min = 12, $max = 24){
 		$maxTotal = 1;
 
@@ -238,18 +285,18 @@ class Faceting{
 	}
 
 	/**
-	* Modifies the provided URL by appending query parameters for faceted searching.
-	* 
-	* @param string $url The URL of the page that supports F.E.S
-	* @param string $type The data point you wish to enable faceting for (ie: a field name or taxonomy name)
-	* @param string $value The value/slug that was provided by another method call in this class
-	* @param string $operation Whether the facet should query using 'and' or 'or' (defaults to and)
-	* 
-	* @return string The URL modified to support faceting
-	**/
+	 * Modifies the provided URL by appending query parameters for faceted searching.
+	 *
+	 * @param string $url The URL of the page that supports F.E.S
+	 * @param string $type The data point you wish to enable faceting for (ie: a field name or taxonomy name)
+	 * @param string $value The value/slug that was provided by another method call in this class
+	 * @param string $operation Whether the facet should query using 'and' or 'or' (defaults to and)
+	 *
+	 * @return string The URL modified to support faceting
+	 **/
 	static function urlAdd($url, $type, $value, $operation = 'and'){
 		$filter = $_GET;
-		
+
 		if(!isset($filter['es'])){
 			$filter['es'] = array();
 		}
@@ -265,18 +312,20 @@ class Faceting{
 
 		$es[$type][$op][] = $value;
 
+		unset($filter['q']); // remove wordpress foo
+
 		return self::_buildUrl($url, $filter);
 	}
 
 	/**
-	* Modifies the provided URL by removing query parameters that control faceting.
-	* 
-	* @param string $url The URL of the page that supports F.E.S
-	* @param string $type The data point you wish to remove faceting for (ie: a field name or taxonomy name)
-	* @param string $value The value/slug that was provided in the URL (query parameters)
-	* 
-	* @return string The URL modified to remove faceting for the provided data point
-	**/
+	 * Modifies the provided URL by removing query parameters that control faceting.
+	 *
+	 * @param string $url The URL of the page that supports F.E.S
+	 * @param string $type The data point you wish to remove faceting for (ie: a field name or taxonomy name)
+	 * @param string $value The value/slug that was provided in the URL (query parameters)
+	 *
+	 * @return string The URL modified to remove faceting for the provided data point
+	 **/
 	static function urlRemove($url, $type, $value){
 		$filter = $_GET;
 
@@ -309,9 +358,15 @@ class Faceting{
 		return self::_buildUrl($url, $filter);
 	}
 
+	static function isActive(){
+		global $wp_query;
+
+		return isset($wp_query->facets);
+	}
+
 	/**
-	* @internal
-	**/
+	 * @internal
+	 **/
 	static function _buildFacetResult($type, $items, $createItem){
 		global $wp_query;
 
@@ -323,10 +378,10 @@ class Faceting{
 			'min' => 0
 		);
 
-		if(!isset($wp_query->facets)){
+		if(!self::isActive()){
 			return $result;
 		}
-		
+
 		$facets = $wp_query->facets;
 
 		if(isset($facets[$type])){
@@ -355,14 +410,14 @@ class Faceting{
 					}
 				}
 			}
-		}		
+		}
 
 		return $result;
 	}
 
 	/**
-	* @internal
-	**/
+	 * @internal
+	 **/
 	static function _buildUrl($url, $query){
 		$parts = parse_url($url);
 
@@ -378,7 +433,7 @@ class Faceting{
 			$url .= http_build_query($query);
 		}
 
-		return $url;		
+		return $url;
 	}
 }
 
