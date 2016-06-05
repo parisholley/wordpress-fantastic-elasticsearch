@@ -194,7 +194,6 @@ class Searcher
 		// return facets
 		foreach (Config::facets() as $facet) {
 			$args['aggs'][$facet] = array(
-				'filter' => array('bool' => array('must' => $blogfilter)),
 				'aggs' => array(
 					"facet" => array(
 						'terms' => array(
@@ -228,14 +227,11 @@ class Searcher
 				$ranges = Config::ranges($facet);
 
 				if (count($ranges) > 0) {
-					$args['aggs'][$facet] = array(
-						'filter' => $args['aggs'][$facet]['filter'],
-						'aggs' => array(
-							"range" => array(
-								'range' => array(
-									'field' => $facet,
-									'ranges' => array()
-								)
+					$args['aggs'][$facet]['aggs'] = array(
+						"range" => array(
+							'range' => array(
+								'field' => $facet,
+								'ranges' => array()
 							)
 						)
 					);
@@ -254,6 +250,16 @@ class Searcher
 						$args['aggs'][$facet]['aggs']['range']['range']['ranges'][] = $params;
 					}
 				}
+			}
+		}
+
+		if (isset($args['aggs'])) {
+			foreach ($args['aggs'] as $facet => &$config) {
+				if (!isset($config['filter'])) {
+					$config['filter'] = array('bool' => array('must' => array()));
+				}
+
+				$config['filter']['bool']['must'][] = $blogfilter;
 			}
 		}
 

@@ -285,8 +285,10 @@ class SearcherTest extends BaseTestCase
 					'filter' => array(
 						'bool' => array(
 							'must' => array(
-								'term' => array(
-									'blog_id' => 1
+								array(
+									'term' => array(
+										'blog_id' => 1
+									)
 								)
 							)
 						)
@@ -345,8 +347,10 @@ class SearcherTest extends BaseTestCase
 					'filter' => array(
 						'bool' => array(
 							'must' => array(
-								'term' => array(
-									'blog_id' => 1
+								array(
+									'term' => array(
+										'blog_id' => 1
+									)
 								)
 							)
 						)
@@ -392,8 +396,10 @@ class SearcherTest extends BaseTestCase
 					'filter' => array(
 						'bool' => array(
 							'must' => array(
-								'term' => array(
-									'blog_id' => 1
+								array(
+									'term' => array(
+										'blog_id' => 1
+									)
 								)
 							)
 						)
@@ -452,8 +458,10 @@ class SearcherTest extends BaseTestCase
 					'filter' => array(
 						'bool' => array(
 							'must' => array(
-								'term' => array(
-									'blog_id' => 1
+								array(
+									'term' => array(
+										'blog_id' => 1
+									)
 								)
 							)
 						)
@@ -493,16 +501,23 @@ class SearcherTest extends BaseTestCase
 				'bool' => array(
 					'should' => array(
 						array(
-							'term' => array(
-								'tax1' => 'value1'
-							)
-						),
-						array(
-							'term' => array(
-								'tax1' => 'value2'
+							'bool' => array(
+								'should' => array(
+									array(
+										'term' => array(
+											'tax1' => 'value1'
+										)
+									),
+									array(
+										'term' => array(
+											'tax1' => 'value2'
+										)
+									)
+								)
 							)
 						)
 					),
+					'minimum_should_match' => 1,
 					'must' => array(
 						array(
 							'term' => array(
@@ -517,8 +532,10 @@ class SearcherTest extends BaseTestCase
 					'filter' => array(
 						'bool' => array(
 							'must' => array(
-								'term' => array(
-									'blog_id' => 1
+								array(
+									'term' => array(
+										'blog_id' => 1
+									)
 								)
 							)
 						)
@@ -570,16 +587,23 @@ class SearcherTest extends BaseTestCase
 				'bool' => array(
 					'should' => array(
 						array(
-							'term' => array(
-								'tax1' => 'value1'
-							)
+							'bool' => array(
+								'should' => array(
+									array(
+										'term' => array(
+											'tax1' => 'value1'
+										)
+									),
+									array(
+										'term' => array(
+											'tax1' => 'value2'
+										)
+									)
+								),
+							),
 						),
-						array(
-							'term' => array(
-								'tax1' => 'value2'
-							)
-						)
 					),
+					'minimum_should_match' => 1,
 					'must' => array(
 						array(
 							'term' => array(
@@ -594,8 +618,10 @@ class SearcherTest extends BaseTestCase
 					'filter' => array(
 						'bool' => array(
 							'must' => array(
-								'term' => array(
-									'blog_id' => 1
+								array(
+									'term' => array(
+										'blog_id' => 1
+									)
 								)
 							)
 						)
@@ -613,21 +639,30 @@ class SearcherTest extends BaseTestCase
 					'filter' => array(
 						'bool' => array(
 							'must' => array(
-								'term' => array(
-									'blog_id' => 1
+								array(
+									'term' => array(
+										'blog_id' => 1
+									)
 								)
 							),
+							'minimum_should_match' => 1,
 							'should' => array(
 								array(
-									'term' => array(
-										'tax1' => 'value1'
-									)
+									'bool' => array(
+										'should' => array(
+											array(
+												'term' => array(
+													'tax1' => 'value1'
+												)
+											),
+											array(
+												'term' => array(
+													'tax1' => 'value2'
+												)
+											)
+										),
+									),
 								),
-								array(
-									'term' => array(
-										'tax1' => 'value2'
-									)
-								)
 							)
 						)
 					),
@@ -699,8 +734,10 @@ class SearcherTest extends BaseTestCase
 					'filter' => array(
 						'bool' => array(
 							'must' => array(
-								'term' => array(
-									'blog_id' => 1
+								array(
+									'term' => array(
+										'blog_id' => 1
+									)
 								)
 							)
 						)
@@ -777,8 +814,10 @@ class SearcherTest extends BaseTestCase
 					'filter' => array(
 						'bool' => array(
 							'must' => array(
-								'term' => array(
-									'blog_id' => 1
+								array(
+									'term' => array(
+										'blog_id' => 1
+									)
 								)
 							)
 						)
@@ -849,16 +888,23 @@ class SearcherTest extends BaseTestCase
 				'bool' => array(
 					'should' => array(
 						array(
-							'term' => array(
-								'tax1' => 'value1'
-							)
+							'bool' => array(
+								'should' => array(
+									array(
+										'term' => array(
+											'tax1' => 'value1'
+										)
+									),
+									array(
+										'term' => array(
+											'tax1' => 'value2'
+										)
+									)
+								),
+							),
 						),
-						array(
-							'term' => array(
-								'tax1' => 'value2'
-							)
-						)
 					),
+					'minimum_should_match' => 1,
 					'must' => array(
 						array(
 							'term' => array(
@@ -873,8 +919,10 @@ class SearcherTest extends BaseTestCase
 					'filter' => array(
 						'bool' => array(
 							'must' => array(
-								'term' => array(
-									'blog_id' => 1
+								array(
+									'term' => array(
+										'blog_id' => 1
+									)
 								)
 							)
 						)
@@ -903,8 +951,10 @@ class SearcherTest extends BaseTestCase
 					'filter' => array(
 						'bool' => array(
 							'must' => array(
-								'term' => array(
-									'blog_id' => 1
+								array(
+									'term' => array(
+										'blog_id' => 1
+									)
 								)
 							)
 						)
