@@ -167,9 +167,7 @@ class Searcher
 			self::_filterBySelectedFacets('post_type', $facets, 'term', $musts, $filters);
 		}
 
-		foreach (Config::customFacets() as $field) {
-			self::_filterBySelectedFacets($field, $facets, 'term', $musts, $filters);
-		}
+		self::_searchField(Config::customFacets(), 'custom', $exclude, $search, $facets, $musts, $filters, $scored, $numeric);
 
 		if (count($filters) > 0) {
 			$args['filter']['bool']['should'] = $filters;
