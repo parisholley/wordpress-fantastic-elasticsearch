@@ -208,11 +208,13 @@ class Searcher
 				$applicable = array();
 
 				foreach ($filters as $filter) {
-					$terms = array_keys($filter['term']);
+					foreach ($filter as $type) {
+						$terms = array_keys($type);
 
-					if (isset($filter['term']) && !in_array($facet, $terms)) {
-						// do not filter on itself when using OR
-						$applicable[] = $filter;
+						if (!in_array($facet, $terms)) {
+							// do not filter on itself when using OR
+							$applicable[] = $filter;
+						}
 					}
 				}
 
