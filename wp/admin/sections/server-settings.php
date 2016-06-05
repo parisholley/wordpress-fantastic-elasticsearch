@@ -1,54 +1,54 @@
 <?php
 namespace elasticsearch;
 
-add_action('nhp-opts-options-validate-elasticsearch', function($new, $current){
+add_action('nhp-opts-options-validate-elasticsearch', function ($new, $current) {
 	global $NHP_Options;
 
-	if($new['server_url'] == $current['server_url'] && $new['server_index'] == $current['server_index']){
+	if ($new['server_url'] == $current['server_url'] && $new['server_index'] == $current['server_index']) {
 		return;
 	}
 
-	if($new['server_url']){
+	if ($new['server_url']) {
 		$client = new \Elastica\Client(array(
 			'url' => $new['server_url']
 		));
 
-		try{
+		try {
 			$index = $client->getIndex($new['server_index']);
 
 			$status = $index->getStats()->getData();
-		} catch(\Elastica\Exception\ResponseException $ex){
+		} catch (\Elastica\Exception\ResponseException $ex) {
 			// This kind usually means there was an issue with the index not existing, so we'll associate the message to that field.
 			$field = $NHP_Options->sections['server']['fields']['server_index'];
 			$field['msg'] = __($ex->getMessage());
 
 			$NHP_Options->errors[] = $field;
 
-			set_transient('nhp-opts-errors-elasticsearch', $NHP_Options->errors, 1000 );
+			set_transient('nhp-opts-errors-elasticsearch', $NHP_Options->errors, 1000);
 			return;
-		} catch(\Exception $ex) {
+		} catch (\Exception $ex) {
 			$field = $NHP_Options->sections['server']['fields']['server_url'];
 			$field['msg'] = __($ex->getMessage());
 
 			$NHP_Options->errors[] = $field;
 
-			set_transient('nhp-opts-errors-elasticsearch', $NHP_Options->errors, 1000 );
+			set_transient('nhp-opts-errors-elasticsearch', $NHP_Options->errors, 1000);
 			return;
 		}
 
-		if(empty($status) || empty($status['indices']) || empty($status['indices'][$new['server_index']])) {
+		if (empty($status) || empty($status['indices']) || empty($status['indices'][$new['server_index']])) {
 			$field = $NHP_Options->sections['server']['fields']['server_url'];
 			$field['msg'] = 'Unable to connect to the ElasticSearch server.';
 
 			$NHP_Options->errors[] = $field;
 
-			set_transient('nhp-opts-errors-elasticsearch', $NHP_Options->errors, 1000 );
+			set_transient('nhp-opts-errors-elasticsearch', $NHP_Options->errors, 1000);
 		}
 	}
 }, 10, 2);
 
 $sections['server'] = array(
-	'icon' => NHP_OPTIONS_URL.'img/glyphicons/glyphicons_280_settings.png',
+	'icon' => NHP_OPTIONS_URL . 'img/glyphicons/glyphicons_280_settings.png',
 	'title' => 'Server Settings',
 	'fields' => array(
 		'server_url' => array(

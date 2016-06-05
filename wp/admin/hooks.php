@@ -53,10 +53,11 @@ class Hooks
 		Indexer::delete($post);
 	}
 
-	function reindex(){
-		try{
+	function reindex()
+	{
+		try {
 			echo Indexer::reindex($_POST['page']);
-		}catch(\Exception $ex){
+		} catch (\Exception $ex) {
 			header("HTTP/1.0 500 Internal Server Error");
 
 			echo $ex->getMessage();

@@ -10,7 +10,7 @@ $fields = array(
 	)
 );
 
-foreach(Config::fields() as $field){
+foreach (Config::fields() as $field) {
 	$fields[] = array(
 		'id' => 'score_field_' . $field,
 		'type' => 'text',
@@ -21,7 +21,7 @@ foreach(Config::fields() as $field){
 	);
 }
 
-foreach(Config::taxonomies() as $tax){
+foreach (Config::taxonomies() as $tax) {
 	$fields[] = array(
 		'id' => 'score_tax_' . $tax,
 		'type' => 'text',
@@ -32,7 +32,7 @@ foreach(Config::taxonomies() as $tax){
 	);
 }
 
-foreach(Config::meta_fields() as $field){
+foreach (Config::meta_fields() as $field) {
 	$fields[] = array(
 		'id' => 'score_meta_' . $field,
 		'type' => 'text',
@@ -44,7 +44,7 @@ foreach(Config::meta_fields() as $field){
 }
 
 $sections['scoring'] = array(
-	'icon' => NHP_OPTIONS_URL.'img/glyphicons/glyphicons_079_signal.png',
+	'icon' => NHP_OPTIONS_URL . 'img/glyphicons/glyphicons_079_signal.png',
 	'title' => 'Result Scoring',
 	'desc' => 'When executing a search, not all content is created equal. Review each of the items that are indexed and order them by the most relevant/important to least relevant/important.',
 	'fields' => $fields

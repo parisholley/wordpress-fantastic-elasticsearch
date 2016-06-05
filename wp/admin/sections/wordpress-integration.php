@@ -2,7 +2,7 @@
 namespace elasticsearch;
 
 $sections['integration'] = array(
-	'icon' => NHP_OPTIONS_URL.'img/glyphicons/glyphicons_083_random.png',
+	'icon' => NHP_OPTIONS_URL . 'img/glyphicons/glyphicons_083_random.png',
 	'title' => 'Wordpress Integration',
 	'fields' => array(
 		'enable' => array(

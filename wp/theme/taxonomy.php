@@ -1,30 +1,32 @@
 <?php
 namespace elasticsearch;
 
-class Taxonomy extends AbstractArchive{
-	function facets($wp_query, $args){
-		if(!is_tax()){
+class Taxonomy extends AbstractArchive
+{
+	function facets($wp_query, $args)
+	{
+		if (!is_tax()) {
 			return;
 		}
 
 		$taxonomies = Config::taxonomies();
-		
+
 		$taxType = null;
 		$taxValue = null;
 
-		foreach($taxonomies as $taxonomy){
-			if(isset($wp_query->query_vars[$taxonomy])){
+		foreach ($taxonomies as $taxonomy) {
+			if (isset($wp_query->query_vars[$taxonomy])) {
 				$taxType = $taxonomy;
 				$taxValue = $wp_query->query_vars[$taxonomy];
 				break;
 			}
 		}
-		
-		if(!$taxType){
+
+		if (!$taxType) {
 			return;
 		}
 
-		if(!isset($args[$taxType])){
+		if (!isset($args[$taxType])) {
 			$args[$taxType]['and'][] = $taxValue;
 		}
 

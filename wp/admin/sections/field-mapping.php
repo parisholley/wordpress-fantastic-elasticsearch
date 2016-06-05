@@ -18,8 +18,8 @@ $fields = array(
 	)
 );
 
-foreach(array_merge(Config::fields(), Config::meta_fields()) as $field){
-	if($field != 'post_date' && $field != 'post_type'){
+foreach (array_merge(Config::fields(), Config::meta_fields()) as $field) {
+	if ($field != 'post_date' && $field != 'post_type') {
 		$fields['numeric']['options'][$field] = $field;
 		$fields['not_analyzed']['options'][$field] = $field;
 	}
@@ -28,7 +28,7 @@ foreach(array_merge(Config::fields(), Config::meta_fields()) as $field){
 $numeric_option = Config::option('numeric');
 
 if ($numeric_option) {
-	foreach(array_keys($numeric_option) as $numeric){
+	foreach (array_keys($numeric_option) as $numeric) {
 		$fields[$numeric . '_range'] = array(
 			'id' => $numeric . '_range',
 			'type' => 'text',
@@ -39,7 +39,7 @@ if ($numeric_option) {
 }
 
 $sections['field'] = array(
-	'icon' => NHP_OPTIONS_URL.'img/glyphicons/glyphicons_097_vector_path_line.png',
+	'icon' => NHP_OPTIONS_URL . 'img/glyphicons/glyphicons_097_vector_path_line.png',
 	'title' => 'Field Mapping',
 	'desc' => 'Finer grain control over how data is interpreted inside of ElasticSearch. Any changes made in this tab will require you to clear then re-index your data.',
 	'fields' => $fields
