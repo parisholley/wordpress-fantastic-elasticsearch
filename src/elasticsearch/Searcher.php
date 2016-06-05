@@ -170,8 +170,6 @@ class Searcher
 
 		self::_searchField(Config::customFacets(), 'custom', $exclude, $search, $facets, $musts, $filters, $scored, $numeric);
 
-		$multiple = array();
-
 		if (count($filters) > 0) {
 			$args['filter']['bool'] = self::_filtersToBoolean($filters);
 		}
@@ -230,16 +228,8 @@ class Searcher
 				$ranges = Config::ranges($facet);
 
 				if (count($ranges) > 0) {
-					$filter = array('bool' => array('must' => array()));
-
-					if (isset($args['aggs'][$facet]['filter'])) {
-						$filter = $args['aggs'][$facet]['filter'];
-					}
-
-					$filter['bool']['must'][] = $blogfilter;
-
 					$args['aggs'][$facet] = array(
-						'filter' => $filter,
+						'filter' => $args['aggs'][$facet]['filter'],
 						'aggs' => array(
 							"range" => array(
 								'range' => array(
@@ -341,8 +331,6 @@ class Searcher
 			if (count($type) == 1) {
 				$bool['should'][] = $type;
 			} else {
-				$multiple[] = $slug;
-
 				$bool['should'][] = array('bool' => array('should' => $type));
 			}
 		}
