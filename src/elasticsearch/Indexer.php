@@ -134,6 +134,8 @@ class Indexer
 	 **/
 	static function _map($index)
 	{
+		$index = $index ?: self::_index(true);
+		
 		foreach (Config::types() as $postType) {
 			$type = $index->getType($postType);
 
