@@ -132,10 +132,10 @@ class Indexer
 	 * Reads F.E.S configuration and updates ElasticSearch field mapping information (this can corrupt existing data).
 	 * @internal
 	 **/
-	static function _map($index)
+	static function _map($index = null)
 	{
 		$index = $index ?: self::_index(true);
-		
+
 		foreach (Config::types() as $postType) {
 			$type = $index->getType($postType);
 
