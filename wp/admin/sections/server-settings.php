@@ -36,6 +36,29 @@ add_action('nhp-opts-options-validate-elasticsearch', function ($new, $current) 
 			return;
 		}
 
+		try {
+			$index = $client->getIndex($new['secondary_index']);
+
+			$status = $index->getStats()->getData();
+		} catch (\Elastica\Exception\ResponseException $ex) {
+			// This kind usually means there was an issue with the index not existing, so we'll associate the message to that field.
+			$field = $NHP_Options->sections['server']['fields']['secondary_index'];
+			$field['msg'] = __($ex->getMessage());
+
+			$NHP_Options->errors[] = $field;
+
+			set_transient('nhp-opts-errors-elasticsearch', $NHP_Options->errors, 1000);
+			return;
+		} catch (\Exception $ex) {
+			$field = $NHP_Options->sections['server']['fields']['server_url'];
+			$field['msg'] = __($ex->getMessage());
+
+			$NHP_Options->errors[] = $field;
+
+			set_transient('nhp-opts-errors-elasticsearch', $NHP_Options->errors, 1000);
+			return;
+		}
+
 		if (empty($status) || empty($status['indices']) || empty($status['indices'][$new['server_index']])) {
 			$field = $NHP_Options->sections['server']['fields']['server_url'];
 			$field['msg'] = 'Unable to connect to the ElasticSearch server.';
@@ -62,6 +85,12 @@ $sections['server'] = array(
 			'id' => 'server_index',
 			'type' => 'text',
 			'title' => 'Index Name'
+		),
+		'secondary_index' => array(
+			'id' => 'secondary_index',
+			'type' => 'text',
+			'sub_desc' => 'If defined, a wipe of data will actually run against the secondary index first, allowing you to re-populate (without touching production) and then swap after.',
+			'title' => 'Secondary Index Name'
 		),
 		'server_timeout_read' => array(
 			'id' => 'server_timeout_read',

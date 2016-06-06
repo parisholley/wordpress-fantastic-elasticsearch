@@ -29,6 +29,22 @@ class Config
 	}
 
 	/**
+	 * Set a specific option within the FES plugin
+	 *
+	 * @param string $name The name of the option
+	 * @param string $value The value of the option
+	 *
+	 * @return object
+	 **/
+	static function set($name, $value)
+	{
+		$options = get_option('elasticsearch') ?: [];
+		$options[$name] = $value;
+
+		update_option('elasticsearch', $options);
+	}
+
+	/**
 	 * Identifies facets that were defined by user but do not follow standard format.
 	 *
 	 * @return array An array of strings that represent mapped fields

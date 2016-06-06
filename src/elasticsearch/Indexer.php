@@ -59,7 +59,9 @@ class Indexer
 	 **/
 	static function clear()
 	{
-		$index = self::_index(true);;
+		$indexName = Config::option('secondary_index') ?: Config::option('server_index');
+
+		$index = self::_client(true)->getIndex($indexName);
 
 		try {
 			$index->delete();
@@ -69,7 +71,7 @@ class Indexer
 
 		$index->create();
 
-		self::_map();
+		self::_map($index);
 	}
 
 	/**
@@ -79,12 +81,14 @@ class Indexer
 	 **/
 	static function reindex($page = 1)
 	{
-		$index = self::_index(true);
+		$indexName = Config::option('secondary_index') ?: Config::option('server_index');
+
+		$index = self::_client(true)->getIndex($indexName);
 
 		$posts = self::get_posts($page);
 
 		foreach ($posts as $post) {
-			self::addOrUpdate($post);
+			self::addOrUpdate($post, $index);
 		}
 
 		return count($posts);
@@ -113,9 +117,11 @@ class Indexer
 	 *
 	 * @param WP_Post $post The wordpress post to remove
 	 **/
-	static function addOrUpdate($post)
+	static function addOrUpdate($post, $index = null)
 	{
-		$type = self::_index(true)->getType($post->post_type);
+		$index = ($index ?: self::_index(true));
+
+		$type = $index->getType($post->post_type);
 
 		$data = self::_build_document($post);
 
@@ -126,10 +132,8 @@ class Indexer
 	 * Reads F.E.S configuration and updates ElasticSearch field mapping information (this can corrupt existing data).
 	 * @internal
 	 **/
-	static function _map()
+	static function _map($index)
 	{
-		$index = self::_index(false);
-
 		foreach (Config::types() as $postType) {
 			$type = $index->getType($postType);
 
