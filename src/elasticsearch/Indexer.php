@@ -125,7 +125,9 @@ class Indexer
 
 		$data = self::_build_document($post);
 
-		$type->addDocument(new \Elastica\Document($post->ID, $data));
+		if ($data) {
+			$type->addDocument(new \Elastica\Document($post->ID, $data));
+		}
 	}
 
 	/**
