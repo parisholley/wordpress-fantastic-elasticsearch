@@ -198,12 +198,12 @@ class Faceting
 
 		$data = isset($wp_query->facets[$field]) ? $wp_query->facets[$field] : array();
 
-		return self::_buildFacetResult($field, $data, function ($value) use ($field) {
+		return self::_buildFacetResult($field, $data, function ($value) use ($field, $data) {
 			$return = array(
 				'slug' => $value
 			);
 
-			return Config::apply_filters('faceting_custom', $return, $field);
+			return Config::apply_filters('faceting_custom', $return, $field, $data);
 		});
 	}
 
