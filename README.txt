@@ -44,6 +44,7 @@ https://github.com/parisholley/wordpress-fantastic-elasticsearch/wiki
 
 = 4.1.1 =
 * pass all data points to custom facet filter for efficiency
+* allow wp to act on exception (ie: rethrow)
 
 = 4.1.0 =
 * support for secondary index to prevent wiping production data live

@@ -71,6 +71,8 @@ class Searcher
 		} catch (\Exception $ex) {
 			error_log($ex);
 
+			Config::do_action('searcher_exception', $ex);
+
 			return null;
 		}
 	}

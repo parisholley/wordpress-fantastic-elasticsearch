@@ -136,6 +136,17 @@ class Config
 	}
 
 	/**
+	 * Behaves exactly like the wordpress do_action method except it prefixes every action with a convention used by this plugin (ie: 'es_').
+	 **/
+	static function do_action()
+	{
+		$args = func_get_args();
+		$args[0] = 'elasticsearch_' . $args[0];
+
+		return call_user_func_array('do_action', $args);
+	}
+
+	/**
 	 * A list of a fields that are included when indexing data.
 	 *
 	 * @return string[] field names
