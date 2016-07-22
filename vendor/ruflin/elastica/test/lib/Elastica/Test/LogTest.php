@@ -1,5 +1,4 @@
 <?php
-
 namespace Elastica\Test;
 
 use Elastica\Log;
@@ -8,7 +7,7 @@ use Psr\Log\LogLevel;
 
 class LogTest extends BaseTest
 {
-    private $_context = array();
+    private $_context = [];
     private $_message = 'hello world';
 
     public static function setUpBeforeClass()
@@ -33,7 +32,7 @@ class LogTest extends BaseTest
     public function testSetLogConfigPath()
     {
         $logPath = '/tmp/php.log';
-        $client = $this->_getClient(array('log' => $logPath));
+        $client = $this->_getClient(['log' => $logPath]);
         $this->assertEquals($logPath, $client->getConfig('log'));
     }
 
@@ -42,7 +41,7 @@ class LogTest extends BaseTest
      */
     public function testSetLogConfigEnable()
     {
-        $client = $this->_getClient(array('log' => true));
+        $client = $this->_getClient(['log' => true]);
         $this->assertTrue($client->getConfig('log'));
     }
 
@@ -85,7 +84,7 @@ class LogTest extends BaseTest
      */
     public function testGetLastMessage2()
     {
-        $client = $this->_getClient(array('log' => true));
+        $client = $this->_getClient(['log' => true]);
         $log = new Log($client);
 
         // Set log path temp path as otherwise test fails with output

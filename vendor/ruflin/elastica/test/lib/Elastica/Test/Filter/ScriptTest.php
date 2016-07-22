@@ -1,5 +1,4 @@
 <?php
-
 namespace Elastica\Test\Filter;
 
 use Elastica\Filter\Script as ScriptFilter;
@@ -29,11 +28,11 @@ class ScriptTest extends BaseTest
         $array = $filter->toArray();
         $this->assertInternalType('array', $array);
 
-        $expected = array(
-            'script' => array(
+        $expected = [
+            'script' => [
                 'script' => $string,
-            ),
-        );
+            ],
+        ];
         $this->assertEquals($expected, $array);
     }
 
@@ -43,10 +42,10 @@ class ScriptTest extends BaseTest
     public function testSetScript()
     {
         $string = '_score * 2.0';
-        $params = array(
+        $params = [
             'param1' => 'one',
             'param2' => 1,
-        );
+        ];
         $lang = 'mvel';
         $script = new Script($string, $params, $lang);
 
@@ -55,13 +54,13 @@ class ScriptTest extends BaseTest
 
         $array = $filter->toArray();
 
-        $expected = array(
-            'script' => array(
+        $expected = [
+            'script' => [
                 'script' => $string,
                 'params' => $params,
                 'lang' => $lang,
-            ),
-        );
+            ],
+        ];
         $this->assertEquals($expected, $array);
     }
 }

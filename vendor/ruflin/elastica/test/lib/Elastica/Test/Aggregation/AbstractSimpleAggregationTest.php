@@ -1,5 +1,4 @@
 <?php
-
 namespace Elastica\Test\Aggregation;
 
 class AbstractSimpleAggregationTest extends BaseAggregationTest
@@ -8,7 +7,7 @@ class AbstractSimpleAggregationTest extends BaseAggregationTest
     {
         $this->aggregation = $this->getMockForAbstractClass(
             'Elastica\Aggregation\AbstractSimpleAggregation',
-            array('whatever')
+            ['whatever']
         );
     }
 

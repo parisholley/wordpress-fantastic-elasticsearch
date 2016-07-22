@@ -1,5 +1,4 @@
 <?php
-
 namespace Elastica\QueryBuilder\DSL;
 
 use Elastica\Filter\AbstractFilter;
@@ -63,7 +62,7 @@ class Filter implements DSL
      *
      * @return BoolAnd
      */
-    public function bool_and(array $filters = array())
+    public function bool_and(array $filters = [])
     {
         return new BoolAnd($filters);
     }
@@ -136,7 +135,7 @@ class Filter implements DSL
      *
      * @return GeoDistanceRange
      */
-    public function geo_distance_range($key, $location, array $ranges = array())
+    public function geo_distance_range($key, $location, array $ranges = [])
     {
         return new GeoDistanceRange($key, $location, $ranges);
     }
@@ -247,7 +246,7 @@ class Filter implements DSL
      *
      * @return Ids
      */
-    public function ids($type = null, array $ids = array())
+    public function ids($type = null, array $ids = [])
     {
         return new Ids($type, $ids);
     }
@@ -343,7 +342,7 @@ class Filter implements DSL
      *
      * @return NumericRange
      */
-    public function numeric_range($fieldName = '', array $args = array())
+    public function numeric_range($fieldName = '', array $args = [])
     {
         return new NumericRange($fieldName, $args);
     }
@@ -357,7 +356,7 @@ class Filter implements DSL
      *
      * @return BoolOr
      */
-    public function bool_or(array $filters = array())
+    public function bool_or(array $filters = [])
     {
         return new BoolOr($filters);
     }
@@ -401,7 +400,7 @@ class Filter implements DSL
      *
      * @return Range
      */
-    public function range($fieldName = '', array $args = array())
+    public function range($fieldName = '', array $args = [])
     {
         return new Range($fieldName, $args);
     }
@@ -417,7 +416,7 @@ class Filter implements DSL
      *
      * @return Regexp
      */
-    public function regexp($field = '', $regexp = '', $options = array())
+    public function regexp($field = '', $regexp = '', $options = [])
     {
         return new Regexp($field, $regexp, $options);
     }
@@ -445,7 +444,7 @@ class Filter implements DSL
      *
      * @return Term
      */
-    public function term(array $term = array())
+    public function term(array $term = [])
     {
         return new Term($term);
     }
@@ -460,7 +459,7 @@ class Filter implements DSL
      *
      * @return Terms
      */
-    public function terms($key = '', array $terms = array())
+    public function terms($key = '', array $terms = [])
     {
         return new Terms($key, $terms);
     }

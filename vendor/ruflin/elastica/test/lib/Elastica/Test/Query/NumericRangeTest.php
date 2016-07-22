@@ -1,5 +1,4 @@
 <?php
-
 namespace Elastica\Test\Query;
 
 use Elastica\Query\NumericRange;
@@ -13,7 +12,7 @@ class NumericRangeTest extends BaseTest
     public function testAddField()
     {
         $rangeQuery = new NumericRange();
-        $returnValue = $rangeQuery->addField('fieldName', array('to' => 'value'));
+        $returnValue = $rangeQuery->addField('fieldName', ['to' => 'value']);
         $this->assertInstanceOf('Elastica\Query\NumericRange', $returnValue);
     }
 
@@ -24,14 +23,14 @@ class NumericRangeTest extends BaseTest
     {
         $query = new NumericRange();
 
-        $fromTo = array('from' => 'ra', 'to' => 'ru');
+        $fromTo = ['from' => 'ra', 'to' => 'ru'];
         $query->addField('name', $fromTo);
 
-        $expectedArray = array(
-            'numeric_range' => array(
+        $expectedArray = [
+            'numeric_range' => [
                 'name' => $fromTo,
-            ),
-        );
+            ],
+        ];
 
         $this->assertEquals($expectedArray, $query->toArray());
     }

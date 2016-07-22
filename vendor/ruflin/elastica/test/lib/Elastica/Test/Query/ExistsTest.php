@@ -1,5 +1,4 @@
 <?php
-
 namespace Elastica\Test\Query;
 
 use Elastica\Query\Exists;
@@ -15,7 +14,7 @@ class ExistsTest extends BaseTest
         $field = 'test';
         $query = new Exists($field);
 
-        $expectedArray = array('exists' => array('field' => $field));
+        $expectedArray = ['exists' => ['field' => $field]];
         $this->assertEquals($expectedArray, $query->toArray());
     }
 

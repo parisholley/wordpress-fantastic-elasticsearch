@@ -1,5 +1,4 @@
 <?php
-
 namespace Elastica\Test\Filter;
 
 use Elastica\Filter\Exists;
@@ -28,7 +27,7 @@ class ExistsTest extends BaseTest
         $field = 'test';
         $filter = new Exists($field);
 
-        $expectedArray = array('exists' => array('field' => $field));
+        $expectedArray = ['exists' => ['field' => $field]];
         $this->assertEquals($expectedArray, $filter->toArray());
     }
 

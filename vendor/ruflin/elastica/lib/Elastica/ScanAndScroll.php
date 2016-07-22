@@ -1,5 +1,4 @@
 <?php
-
 namespace Elastica;
 
 /**
@@ -39,7 +38,7 @@ class ScanAndScroll extends Scroll
     {
         // reset state
         $this->_nextScrollId = null;
-        $this->_options = array(null, null, null, null);
+        $this->_options = [null, null, null, null];
 
         $this->_saveOptions();
 

@@ -1,5 +1,4 @@
 <?php
-
 namespace Elastica\Filter;
 
 trigger_error('Deprecated: Filters are deprecated. Use queries in filter context. See https://www.elastic.co/guide/en/elasticsearch/reference/2.0/query-dsl-filters.html', E_USER_DEPRECATED);
@@ -26,7 +25,7 @@ class GeoPolygon extends AbstractFilter
      *
      * @var array Points making up polygon
      */
-    protected $_points = array();
+    protected $_points = [];
 
     /**
      * Construct polygon filter.
@@ -49,12 +48,12 @@ class GeoPolygon extends AbstractFilter
      */
     public function toArray()
     {
-        return array(
-            'geo_polygon' => array(
-                $this->_key => array(
+        return [
+            'geo_polygon' => [
+                $this->_key => [
                     'points' => $this->_points,
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
     }
 }

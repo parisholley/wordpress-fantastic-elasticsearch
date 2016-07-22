@@ -1,5 +1,4 @@
 <?php
-
 namespace Elastica\Test\Query;
 
 use Elastica\Query\Type;
@@ -24,9 +23,9 @@ class TypeTest extends BaseTest
     {
         $typeQuery = new Type('type_name');
 
-        $expectedArray = array(
-            'type' => array('value' => 'type_name'),
-        );
+        $expectedArray = [
+            'type' => ['value' => 'type_name'],
+        ];
 
         $this->assertEquals($expectedArray, $typeQuery->toArray());
     }

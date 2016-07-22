@@ -1,5 +1,4 @@
 <?php
-
 namespace Elastica\Test\Query;
 
 use Elastica\Query\Regexp;
@@ -18,14 +17,14 @@ class RegexpTest extends BaseTest
 
         $query = new Regexp($field, $value, $boost);
 
-        $expectedArray = array(
-            'regexp' => array(
-                $field => array(
+        $expectedArray = [
+            'regexp' => [
+                $field => [
                     'value' => $value,
                     'boost' => $boost,
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
 
         $this->assertequals($expectedArray, $query->toArray());
     }

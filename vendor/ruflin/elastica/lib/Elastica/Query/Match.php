@@ -1,5 +1,4 @@
 <?php
-
 namespace Elastica\Query;
 
 /**
@@ -51,7 +50,7 @@ class Match extends AbstractQuery
     public function setFieldParam($field, $key, $value)
     {
         if (!isset($this->_params[$field])) {
-            $this->_params[$field] = array();
+            $this->_params[$field] = [];
         }
 
         $this->_params[$field][$key] = $value;
