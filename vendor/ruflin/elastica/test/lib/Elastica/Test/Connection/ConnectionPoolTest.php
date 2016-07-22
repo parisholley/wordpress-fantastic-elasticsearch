@@ -1,5 +1,4 @@
 <?php
-
 namespace Elastica\Test\Connection;
 
 use Elastica\Connection;
@@ -44,7 +43,7 @@ class ConnectionPoolTest extends BaseTest
     public function testAddConnection()
     {
         $pool = $this->createPool();
-        $pool->setConnections(array());
+        $pool->setConnections([]);
 
         $connections = $this->getConnections(5);
 
@@ -74,7 +73,7 @@ class ConnectionPoolTest extends BaseTest
     {
         $pool = $this->createPool();
 
-        $pool->setConnections(array());
+        $pool->setConnections([]);
 
         $this->assertFalse($pool->hasConnection());
     }
@@ -91,8 +90,8 @@ class ConnectionPoolTest extends BaseTest
 
     protected function getConnections($quantity = 1)
     {
-        $params = array();
-        $connections = array();
+        $params = [];
+        $connections = [];
 
         for ($i = 0; $i < $quantity; ++$i) {
             $connections[] = new Connection($params);

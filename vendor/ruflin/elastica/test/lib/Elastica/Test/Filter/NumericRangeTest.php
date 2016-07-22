@@ -1,5 +1,4 @@
 <?php
-
 namespace Elastica\Test\Filter;
 
 use Elastica\Filter\NumericRange;
@@ -22,7 +21,7 @@ class NumericRangeTest extends BaseTest
     public function testAddField()
     {
         $rangeFilter = new NumericRange();
-        $returnValue = $rangeFilter->addField('fieldName', array('to' => 'value'));
+        $returnValue = $rangeFilter->addField('fieldName', ['to' => 'value']);
         $this->assertInstanceOf('Elastica\Filter\NumericRange', $returnValue);
     }
 
@@ -33,14 +32,14 @@ class NumericRangeTest extends BaseTest
     {
         $filter = new NumericRange();
 
-        $fromTo = array('from' => 'ra', 'to' => 'ru');
+        $fromTo = ['from' => 'ra', 'to' => 'ru'];
         $filter->addField('name', $fromTo);
 
-        $expectedArray = array(
-            'numeric_range' => array(
+        $expectedArray = [
+            'numeric_range' => [
                 'name' => $fromTo,
-            ),
-        );
+            ],
+        ];
 
         $this->assertEquals($expectedArray, $filter->toArray());
     }

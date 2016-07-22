@@ -1,5 +1,4 @@
 <?php
-
 namespace Elastica\Query;
 
 use Elastica\Exception\InvalidException;
@@ -21,7 +20,7 @@ class Fuzzy extends AbstractQuery
      */
     public function __construct($fieldName = null, $value = null)
     {
-        if ($fieldName and $value) {
+        if ($fieldName && $value) {
             $this->setField($fieldName, $value);
         }
     }
@@ -36,14 +35,14 @@ class Fuzzy extends AbstractQuery
      */
     public function setField($fieldName, $value)
     {
-        if (!is_string($value) or !is_string($fieldName)) {
+        if (!is_string($value) || !is_string($fieldName)) {
             throw new InvalidException('The field and value arguments must be of type string.');
         }
-        if (count($this->getParams()) > 0 and array_shift(array_keys($this->getParams())) != $fieldName) {
+        if (count($this->getParams()) > 0 && array_shift(array_keys($this->getParams())) != $fieldName) {
             throw new InvalidException('Fuzzy query can only support a single field.');
         }
 
-        return $this->setParam($fieldName, array('value' => $value));
+        return $this->setParam($fieldName, ['value' => $value]);
     }
 
     /**

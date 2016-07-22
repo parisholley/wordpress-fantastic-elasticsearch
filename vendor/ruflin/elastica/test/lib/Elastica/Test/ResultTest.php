@@ -1,5 +1,4 @@
 <?php
-
 namespace Elastica\Test;
 
 use Elastica\Document;
@@ -22,7 +21,7 @@ class ResultTest extends BaseTest
 
         // Adds 1 document to the index
         $docId = 3;
-        $doc1 = new Document($docId, array('username' => 'hans'));
+        $doc1 = new Document($docId, ['username' => 'hans']);
         $type->addDocument($doc1);
 
         // Refreshes index
@@ -56,7 +55,7 @@ class ResultTest extends BaseTest
 
         $client = $this->_getClient();
         $index = $client->getIndex($indexName);
-        $index->create(array(), true);
+        $index->create([], true);
         $type = $index->getType($typeName);
 
         $mapping = new Mapping($type);
@@ -65,7 +64,7 @@ class ResultTest extends BaseTest
 
         // Adds 1 document to the index
         $docId = 3;
-        $doc1 = new Document($docId, array('username' => 'hans'));
+        $doc1 = new Document($docId, ['username' => 'hans']);
         $type->addDocument($doc1);
 
         // Refreshes index
@@ -77,7 +76,7 @@ class ResultTest extends BaseTest
 
         $result = $resultSet->current();
 
-        $this->assertEquals(array(), $result->getSource());
+        $this->assertEquals([], $result->getSource());
         $this->assertInstanceOf('Elastica\Result', $result);
         $this->assertEquals($indexName, $result->getIndex());
         $this->assertEquals($typeName, $result->getType());
@@ -97,7 +96,7 @@ class ResultTest extends BaseTest
 
         // Adds 1 document to the index
         $docId = 3;
-        $doc1 = new Document($docId, array('username' => 'hans'));
+        $doc1 = new Document($docId, ['username' => 'hans']);
         $type->addDocument($doc1);
 
         // Refreshes index
@@ -118,15 +117,15 @@ class ResultTest extends BaseTest
      */
     public function testHasFields()
     {
-        $data = array('value set');
+        $data = ['value set'];
 
-        $result = new Result(array());
+        $result = new Result([]);
         $this->assertFalse($result->hasFields());
 
-        $result = new Result(array('_source' => $data));
+        $result = new Result(['_source' => $data]);
         $this->assertFalse($result->hasFields());
 
-        $result = new Result(array('fields' => $data));
+        $result = new Result(['fields' => $data]);
         $this->assertTrue($result->hasFields());
         $this->assertEquals($data, $result->getFields());
     }

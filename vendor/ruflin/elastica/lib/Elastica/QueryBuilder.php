@@ -1,5 +1,4 @@
 <?php
-
 namespace Elastica;
 
 use Elastica\Exception\QueryBuilderException;
@@ -22,7 +21,7 @@ class QueryBuilder
     /**
      * @var Facade[]
      */
-    private $_facades = array();
+    private $_facades = [];
 
     /**
      * Constructor.

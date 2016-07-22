@@ -1,5 +1,4 @@
 <?php
-
 namespace Elastica\Aggregation;
 
 use Elastica\Exception\DeprecatedException;
@@ -143,7 +142,7 @@ class DateHistogram extends Histogram
      */
     public function setExtendedBounds($min = '', $max = '')
     {
-        $bounds = array();
+        $bounds = [];
         $bounds['min'] = $min;
         $bounds['max'] = $max;
         // switch if min is higher then max

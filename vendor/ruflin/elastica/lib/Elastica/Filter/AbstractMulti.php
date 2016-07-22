@@ -1,5 +1,4 @@
 <?php
-
 namespace Elastica\Filter;
 
 trigger_error('Deprecated: Filters are deprecated. Use queries in filter context. See https://www.elastic.co/guide/en/elasticsearch/reference/2.0/query-dsl-filters.html', E_USER_DEPRECATED);
@@ -18,12 +17,12 @@ abstract class AbstractMulti extends AbstractFilter
      *
      * @var array
      */
-    protected $_filters = array();
+    protected $_filters = [];
 
     /**
      * @param array $filters
      */
-    public function __construct(array $filters = array())
+    public function __construct(array $filters = [])
     {
         if (!empty($filters)) {
             $this->setFilters($filters);
@@ -53,7 +52,7 @@ abstract class AbstractMulti extends AbstractFilter
      */
     public function setFilters(array $filters)
     {
-        $this->_filters = array();
+        $this->_filters = [];
 
         foreach ($filters as $filter) {
             $this->addFilter($filter);

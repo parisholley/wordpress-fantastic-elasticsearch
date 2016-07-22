@@ -1,5 +1,4 @@
 <?php
-
 namespace Elastica\Filter;
 
 use Elastica\Type as ElasticaType;
@@ -22,7 +21,7 @@ class Ids extends AbstractFilter
      * @param string|\Elastica\Type $type Type to filter on
      * @param array                 $ids  List of ids
      */
-    public function __construct($type = null, array $ids = array())
+    public function __construct($type = null, array $ids = [])
     {
         $this->setType($type);
         $this->setIds($ids);
@@ -90,7 +89,7 @@ class Ids extends AbstractFilter
     public function setIds($ids)
     {
         if (!is_array($ids)) {
-            $ids = array($ids);
+            $ids = [$ids];
         }
 
         return $this->setParam('values', $ids);

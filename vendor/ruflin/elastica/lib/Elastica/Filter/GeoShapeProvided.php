@@ -1,5 +1,4 @@
 <?php
-
 namespace Elastica\Filter;
 
 trigger_error('Deprecated: Filters are deprecated. Use queries in filter context. See https://www.elastic.co/guide/en/elasticsearch/reference/2.0/query-dsl-filters.html', E_USER_DEPRECATED);
@@ -62,16 +61,16 @@ class GeoShapeProvided extends AbstractGeoShape
      */
     public function toArray()
     {
-        return array(
-            'geo_shape' => array(
-                $this->_path => array(
-                    'shape' => array(
+        return [
+            'geo_shape' => [
+                $this->_path => [
+                    'shape' => [
                         'type' => $this->_shapeType,
                         'coordinates' => $this->_coordinates,
                         'relation' => $this->_relation,
-                    ),
-                ),
-            ),
-        );
+                    ],
+                ],
+            ],
+        ];
     }
 }

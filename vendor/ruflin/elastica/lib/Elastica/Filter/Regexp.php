@@ -1,5 +1,4 @@
 <?php
-
 namespace Elastica\Filter;
 
 trigger_error('Deprecated: Filters are deprecated. Use queries in filter context. See https://www.elastic.co/guide/en/elasticsearch/reference/2.0/query-dsl-filters.html', E_USER_DEPRECATED);
@@ -33,7 +32,7 @@ class Regexp extends AbstractFilter
      *
      * @var array
      */
-    protected $_options = array();
+    protected $_options = [];
 
     /**
      * Create Regexp object.
@@ -44,7 +43,7 @@ class Regexp extends AbstractFilter
      *
      * @throws \Elastica\Exception\InvalidException
      */
-    public function __construct($field = '', $regexp = '', $options = array())
+    public function __construct($field = '', $regexp = '', $options = [])
     {
         $this->setField($field);
         $this->setRegexp($regexp);
@@ -103,7 +102,7 @@ class Regexp extends AbstractFilter
     public function toArray()
     {
         if (count($this->_options) > 0) {
-            $options = array('value' => $this->_regexp);
+            $options = ['value' => $this->_regexp];
             $options = array_merge($options, $this->_options);
 
             $this->setParam($this->_field, $options);

@@ -1,5 +1,4 @@
 <?php
-
 namespace Elastica\QueryBuilder\Version;
 
 use Elastica\QueryBuilder\Version;
@@ -13,7 +12,7 @@ use Elastica\QueryBuilder\Version;
  */
 class Version090 extends Version
 {
-    protected $queries = array(
+    protected $queries = [
         'match',
         'multi_match',
         'bool',
@@ -56,9 +55,9 @@ class Version090 extends Version
         'wildcard',
         'text',
         'minimum_should_match',
-    );
+    ];
 
-    protected $filters = array(
+    protected $filters = [
         'bool_and', // original: bool
         'bool',
         'exists',
@@ -88,11 +87,11 @@ class Version090 extends Version
         'term',
         'terms',
         'type',
-    );
+    ];
 
-    protected $suggesters = array(
+    protected $suggesters = [
         'term',
         'phrase',
         'completion',
-    );
+    ];
 }

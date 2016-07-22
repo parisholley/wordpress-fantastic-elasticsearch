@@ -1,5 +1,4 @@
 <?php
-
 namespace Elastica\Test\Connection\Strategy;
 
 use Elastica\Connection\Strategy\CallbackStrategy;
@@ -24,7 +23,7 @@ class CallbackStrategyTest extends Base
         };
 
         $strategy = new CallbackStrategy($callback);
-        $strategy->getConnection(array());
+        $strategy->getConnection([]);
 
         $this->assertEquals(1, $count);
     }
@@ -47,11 +46,11 @@ class CallbackStrategyTest extends Base
         $this->assertTrue($isValid);
 
         // static method as array
-        $isValid = CallbackStrategy::isValid(array('Elastica\Test\Connection\Strategy\CallbackStrategyTestHelper', 'getFirstConnectionStatic'));
+        $isValid = CallbackStrategy::isValid(['Elastica\Test\Connection\Strategy\CallbackStrategyTestHelper', 'getFirstConnectionStatic']);
         $this->assertTrue($isValid);
 
         // object method
-        $isValid = CallbackStrategy::isValid(array(new CallbackStrategyTestHelper(), 'getFirstConnectionStatic'));
+        $isValid = CallbackStrategy::isValid([new CallbackStrategyTestHelper(), 'getFirstConnectionStatic']);
         $this->assertTrue($isValid);
 
         // function name
@@ -78,11 +77,11 @@ class CallbackStrategyTest extends Base
     {
         $count = 0;
 
-        $config = array('connectionStrategy' => function ($connections) use (&$count) {
+        $config = ['connectionStrategy' => function ($connections) use (&$count) {
             ++$count;
 
             return current($connections);
-       });
+       }];
 
         $client = $this->_getClient($config);
         $response = $client->request('/_aliases');

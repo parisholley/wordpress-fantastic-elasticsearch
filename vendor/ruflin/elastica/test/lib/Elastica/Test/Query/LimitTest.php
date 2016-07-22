@@ -1,5 +1,4 @@
 <?php
-
 namespace Elastica\Test\Query;
 
 use Elastica\Query\Limit;
@@ -26,9 +25,9 @@ class LimitTest extends BaseTest
     {
         $query = new Limit(15);
 
-        $expectedArray = array(
-            'limit' => array('value' => 15),
-        );
+        $expectedArray = [
+            'limit' => ['value' => 15],
+        ];
 
         $this->assertEquals($expectedArray, $query->toArray());
     }

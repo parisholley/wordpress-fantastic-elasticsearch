@@ -1,5 +1,4 @@
 <?php
-
 namespace Elastica\QueryBuilder\Version;
 
 /**
@@ -11,7 +10,7 @@ namespace Elastica\QueryBuilder\Version;
  */
 class Version140 extends Version130
 {
-    protected $queries = array(
+    protected $queries = [
         'match',
         'multi_match',
         'bool',
@@ -59,9 +58,9 @@ class Version140 extends Version130
 
         // new in 1.1.0
         'template',
-    );
+    ];
 
-    protected $filters = array(
+    protected $filters = [
         'bool_and', // original: bool
         'bool',
         'exists',
@@ -93,9 +92,9 @@ class Version140 extends Version130
 
         // removed in 1.0.0
         // 'numeric_range'
-    );
+    ];
 
-    protected $aggregations = array(
+    protected $aggregations = [
         'min',
         'max',
         'sum',
@@ -133,14 +132,14 @@ class Version140 extends Version130
         'scripted_metric',
         'filters',
         'children',
-    );
+    ];
 
-    protected $suggesters = array(
+    protected $suggesters = [
         'term',
         'phrase',
         'completion',
 
         // new in 1.2.0
         'context',
-    );
+    ];
 }

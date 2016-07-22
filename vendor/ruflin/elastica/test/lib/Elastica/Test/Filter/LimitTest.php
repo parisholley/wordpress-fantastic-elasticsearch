@@ -1,5 +1,4 @@
 <?php
-
 namespace Elastica\Test\Filter;
 
 use Elastica\Filter\Limit;
@@ -35,9 +34,9 @@ class LimitTest extends BaseTest
     {
         $filter = new Limit(15);
 
-        $expectedArray = array(
-            'limit' => array('value' => 15),
-        );
+        $expectedArray = [
+            'limit' => ['value' => 15],
+        ];
 
         $this->assertEquals($expectedArray, $filter->toArray());
     }

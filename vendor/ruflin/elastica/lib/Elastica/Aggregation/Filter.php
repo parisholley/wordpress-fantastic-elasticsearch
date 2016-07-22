@@ -1,5 +1,4 @@
 <?php
-
 namespace Elastica\Aggregation;
 
 use Elastica\Exception\InvalidException;
@@ -61,9 +60,9 @@ class Filter extends AbstractAggregation
             throw new InvalidException('Filter is required');
         }
 
-        $array = array(
+        $array = [
             'filter' => $this->getParam('filter')->toArray(),
-        );
+        ];
 
         if ($this->_aggs) {
             $array['aggs'] = $this->_convertArrayable($this->_aggs);

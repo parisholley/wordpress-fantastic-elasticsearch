@@ -1,5 +1,4 @@
 <?php
-
 namespace Elastica\Test;
 
 use Elastica\Cluster;
@@ -20,7 +19,7 @@ class ClusterTest extends BaseTest
         $data = $client->request('/_nodes')->getData();
         $rawNodes = $data['nodes'];
 
-        $rawNodeNames = array();
+        $rawNodeNames = [];
 
         foreach ($rawNodes as $rawNode) {
             $rawNodeNames[] = $rawNode['name'];

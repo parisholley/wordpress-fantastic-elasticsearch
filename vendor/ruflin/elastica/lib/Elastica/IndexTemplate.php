@@ -1,5 +1,4 @@
 <?php
-
 namespace Elastica;
 
 use Elastica\Exception\InvalidException;
@@ -18,14 +17,14 @@ class IndexTemplate
      *
      * @var string Index pattern
      */
-    protected $_name = '';
+    protected $_name;
 
     /**
      * Client object.
      *
      * @var \Elastica\Client Client object
      */
-    protected $_client = null;
+    protected $_client;
 
     /**
      * Creates a new index template object.
@@ -66,7 +65,7 @@ class IndexTemplate
      *
      * @return \Elastica\Response
      */
-    public function create(array $args = array())
+    public function create(array $args = [])
     {
         return $this->request(Request::PUT, $args);
     }
@@ -112,7 +111,7 @@ class IndexTemplate
      *
      * @return \Elastica\Response Response object
      */
-    public function request($method, $data = array())
+    public function request($method, $data = [])
     {
         $path = '/_template/'.$this->getName();
 
