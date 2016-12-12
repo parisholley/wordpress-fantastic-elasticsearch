@@ -301,7 +301,7 @@ class Indexer
 
 				$lang = Config::apply_filters('string_language', 'english');
 				$props = array(
-					'type' => 'multi_field',
+					'type' => 'text',
 					'fields' => array(
 						$field => $props,
 						$lang => array_merge($props, array(
