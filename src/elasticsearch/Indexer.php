@@ -69,7 +69,10 @@ class Indexer
 			// will throw an exception if index does not exist
 		}
 
-		$index->create();
+		$settings = array();
+		$settings = Config::apply_filters('indexer_index_settings', $settings);
+
+		$index->create($settings);
 
 		self::_map($index);
 	}
@@ -125,9 +128,7 @@ class Indexer
 
 		$data = self::_build_document($post);
 
-		if ($data) {
-			$type->addDocument(new \Elastica\Document($post->ID, $data));
-		}
+		$type->addDocument(new \Elastica\Document($post->ID, $data));
 	}
 
 	/**
@@ -282,12 +283,17 @@ class Indexer
 		$notanalyzed = Config::option('not_analyzed');
 
 		foreach ($config_fields as $field) {
+
 			// set default
-			$props = array('type' => 'string');
+			$props = array(
+				'type' => 'text',
+				'store' => true,
+			);
 			// detect special field type
 			if (isset($numeric[$field])) {
 				$props['type'] = 'float';
 			} elseif (isset($notanalyzed[$field]) || $kind == 'taxonomy' || $field == 'post_type') {
+				$props['type'] = 'keyword';
 				$props['index'] = 'not_analyzed';
 			} elseif ($field == 'post_date') {
 				$props['type'] = 'date';
@@ -296,12 +302,13 @@ class Indexer
 				$props['index'] = 'analyzed';
 			}
 
-			if ($props['type'] == 'string' && $props['index'] == 'analyzed') {
+			if ($props['type'] == 'text' && $props['index'] == 'analyzed') {
 				// provides more accurate searches
 
 				$lang = Config::apply_filters('string_language', 'english');
 				$props = array(
-					'type' => 'multi_field',
+					'type' => 'text',
+					'store' => true,
 					'fields' => array(
 						$field => $props,
 						$lang => array_merge($props, array(
@@ -311,12 +318,16 @@ class Indexer
 				);
 			}
 
+
+
 			// generic filter indexer_map_field| indexer_map_meta | indexer_map_taxonomy
 			$props = Config::apply_filters('indexer_map_' . $kind, $props, $field);
 
+			//var_dump($props); var_dump($field);
+
 			// also index taxonomy_name field
 			if ($kind == 'taxonomy') {
-				$tax_name_props = array('type' => 'string');
+				$tax_name_props = array('type' => 'text');
 				$tax_name_props = Config::apply_filters('indexer_map_taxonomy_name', $tax_name_props, $field);
 			}
 
@@ -368,4 +379,3 @@ class Indexer
 	}
 }
 
-?>
