@@ -68,8 +68,11 @@ class Indexer
 		} catch (\Exception $ex) {
 			// will throw an exception if index does not exist
 		}
+        
+        $settings = array();
+        $settings = apply_filters('indexer_index_settings', $settings);
 
-		$index->create();
+		$index->create($settings);
 
 		self::_map($index);
 	}
@@ -291,7 +294,8 @@ class Indexer
 			if (isset($numeric[$field])) {
 				$props['type'] = 'float';
 			} elseif (isset($notanalyzed[$field]) || $kind == 'taxonomy' || $field == 'post_type') {
-				$props['index'] = 'not_analyzed';
+				$props['type'] = 'keyword';
+                $props['index'] = 'not_analyzed';
 			} elseif ($field == 'post_date') {
 				$props['type'] = 'date';
 				$props['format'] = 'date_time_no_millis';
@@ -320,7 +324,7 @@ class Indexer
 
 			// also index taxonomy_name field
 			if ($kind == 'taxonomy') {
-				$tax_name_props = array('type' => 'string');
+				$tax_name_props = array('type' => 'keyword');
 				$tax_name_props = Config::apply_filters('indexer_map_taxonomy_name', $tax_name_props, $field);
 			}
 
