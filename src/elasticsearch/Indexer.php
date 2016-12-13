@@ -288,7 +288,7 @@ class Indexer
 			// set default
 			$props = array(
                 'type' => 'text',
-                'stored' => true,
+                'store' => true,
             );
 			// detect special field type
 			if (isset($numeric[$field])) {
@@ -309,7 +309,7 @@ class Indexer
 				$lang = Config::apply_filters('string_language', 'english');
 				$props = array(
 					'type' => 'text',
-                    'stored' => true,
+                    'store' => true,
 					'fields' => array(
 						$field => $props,
 						$lang => array_merge($props, array(
