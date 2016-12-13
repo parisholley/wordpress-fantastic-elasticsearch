@@ -283,7 +283,10 @@ class Indexer
 
 		foreach ($config_fields as $field) {
 			// set default
-			$props = array('type' => 'string');
+			$props = array(
+                'type' => 'text',
+                'stored' => true,
+            );
 			// detect special field type
 			if (isset($numeric[$field])) {
 				$props['type'] = 'float';
@@ -296,12 +299,13 @@ class Indexer
 				$props['index'] = 'analyzed';
 			}
 
-			if ($props['type'] == 'string' && $props['index'] == 'analyzed') {
+			if ($props['type'] == 'text' && $props['index'] == 'analyzed') {
 				// provides more accurate searches
 
 				$lang = Config::apply_filters('string_language', 'english');
 				$props = array(
 					'type' => 'text',
+                    'stored' => true,
 					'fields' => array(
 						$field => $props,
 						$lang => array_merge($props, array(
