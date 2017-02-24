@@ -17,7 +17,7 @@ class Defaults
 	 **/
 	static function fields()
 	{
-		return array('post_content', 'post_title', 'post_type');
+		return array('post_content', 'post_title', 'post_type', 'post_excerpt');
 	}
 
 	/**
